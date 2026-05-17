@@ -6,6 +6,14 @@
     <title>Carrzy Apps | Home Page</title>
     <link rel="icon" type="image/x-icon" href="/favicon.png">
     <style>
+
+document.addEventListener('keydown', function(event) {
+    if (event.ctrlKey && event.key === 'u') {
+        event.preventDefault(); // Prevent the default action (viewing source)
+        alert('Sorry, viewing source is disabled!'); // Optional alert
+    }
+});
+        
         body {
             background-color: #0a0a0a;
             color: #ffffff;
