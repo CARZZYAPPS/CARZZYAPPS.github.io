@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rhythm DJ</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.png">
+    <style>
+        body { background: #0a0a0a; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; touch-action: manipulation; }
+        #ui-layer { text-align: center; z-index: 10; background: rgba(15,15,15,0.95); padding: 30px; border-radius: 15px; border: 1px solid #00d1b2; position: absolute; box-shadow: 0 0 30px rgba(0,209,178,0.3); min-width: 280px; }
+        canvas { background: #050505; border-bottom: 4px solid #00d1b2; width: 100%; max-width: 800px; }
+        .stats { position: absolute; top: 20px; right: 20px; font-size: 18px; font-weight: bold; color: #00d1b2; }
+        #best-label { color: #ffd700; font-size: 14px; }
+        .controls { position: fixed; bottom: 30px; display: none; gap: 40px; z-index: 5; }
+        #startBtn:hover {
+            background-color:#00d9b2;
+        }
+        .action-btn { width: 95px; height: 95px; background: rgba(0, 209, 178, 0.2); border: 3px solid #00d1b2; border-radius: 50%; color: white; font-weight: bold; font-size: 16px; outline: none; -webkit-tap-highlight-color: transparent; }
+        #jumpBtn { background: rgba(0, 209, 178, 0.5); box-shadow: 0 0 20px rgba(0,209,178,0.4); }
+        .action-btn:active { background: rgba(0, 209, 178, 0.8); }
+        button.menu-btn { padding: 12px 30px; font-size: 16px; cursor: pointer; background: #00d1b2; border: none; border-radius: 30px; color: white; font-weight: bold; margin-top: 10px; }
+        #logo {
+            width:100%;
+            position: absolute; 
+            top: 20px; 
+            left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="logo">
+    <a href="https://carzzyapps.github.io"><img src="/Carzzy Apps Logo.png" style="width:150px;height:50px;"></a>
+    </div>
+    <div class="stats">
+        SCORE: <span id="score">0</span><br>
+        <div id="best-label">BEST: <span id="best-score">0</span></div>
+    </div>
+
+    <div id="ui-layer">
+        <img src="rhythm-dj.png" style="width:60px;length:60px;">
+        <h1 id="title">RHYTHM DJ</h1>
+        <p><b>JUMP</b> spikes 🔼 | <b>DUCK</b> drones 🔽</p>
+        <button id="startBtn" class="menu-btn">START GAME</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="controls" id="controls">
+        <button class="action-btn" id="jumpBtn">JUMP</button>
+        <button class="action-btn" id="duckBtn">DUCK</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const controls = document.getElementById('controls');
+
+        // --- 1. PLAYLIST SETUP ---
+        const playlist = [
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Bekitcha.mp3',
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Yerushalayim.mp3',
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Hershy%20Weinberger%20and%20Shmueli%20Ungar%20-%20RTVT.mp3',
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Arcade.mp3',
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Ari%20Samet%20and%20Ancii%20-%20Hood.mp3',
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Fire-shmulei_ungar.mp3',
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Chaim_Shlomo_Mayesz-Baskol.mp3',
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Parentches.mp3',
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Zusha-Pull_Me_Through.mp3',
+            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Zusha%20-%20Everything%20Can%20Change.mp3'
+            
+        ];
+
+        function shufflePlaylist(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+            
+        let currentTrackIndex = 0;
+        const bgMusic = new Audio(playlist[currentTrackIndex]);
+        bgMusic.volume = 1.0;
+
+        bgMusic.addEventListener('ended', () => {
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            bgMusic.src = playlist[currentTrackIndex];
+            bgMusic.play();
+        });
+
+        let gameActive = false, score = 0, bestScore = localStorage.getItem('rr_best_pro') || 0;
+        document.getElementById('best-score').innerText = bestScore;
+
+        let player = { x: 60, y: 0, w: 35, h: 45, baseH: 45, dy: 0, jumpPower: -15, grounded: true, isDucking: false };
+        let obstacles = [], gravity = 0.8, groundY = 0;
+        let gameSpeed = 6.5, spawnTimer = 0, nextSpawn = 0;
+        let isJumpKeyPressed = false;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = 350;
+            groundY = canvas.height - 50;
+            player.y = groundY - player.h;
+        }
+        window.onresize = resize;
+        resize();
+
+        function jump() {
+            if (player.grounded && gameActive && !player.isDucking && !isJumpKeyPressed) {
+                player.dy = player.jumpPower;
+                player.grounded = false;
+                isJumpKeyPressed = true; 
+            }
+        }
+
+        function toggleDuck(ducking) {
+            if (!player.grounded && ducking) return; 
+            player.isDucking = ducking;
+            player.h = ducking ? 22 : player.baseH;
+            player.y = groundY - player.h;
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'ArrowUp' || e.code === 'Space') jump();
+            if (e.code === 'ArrowDown') toggleDuck(true);
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'ArrowUp' || e.code === 'Space') isJumpKeyPressed = false;
+            if (e.code === 'ArrowDown') toggleDuck(false);
+        });
+
+        document.getElementById('jumpBtn').ontouchstart = (e) => { e.preventDefault(); jump(); };
+        document.getElementById('jumpBtn').ontouchend = (e) => { e.preventDefault(); isJumpKeyPressed = false; };
+        document.getElementById('duckBtn').ontouchstart = (e) => { e.preventDefault(); toggleDuck(true); };
+        document.getElementById('duckBtn').ontouchend = (e) => { e.preventDefault(); toggleDuck(false); };
+
+        function update() {
+            if (!gameActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = "rgba(0, 209, 178, 0.5)";
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
+
+            spawnTimer++;
+            if (spawnTimer > nextSpawn) {
+                const isDrone = Math.random() > 0.8;
+                obstacles.push({
+                    x: canvas.width, w: 30,
+                    h: isDrone ? 1000 : 45,
+                    y: isDrone ? groundY - 1030 : groundY - 45,
+                    visualY: isDrone ? groundY - 55 : groundY - 45,
+                    type: isDrone ? 'drone' : 'spike',
+                    passed: false
+                });
+                spawnTimer = 0;
+                nextSpawn = 25 + Math.floor(Math.random() * 40) - Math.floor((gameSpeed - 6) * 1.8);
+                nextSpawn = Math.max(18, nextSpawn);
+            }
+
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                let o = obstacles[i];
+                o.x -= gameSpeed;
+
+                ctx.fillStyle = o.type === 'drone' ? "#ff0077" : "#00d1b2";
+                if (o.type === 'drone') {
+                    ctx.fillRect(o.x, o.visualY, o.w, 15);
+                    ctx.fillStyle = "rgba(255, 0, 119, 0.3)";
+                    ctx.fillRect(o.x - 10, o.visualY + 5, o.w + 20, 5); 
+                } else {
+                    ctx.beginPath();
+                    ctx.moveTo(o.x, groundY);
+                    ctx.lineTo(o.x + o.w/2, groundY - o.h);
+                    ctx.lineTo(o.x + o.w, groundY);
+                    ctx.fill();
+                }
+
+                if (o.x < player.x + player.w && o.x + o.w > player.x && 
+                    player.y < o.y + o.h && player.y + player.h > o.y) {
+                    gameOver();
+                }
+
+                if (o.x + o.w < player.x && !o.passed) {
+                    o.passed = true;
+                    score += 10;
+                    document.getElementById('score').innerText = score;
+                    gameSpeed += 0.12;
+                }
+                if (o.x < -50) obstacles.splice(i, 1);
+            }
+
+            if (!player.grounded) {
+                player.dy += gravity;
+                player.y += player.dy;
+            }
+            if (player.y > groundY - player.h) {
+                player.y = groundY - player.h;
+                player.dy = 0;
+                player.grounded = true;
+            }
+
+            ctx.globalAlpha = 1.0;
+            ctx.shadowBlur = 10; ctx.shadowColor = "#00d1b2";
+            ctx.fillStyle = player.isDucking ? "#008a76" : "#111";
+            ctx.strokeStyle = "#00d1b2";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.roundRect(player.x, player.y, player.w, player.h, 5);
+            ctx.fill(); ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            requestAnimationFrame(update);
+        }
+
+        function gameOver() {
+            gameActive = false;
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            if (score > bestScore) {
+                bestScore = score;
+                localStorage.setItem('rr_best_pro', bestScore);
+                document.getElementById('best-score').innerText = bestScore;
+            }
+            document.getElementById('ui-layer').style.display = 'block';
+            document.getElementById('title').innerText = "SYSTEM CRASH";
+            controls.style.display = 'none';
+        }
+
+        document.getElementById('startBtn').onclick = () => {
+            score = 0; gameSpeed = 8.5; obstacles = [];
+            nextSpawn = 25 + Math.floor(Math.random() * 40) - Math.floor((gameSpeed - 6) * 1.8);
+            nextSpawn = Math.max(18, nextSpawn);
+            shufflePlaylist(playlist);
+            currentTrackIndex = 0;
+            bgMusic.src = playlist[currentTrackIndex];
+            document.getElementById('score').innerText = "0";
+            document.getElementById('ui-layer').style.display = 'none';
+            controls.style.display = 'flex';
+            gameActive = true;
+            bgMusic.play().catch(e => {});
+            update();
+        };
+                // Disables the right-click context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        }, false);
+
+        // Block developer tools and specific shortcuts
+        document.addEventListener('keydown', function(e) {
+            // F12 key
+            if (e.key === 'F12') {
+                e.preventDefault();
+
+                return false;
+            }
+
+            // Ctrl+Shift+I (Inspect), Ctrl+Shift+J (Console), Ctrl+Shift+C (Elements)
+            // Also handles Mac Cmd+Option+I etc.
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+                e.preventDefault();
+                return false;
+            }
+
+            // Ctrl+U or Cmd+U (View Source)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U')) {
+                e.preventDefault();
+                return false;
+            }
+
+
+            // Ctrl+S or Cmd+S (Save Page)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+                return false;
+            }
+        }, false);
+    </script>
+
+    <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a13a7770e89d01c34a57289/1jpeccafp';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+    
+</body>
+</html>
