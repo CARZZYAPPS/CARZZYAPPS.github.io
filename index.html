@@ -18,12 +18,17 @@
           padding: 50px 20px;
         }
 
+        header {
+          position: sticky;
+          display: flex;
+          flex-direction: column;
+          text-align: center;
+
         h1 {
           color: #00d1b2;
           text-shadow: 0 0 15px rgba(0, 209, 178, 0.5);
           font-size: 2.5rem;
           margin-bottom: 10px;
-          text-align: center;
         }
 
         .subtitle {
@@ -102,8 +107,9 @@
         }
         
         #logo {
-          position: sticky; 
-          float: left;
+          position: absolute;
+          top: 20px;
+          left: 20px;
         }
         
       </style>
