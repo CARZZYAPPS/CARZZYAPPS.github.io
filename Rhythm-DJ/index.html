@@ -12,6 +12,7 @@
         canvas { background: #050505; border-bottom: 4px solid #00d1b2; width: 100%; max-width: 800px; }
         .stats { position: absolute; top: 20px; right: 20px; font-size: 18px; font-weight: bold; color: #00d1b2; }
         #best-label { color: #ffd700; font-size: 14px; }
+        #cheat-indicator { color: #ff0077; font-size: 12px; font-weight: normal; display: none; margin-top: 5px; }
         .controls { position: fixed; bottom: 30px; display: none; gap: 40px; z-index: 5; }
         #startBtn:hover {
             background-color:#00d9b2;
@@ -36,6 +37,7 @@
     <div class="stats">
         SCORE: <span id="score">0</span><br>
         <div id="best-label">BEST: <span id="best-score">0</span></div>
+        <div id="cheat-indicator">ACTIVE</div>
     </div>
 
     <div id="ui-layer">
@@ -60,12 +62,10 @@
         // --- 1. PLAYLIST SETUP ---
         const playlist = [
             'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Bekitcha.mp3',
-            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Yerushalayim.mp3',
             'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Hershy%20Weinberger%20and%20Shmueli%20Ungar%20-%20RTVT.mp3',
             'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Arcade.mp3',
             'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Ari%20Samet%20and%20Ancii%20-%20Hood.mp3',
             'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Fire-shmulei_ungar.mp3',
-            'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Chaim_Shlomo_Mayesz-Baskol.mp3',
             'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Parentches.mp3',
             'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Zusha-Pull_Me_Through.mp3',
             'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Zusha%20-%20Everything%20Can%20Change.mp3'
@@ -89,12 +89,17 @@
             bgMusic.play();
         });
 
+        // --- 2. CHEAT SETUP ---
+        let ghostMode = false;
+        let inputBuffer = "";
+        const cheatCode = "JSFGSGFKJSHUEGDBDCVGDSLFCBJHGFSDJTFSLJGFSYCSGKAJHBTCOSIEUGRCKDGFBLJKDGFKHDGFJHSDGKSFHDGJDHGFJHVJDGFJSDHGFKJSDHFJHDSGKJSDHFJHDGSKHGFGSDMNFGJDHGFDJHFGDJHF";
+
         let gameActive = false, score = 0, bestScore = localStorage.getItem('rr_best_pro') || 0;
         document.getElementById('best-score').innerText = bestScore;
 
         let player = { x: 60, y: 0, w: 35, h: 45, baseH: 45, dy: 0, jumpPower: -15, grounded: true, isDucking: false };
         let obstacles = [], gravity = 0.8, groundY = 0;
-        let gameSpeed = 6.5, spawnTimer = 0, nextSpawn = 0;
+        let gameSpeed = 6.5, spawnTimer = 0;
         let isJumpKeyPressed = false;
 
         function resize() {
@@ -124,6 +129,14 @@
         window.addEventListener('keydown', (e) => {
             if (e.code === 'ArrowUp' || e.code === 'Space') jump();
             if (e.code === 'ArrowDown') toggleDuck(true);
+
+            inputBuffer += e.key.toUpperCase();
+            if (inputBuffer.includes(cheatCode)) {
+                ghostMode = !ghostMode;
+                inputBuffer = "";
+                document.getElementById('cheat-indicator').style.display = ghostMode ? 'block' : 'none';
+            }
+            if (inputBuffer.length > 5) inputBuffer = inputBuffer.substring(1);
         });
 
         window.addEventListener('keyup', (e) => {
@@ -145,19 +158,18 @@
             ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
 
             spawnTimer++;
-            if (spawnTimer > nextSpawn) {
-                const isDrone = Math.random() > 0.8;
+            let nextSpawn = Math.floor(Math.random() * (85 - 35) + 35); 
+            if (spawnTimer > Math.max(nextSpawn, 75 - gameSpeed)) { 
+                const isDrone = Math.random() > 0.8; 
                 obstacles.push({
                     x: canvas.width, w: 30,
-                    h: isDrone ? 1000 : 45,
-                    y: isDrone ? groundY - 1030 : groundY - 45,
+                    h: isDrone ? 1000 : 45, 
+                    y: isDrone ? groundY - 1030 : groundY - 45, 
                     visualY: isDrone ? groundY - 55 : groundY - 45,
                     type: isDrone ? 'drone' : 'spike',
                     passed: false
                 });
                 spawnTimer = 0;
-                nextSpawn = 25 + Math.floor(Math.random() * 40) - Math.floor((gameSpeed - 6) * 1.8);
-                nextSpawn = Math.max(18, nextSpawn);
             }
 
             for (let i = obstacles.length - 1; i >= 0; i--) {
@@ -177,9 +189,11 @@
                     ctx.fill();
                 }
 
-                if (o.x < player.x + player.w && o.x + o.w > player.x && 
-                    player.y < o.y + o.h && player.y + player.h > o.y) {
-                    gameOver();
+                if (!ghostMode) {
+                    if (o.x < player.x + player.w && o.x + o.w > player.x && 
+                        player.y < o.y + o.h && player.y + player.h > o.y) {
+                        gameOver();
+                    }
                 }
 
                 if (o.x + o.w < player.x && !o.passed) {
@@ -201,7 +215,7 @@
                 player.grounded = true;
             }
 
-            ctx.globalAlpha = 1.0;
+            ctx.globalAlpha = ghostMode ? 0.4 : 1.0;
             ctx.shadowBlur = 10; ctx.shadowColor = "#00d1b2";
             ctx.fillStyle = player.isDucking ? "#008a76" : "#111";
             ctx.strokeStyle = "#00d1b2";
@@ -210,6 +224,7 @@
             ctx.roundRect(player.x, player.y, player.w, player.h, 5);
             ctx.fill(); ctx.stroke();
             ctx.shadowBlur = 0;
+            ctx.globalAlpha = 1.0;
 
             requestAnimationFrame(update);
         }
@@ -229,9 +244,7 @@
         }
 
         document.getElementById('startBtn').onclick = () => {
-            score = 0; gameSpeed = 8.5; obstacles = [];
-            nextSpawn = 25 + Math.floor(Math.random() * 40) - Math.floor((gameSpeed - 6) * 1.8);
-            nextSpawn = Math.max(18, nextSpawn);
+            score = 0; gameSpeed = 6.5; obstacles = [];
             shufflePlaylist(playlist);
             currentTrackIndex = 0;
             bgMusic.src = playlist[currentTrackIndex];
