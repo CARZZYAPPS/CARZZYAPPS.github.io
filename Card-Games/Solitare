@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klondike Solitaire Pro</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --major-accent: #00d1b2;
+            --minor-text: #666;
+            --card-width: 80px;
+            --card-height: 120px;
+            --card-radius: 8px;
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+
+        body {
+
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white; height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        header {
+            padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0, 0, 0, 0.8); border-bottom: 1px solid #222;
+            z-index: 100;
+        }
+
+        h1 { color: var(--major-accent); margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; }
+
+        .stats { display: flex; gap: 15px; color: var(--minor-text); font-weight: bold; font-size: 12px; }
+        .stat-val { color: white; }
+
+
+        .controls { display: flex; gap: 8px; }
+        .controls button {
+            background: #1a1a1a; border: 1px solid var(--major-accent);
+            padding: 6px 12px; border-radius: 4px; color: var(--major-accent);
+            font-weight: bold; cursor: pointer; font-size: 11px;
+            transition: all 0.2s;
+        }
+        .controls button:hover { background: var(--major-accent); color: var(--bg-color); }
+        .controls button:disabled { border-color: #333; color: #333; cursor: not-allowed; }
+
+        #game-board {
+            flex-grow: 1; padding: 20px; display: flex; flex-direction: column;
+            gap: 20px; max-width: 1000px; margin: 0 auto; width: 100%;
+        }
+
+        .row { display: flex; justify-content: space-between; width: 100%; }
+
+        .slot {
+            width: var(--card-width); height: var(--card-height);
+
+            border-radius: var(--card-radius); border: 2px solid #222;
+            position: relative; background: rgba(255, 255, 255, 0.02);
+        }
+
+        .foundation .slot::after {
+            content: 'A'; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); font-size: 40px;
+            color: #1a1a1a; z-index: 0;
+        }
+        .slot.has-card::after { display: none; }
+
+        .card {
+            width: var(--card-width); height: var(--card-height);
+            background: white; border-radius: var(--card-radius);
+            position: absolute; box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            cursor: pointer; z-index: 10;
+        }
+
+        .card.face-down {
+
+            /* Verified turquoise geometric pattern from Unsplash matching requested style */
+            background-image: url('card_back.png');
+            background-size: cover; background-position: center;
+            border: 2px solid white;
+        }
+        .card.face-down.can-flip { border-color: var(--major-accent); box-shadow: 0 0 10px var(--major-accent); }
+
+        .card.face-up { display: flex; flex-direction: column; padding: 5px; color: black; border: 1px solid #ccc; }
+        .card.red { color: #ff3860; }
+        .card.black { color: #0a0a0a; }
+
+        .card.selected { outline: 3px solid var(--major-accent); outline-offset: 2px; transform: translateY(-5px); z-index: 100; }
+        .card.hint { animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 209, 178, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 209, 178, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 209, 178, 0); }
+        }
+
+
+        .card-value { font-weight: 800; font-size: 16px; line-height: 1; }
+        .card-suit { font-size: 14px; }
+        .card-center-suit { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; }
+
+        .tableau .card { position: absolute; top: 0; left: 0; }
+
+        #toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #ff3860; color: white; padding: 10px 20px;
+            border-radius: 4px; font-size: 14px; display: none; z-index: 2000;
+        }
+
+        @media (max-width: 600px) {
+            :root { --card-width: 48px; --card-height: 72px; }
+            .card-center-suit { font-size: 20px; }
+            .card-value { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+
+    <header>
+        <h1>Solitaire</h1>
+        <div class="stats">
+            <span>Score: <span id="score" class="stat-val">0</span></span>
+            <span>Moves: <span id="moves" class="stat-val">0</span></span>
+            <span>Time: <span id="timer" class="stat-val">00:00</span></span>
+        </div>
+        <div class="controls">
+            <button onclick="game.undo()" id="undo-btn" disabled>Undo</button>
+            <button onclick="game.getHint()" id="hint-btn">Hint</button>
+            <button onclick="game.init()">New Game</button>
+        </div>
+    </header>
+
+    <main id="game-board">
+        <div class="row top-row">
+            <div style="display: flex; gap: 10px;">
+                <div id="stock" class="slot" onclick="game.drawStock()"></div>
+                <div id="waste" class="slot"></div>
+
+            </div>
+            <div class="foundation" style="display: flex; gap: 10px;">
+                <div id="f-0" class="slot" onclick="game.handleSlotClick(this)"></div>
+                <div id="f-1" class="slot" onclick="game.handleSlotClick(this)"></div>
+                <div id="f-2" class="slot" onclick="game.handleSlotClick(this)"></div>
+                <div id="f-3" class="slot" onclick="game.handleSlotClick(this)"></div>
+            </div>
+        </div>
+
+        <div class="row tableau">
+            <div id="t-0" class="slot" onclick="game.handleSlotClick(this)"></div>
+            <div id="t-1" class="slot" onclick="game.handleSlotClick(this)"></div>
+            <div id="t-2" class="slot" onclick="game.handleSlotClick(this)"></div>
+            <div id="t-3" class="slot" onclick="game.handleSlotClick(this)"></div>
+            <div id="t-4" class="slot" onclick="game.handleSlotClick(this)"></div>
+            <div id="t-5" class="slot" onclick="game.handleSlotClick(this)"></div>
+            <div id="t-6" class="slot" onclick="game.handleSlotClick(this)"></div>
+        </div>
+    </main>
+
+
+    <div id="toast"></div>
+
+    <script>
+        const SUITS = [
+            { name: 'hearts', symbol: '♥', color: 'red' },
+            { name: 'diamonds', symbol: '♦', color: 'red' },
+            { name: 'clubs', symbol: '♣', color: 'black' },
+            { name: 'spades', symbol: '♠', color: 'black' }
+        ];
+        const VALUES = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+        class Game {
+            constructor() {
+                this.history = [];
+                this.hintCount = 0;
+                this.init();
+            }
+
+            init() {
+
+                this.score = 0;
+                this.moves = 0;
+                this.timeSeconds = 0;
+                this.hintCount = 0;
+                this.history = [];
+                this.stock = [];
+                this.waste = [];
+                this.foundations = [[], [], [], []];
+                this.tableaus = [[], [], [], [], [], [], []];
+                this.selectedCard = null;
+                this.selectedStack = null;
+                
+                this.createDeck();
+                this.shuffle();
+                this.deal();
+                this.startTimer();
+                this.updateUI();
+                this.render();
+            }
+
+
+            createDeck() {
+                this.deck = [];
+                SUITS.forEach(suit => VALUES.forEach(val => this.deck.push({ value: val, suit, isFaceUp: false, rank: VALUES.indexOf(val) + 1 })));
+            }
+
+            shuffle() {
+                for (let i = this.deck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
+                }
+            }
+
+            deal() {
+                for (let i = 0; i < 7; i++) {
+                    for (let j = i; j < 7; j++) {
+                        const card = this.deck.pop();
+                        if (i === j) card.isFaceUp = true;
+                        this.tableaus[j].push(card);
+                    }
+
+                }
+                this.stock = this.deck;
+            }
+
+            saveState() {
+                // Deep copy the current state for Undo
+                const state = JSON.stringify({
+                    stock: this.stock, 
+                    waste: this.waste, 
+                    foundations: this.foundations,
+                    tableaus: this.tableaus, 
+                    score: this.score, 
+                    moves: this.moves
+                });
+                this.history.push(state);
+                document.getElementById('undo-btn').disabled = false;
+            }
+
+            undo() {
+
+                if (this.history.length === 0) return;
+                const state = JSON.parse(this.history.pop());
+                this.stock = state.stock;
+                this.waste = state.waste;
+                this.foundations = state.foundations;
+                this.tableaus = state.tableaus;
+                this.score = state.score - 2; // Penalty for undo
+                this.moves = state.moves;
+                this.deselect();
+                this.render();
+                this.updateUI();
+                if (this.history.length === 0) document.getElementById('undo-btn').disabled = true;
+            }
+
+            render() {
+                const drawSlot = (id, cards, isTableau = false) => {
+                    const el = document.getElementById(id);
+                    el.innerHTML = '';
+                    el.classList.toggle('has-card', cards.length > 0);
+
+                    cards.forEach((card, i) => {
+                        const div = document.createElement('div');
+                        div.className = `card ${card.isFaceUp ? 'face-up ' + card.suit.color : 'face-down'}`;
+                        if (card.isFaceUp) {
+                            div.innerHTML = `<div class="card-value">${card.value}</div><div class="card-suit">${card.suit.symbol}</div><div class="card-center-suit">${card.suit.symbol}</div>`;
+                            div.onclick = (e) => { e.stopPropagation(); this.selectCard(card, cards); };
+                        } else if (isTableau && i === cards.length - 1) {
+                            // Manual Flip Logic: Card must be clicked to flip
+                            div.classList.add('can-flip');
+                            div.onclick = (e) => { e.stopPropagation(); this.flipTableauCard(card, cards); };
+                        }
+                        if (isTableau) div.style.top = `${i * (window.innerWidth < 600 ? 15 : 25)}px`;
+                        if (this.selectedCard === card) div.classList.add('selected');
+                        el.appendChild(div);
+                    });
+                };
+
+                drawSlot('stock', this.stock.slice(-1));
+                drawSlot('waste', this.waste.slice(-1));
+
+                this.foundations.forEach((f, i) => drawSlot(`f-${i}`, f));
+                this.tableaus.forEach((t, i) => drawSlot(`t-${i}`, t, true));
+            }
+
+            flipTableauCard(card, stack) {
+                this.saveState();
+                card.isFaceUp = true;
+                this.score += 5; // Points for flipping a card
+                this.moves++;
+                this.updateUI();
+                this.render();
+            }
+
+            drawStock() {
+                this.saveState();
+                if (this.stock.length === 0) {
+                    this.stock = this.waste.reverse().map(c => ({...c, isFaceUp: false}));
+                    this.waste = [];
+                } else {
+
+                    const card = this.stock.pop();
+                    card.isFaceUp = true;
+                    this.waste.push(card);
+                }
+                this.moves++;
+                this.updateUI();
+                this.render();
+            }
+
+            selectCard(card, stack) {
+                if (this.selectedCard === card) { this.deselect(); return; }
+                if (this.selectedCard) { this.tryMove(stack); return; }
+                this.selectedCard = card;
+                this.selectedStack = stack;
+                this.render();
+            }
+
+            deselect() { this.selectedCard = null; this.selectedStack = null; this.render(); }
+
+
+            handleSlotClick(el) {
+                if (!this.selectedCard) return;
+                const id = el.id;
+                let target;
+                if (id.startsWith('f-')) target = this.foundations[id.split('-')[1]];
+                if (id.startsWith('t-')) target = this.tableaus[id.split('-')[1]];
+                this.tryMove(target);
+            }
+
+            tryMove(target) {
+                if (!target || target === this.selectedStack) { this.deselect(); return; }
+                const card = this.selectedCard;
+                const source = this.selectedStack;
+                const isF = this.foundations.includes(target);
+                const isT = this.tableaus.includes(target);
+                
+                let valid = false;
+                if (isF && source.indexOf(card) === source.length - 1) {
+                    const top = target[target.length - 1];
+
+                    if (!top) valid = card.rank === 1;
+                    else valid = card.suit.name === top.suit.name && card.rank === top.rank + 1;
+                } else if (isT) {
+                    const top = target[target.length - 1];
+                    if (!top) valid = card.rank === 13;
+                    else valid = card.suit.color !== top.suit.color && card.rank === top.rank - 1;
+                }
+
+                if (valid) {
+                    this.saveState();
+                    const cards = source.splice(source.indexOf(card));
+                    target.push(...cards);
+                    
+                    // Standard Klondike Scoring
+                    if (this.foundations.includes(target)) this.score += 10;
+                    else if (this.tableaus.includes(target) && this.waste === source) this.score += 5;
+                    
+                    this.moves++;
+                    this.updateUI();
+
+                }
+                this.deselect();
+            }
+
+            getHint() {
+                const findMove = () => {
+                    const sources = [this.waste, ...this.tableaus];
+                    const targets = [...this.foundations, ...this.tableaus];
+                    for (let s of sources) {
+                        if (s.length === 0) continue;
+                        const card = s[s.length - 1];
+                        if (!card.isFaceUp) continue;
+                        for (let t of targets) {
+                            if (s === t) continue;
+                            const top = t[t.length - 1];
+                            if (this.foundations.includes(t)) {
+                                if (!top && card.rank === 1) return card;
+                                if (top && card.suit.name === top.suit.name && card.rank === top.rank + 1) return card;
+                            } else {
+
+                                if (!top && card.rank === 13) return card;
+                                if (top && card.suit.color !== top.suit.color && card.rank === top.rank - 1) return card;
+                            }
+                        }
+                    }
+                    return null;
+                };
+
+                const hintCard = findMove();
+                if (hintCard) {
+                    this.hintCount++;
+                    // Penalty: 15s, 30s, 60s...
+                    const penalty = 15 * Math.pow(2, this.hintCount - 1);
+                    this.timeSeconds += penalty;
+                    this.showToast(`Hint Penalty: +${penalty}s`);
+                    this.render();
+                    const el = Array.from(document.querySelectorAll('.card.face-up')).find(d => d.innerText.includes(hintCard.value));
+                    if (el) { el.classList.add('hint'); setTimeout(() => el.classList.remove('hint'), 2000); }
+                } else {
+
+                    this.showToast("No legal moves found!");
+                }
+            }
+
+            showToast(msg) {
+                const t = document.getElementById('toast');
+                t.innerText = msg; t.style.display = 'block';
+                setTimeout(() => t.style.display = 'none', 3000);
+            }
+
+            startTimer() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.timerInterval = setInterval(() => {
+                    this.timeSeconds++;
+                    const m = Math.floor(this.timeSeconds / 60).toString().padStart(2, '0');
+                    const s = (this.timeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer').innerText = `${m}:${s}`;
+                }, 1000);
+            }
+
+
+            updateUI() {
+                document.getElementById('score').innerText = this.score;
+                document.getElementById('moves').innerText = this.moves;
+            }
+        }
+
+        const game = new Game();
+    </script>
+</body>
+</html>
+
+
