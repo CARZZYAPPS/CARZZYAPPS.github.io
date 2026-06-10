@@ -1,1 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jewish Music Trivia</title>
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #000000;
+      color: #00d1b2;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .app {
+      width: 100%;
+      max-width: 480px;
+      background: #0a0a0a;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px #00d1b2 <!--rgba(15, 23, 42, 0.15)-->;
+      padding: 20px 20px 28px;
+      position: relative;
+    }
 
+    .x2-badge {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: #dc2626;
+      color: white;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 16px;
+      box-shadow: 0 0 12px rgba(220, 38, 38, 0.7);
+      animation: pulse 1s infinite alternate;
+      display: none;
+    }
+    @keyframes pulse {
+      from { transform: scale(1); box-shadow: 0 0 12px rgba(220, 38, 38, 0.7); }
+      to { transform: scale(1.15); box-shadow: 0 0 20px rgba(220, 38, 38, 1); }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      text-shadow: #00d1b2;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      text-shadow: #00d1b2;
+    }
+    .score {
+      font-size: 16px;
+      font-weight: 600;
+      color: #00d1b2;
+      text-shadow: #00d1b2;  
+    }
+    .timer {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      text-shadow: #00d1b2;  
+    }
+    .timer-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #2563eb;
+    }
+    .question-card {
+      border-radius: 18px;
+      background: #0a0a0a;
+      padding: 16px;
+      margin-bottom: 16px;
+      position: relative;
+      box-shadow: #00d1b2;  
+    }
+    .question-text {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .answer-btn {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 12px;
+      background: #ffffff;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .answer-btn:hover {
+      border-color: #00d1b2;
+      background: #00d1b2;
+    }
+    .answer-btn.correct {
+      border-color: #16a34a;
+      background: #dcfce7;
+      color: #166534;
+    }
+    .answer-btn.wrong {
+      border-color: #dc2626;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      gap: 8px;
+    }
+    .controls-left {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #d1d5db;
+      color: #d1d5db;
+    }
+    .btn-outline:hover {
+      background: #d1d5db;
+      color: #374151;
+    }
+    .status {
+      font-size: 14px;
+      font-weight: 500;
+      min-height: 20px;
+      margin-top: 6px;
+    }
+    .status.correct {
+      color: #16a34a;
+    }
+    .status.wrong {
+      color: #dc2626;
+    }
+    .dropdown {
+      margin-top: 10px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 8px;
+    }
+    .dropdown-toggle {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2563eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dropdown-content {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #4b5563;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      display: none;
+      justify-content: flex-end;
+      align-items: flex-end;
+      z-index: 50;
+    }
+    .modal {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(248, 250, 252, 0.96);
+      backdrop-filter: blur(18px);
+      border-radius: 24px 24px 0 0;
+      padding: 16px 18px 20px;
+      box-shadow: 0 -12px 30px rgba(15, 23, 42, 0.25);
+      animation: slideUp 0.2s ease-out;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .modal-close {
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      cursor: pointer;
+      color: #6b7280;
+    }
+    .modal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .modal-item {
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      padding: 10px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-item-info {
+      font-size: 13px;
+    }
+    .modal-item-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .modal-item-desc {
+      color: #6b7280;
+      font-size: 12px;
+    }
+    .modal-item-meta {
+      font-size: 11px;
+      color: #4b5563;
+      margin-top: 2px;
+    }
+    .modal-item button {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .modal-item button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .powerup-count {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="x2-badge" id="x2Badge">×2</div>
+
+    <div class="header">
+      <div class="title">Jewish Music Trivia</div>
+      <div class="score">Score: <span id="score">0</span></div>
+    </div>
+
+    <div class="timer">
+      <div class="timer-circle" id="timerCircle">30</div>
+      <span id="timerLabel">Time left</span>
+    </div>
+
+    <div class="question-card">
+      <div class="question-text" id="questionText"></div>
+      <div class="answers" id="answersContainer"></div>
+
+      <div class="controls">
+        <div class="controls-left">
+          <button class="btn btn-primary" id="hintBtn">Hint</button>
+          <button class="btn btn-secondary" id="powerupBtn">⚡ Power-Up</button>
+        </div>
+        <button class="btn btn-outline" id="nextBtn" disabled>Next</button>
+      </div>
+
+      <div class="status" id="statusText"></div>
+
+      <div class="dropdown">
+        <div class="dropdown-toggle" id="sourceToggle">
+          <span>Show Source</span>
+          <span id="sourceArrow">▼</span>
+        </div>
+        <div class="dropdown-content" id="sourceContent" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;color:#6b7280;margin-top:8px;">
+      Power-ups are randomly awarded (12.5% chance) only for first-try correct answers without hints.
+    </div>
+  </div>
+
+  <!-- Hint Modal -->
+  <div class="modal-backdrop" id="hintModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Choose a Hint</div>
+        <button class="modal-close" id="hintModalClose">×</button>
+      </div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:6px;">
+        One hint per question. Using a hint deducts points.
+      </div>
+      <div class="modal-list">
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Remove One Wrong Answer</div>
+            <div class="modal-item-desc">Eliminates one incorrect option.</div>
+            <div class="modal-item-meta">Cost: 5 points</div>
+          </div>
+          <button data-hint="removeOne">Use</button>
+        </div>
+
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Clue Sentence</div>
+            <div class="modal-item-desc">Short sentence that strongly hints the answer.</div>
+            <div class="modal-item-meta">Cost: 4 points</div>
+          </div>
+          <button data-hint="clueSentence">Use</button>
+        </div>
+
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">First Letter</div>
+            <div class="modal-item-desc">Shows the first letter of the correct answer.</div>
+            <div class="modal-item-meta">Cost: 2 points</div>
+          </div>
+          <button data-hint="firstLetter">Use</button>
+        </div>
+
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Initials</div>
+            <div class="modal-item-desc">Shows the initials of the correct answer.</div>
+            <div class="modal-item-meta">Cost: 6 points</div>
+          </div>
+          <button data-hint="initials">Use</button>
+        </div>
+
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">50/50</div>
+            <div class="modal-item-desc">Leaves two options: one correct, one wrong.</div>
+            <div class="modal-item-meta">Cost: 7 points</div>
+          </div>
+          <button data-hint="fiftyFifty">Use</button>
+        </div>
+
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Fun Fact</div>
+            <div class="modal-item-desc">Interesting trivia that nudges you toward the answer.</div>
+            <div class="modal-item-meta">Cost: 3 points</div>
+          </div>
+          <button data-hint="funFact">Use</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Power-Up Modal -->
+  <div class="modal-backdrop" id="powerupModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Power-Ups</div>
+        <button class="modal-close" id="powerupModalClose">×</button>
+      </div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:6px;">
+        Power-ups are rare. Use them wisely.
+      </div>
+      <div class="modal-list">
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Double Points</div>
+            <div class="modal-item-desc">This question gives double points.</div>
+            <div class="powerup-count">Owned: <span id="puDoubleCount">0</span></div>
+          </div>
+          <button id="puDoubleBtn">Activate</button>
+        </div>
+
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Second Chance</div>
+            <div class="modal-item-desc">One extra attempt if you get this question wrong.</div>
+            <div class="powerup-count">Owned: <span id="puSecondCount">0</span></div>
+          </div>
+          <button id="puSecondBtn">Activate</button>
+        </div>
+
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Freeze Timer</div>
+            <div class="modal-item-desc">Pause the 30-second timer for this question.</div>
+            <div class="powerup-count">Owned: <span id="puFreezeCount">0</span></div>
+          </div>
+          <button id="puFreezeBtn">Activate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+  {
+    text: "Which singer is known for the hit song 'Yesh Tikvah'?",
+    answers: ["Benny Friedman", "Shwekey", "Ari Goldwag", "8th Day"],
+    correctIndex: 0,
+    source: "Benny Friedman popularized 'Yesh Tikvah', written by Ari Goldwag.",
+    funFact: "The song 'Yesh Tikvah' became an anthem of hope in Jewish music.",
+    clue: "He is a Chassidic singer whose last name means 'man of peace'.",
+    initials: "B F"
+  },
+  {
+    text: "Which group is famous for the song 'Ya'alili'?",
+    answers: ["Miami Boys Choir", "8th Day", "Maccabeats", "Shalsheles"],
+    correctIndex: 1,
+    source: "8th Day released 'Ya'alili', which became a major hit.",
+    funFact: "8th Day is made up of two brothers from California.",
+    clue: "Their name sounds like a time beyond the regular week.",
+    initials: "8 D"
+  },
+  {
+    text: "Which a cappella group is known for Jewish-themed pop covers?",
+    answers: ["Maccabeats", "Lev Tahor", "Shalsheles Junior", "Y-Studs"],
+    correctIndex: 0,
+    source: "The Maccabeats are a Jewish a cappella group from Yeshiva University.",
+    funFact: "They went viral with their Hanukkah song 'Candlelight'.",
+    clue: "Their name references a famous group of Jewish warriors.",
+    initials: "M"
+  },
+
+  // --- MORE QUESTIONS BELOW ---
+
+  {
+    text: "Which singer is known for the song 'Ribono Shel Olam'?",
+    answers: ["Shwekey", "Avraham Fried", "Mordechai Ben David", "Simcha Leiner"],
+    correctIndex: 0,
+    source: "Yaakov Shwekey popularized 'Ribono Shel Olam'.",
+    funFact: "Shwekey is known for emotional, powerful ballads.",
+    clue: "His last name is often associated with big concert halls.",
+    initials: "Y S"
+  },
+  {
+    text: "Which singer is famous for 'Chazak'?",
+    answers: ["Avraham Fried", "MBD", "Shwekey", "Baruch Levine"],
+    correctIndex: 0,
+    source: "Avraham Fried is known for the song 'Chazak'.",
+    funFact: "Avraham Fried has been performing for decades in the Jewish music world.",
+    clue: "His last name means 'joy' in Yiddish.",
+    initials: "A F"
+  },
+  {
+    text: "Which group released the song 'Candlelight' for Chanukah?",
+    answers: ["Maccabeats", "Y-Studs", "Miami Boys Choir", "8th Day"],
+    correctIndex: 0,
+    source: "The Maccabeats released 'Candlelight', a viral Chanukah hit.",
+    funFact: "The song is a parody of 'Dynamite' by Taio Cruz.",
+    clue: "They are an a cappella group from Yeshiva University.",
+    initials: "M"
+  },
+  {
+    text: "Which singer is known for 'Ani Maamin' with a slow, emotional style?",
+    answers: ["Shwekey", "MBD", "Avraham Fried", "Baruch Levine"],
+    correctIndex: 1,
+    source: "Mordechai Ben David is known for classic versions of 'Ani Maamin'.",
+    funFact: "MBD is often called the 'King of Jewish Music'.",
+    clue: "His initials are MBD.",
+    initials: "M B D"
+  },
+  {
+    text: "Which group is known for the song 'Ivri Anochi'?",
+    answers: ["8th Day", "Maccabeats", "Lev Tahor", "Shalsheles"],
+    correctIndex: 0,
+    source: "8th Day released 'Ivri Anochi'.",
+    funFact: "Their style mixes rock, pop, and Jewish themes.",
+    clue: "Their name sounds like a day beyond Shabbos.",
+    initials: "8 D"
+  },
+  {
+    text: "Which singer is known for 'Kol Berama'?",
+    answers: ["Shwekey", "Simcha Leiner", "Baruch Levine", "Avraham Fried"],
+    correctIndex: 1,
+    source: "Simcha Leiner is known for 'Kol Berama'.",
+    funFact: "Simcha Leiner is also a popular wedding singer.",
+    clue: "His first name literally means 'joy'.",
+    initials: "S L"
+  },
+  {
+    text: "Which group is famous for the song 'Yerushalayim' with child soloists?",
+    answers: ["Miami Boys Choir", "Shalsheles Junior", "Yeshiva Boys Choir", "Maccabeats"],
+    correctIndex: 0,
+    source: "Miami Boys Choir is known for powerful choir songs like 'Yerushalayim'.",
+    funFact: "They have been around since the 1970s.",
+    clue: "Their name includes a US city and 'Boys Choir'.",
+    initials: "M B C"
+  },
+  {
+    text: "Which choir is led by Yossi Green's compositions and features child soloists?",
+    answers: ["Yeshiva Boys Choir", "Miami Boys Choir", "Shalsheles Junior", "Maccabeats"],
+    correctIndex: 1,
+    source: "Miami Boys Choir has many songs composed by Yossi Green.",
+    funFact: "Yossi Green is a legendary Jewish music composer.",
+    clue: "The choir is named after a Florida city.",
+    initials: "M B C"
+  },
+  {
+    text: "Which group is known for the song 'Kol HaOlam Kulo' in a lively style?",
+    answers: ["Lev Tahor", "Maccabeats", "8th Day", "Shalsheles"],
+    correctIndex: 0,
+    source: "Lev Tahor recorded a popular version of 'Kol HaOlam Kulo'.",
+    funFact: "Lev Tahor is a vocal group known for harmonies.",
+    clue: "Their name means 'pure heart'.",
+    initials: "L T"
+  },
+  {
+    text: "Which singer is known for 'No Lyrics' style niggunim albums?",
+    answers: ["Eitan Katz", "Avraham Fried", "Shwekey", "MBD"],
+    correctIndex: 0,
+    source: "Eitan Katz is known for soulful niggunim and kumzitz albums.",
+    funFact: "He often performs with just a guitar and voice.",
+    clue: "His last name is shared with a famous Jewish last name meaning 'priest'.",
+    initials: "E K"
+  },
+  {
+    text: "Which singer is known for the song 'Hafachta'?",
+    answers: ["Avraham Fried", "Shwekey", "MBD", "Simcha Leiner"],
+    correctIndex: 0,
+    source: "Avraham Fried is known for 'Hafachta'.",
+    funFact: "He blends Chassidic warmth with modern arrangements.",
+    clue: "His first name is Avraham.",
+    initials: "A F"
+  },
+  {
+    text: "Which group is known for the song 'Aleh Katan'?",
+    answers: ["Shalsheles", "Lev Tahor", "Miami Boys Choir", "Yeshiva Boys Choir"],
+    correctIndex: 0,
+    source: "Shalsheles is known for 'Aleh Katan'.",
+    funFact: "Shalsheles means 'chain' in Hebrew.",
+    clue: "Their name suggests a link from past to future.",
+    initials: "S"
+  },
+  {
+    text: "Which group is known for 'Vehi She'amda' with a modern arrangement?",
+    answers: ["Shwekey & Yonatan Razel", "Maccabeats", "Lev Tahor", "8th Day"],
+    correctIndex: 0,
+    source: "Yaakov Shwekey and Yonatan Razel popularized 'Vehi She'amda'.",
+    funFact: "The song became a staple at Pesach concerts.",
+    clue: "It’s a duet between two well-known singers.",
+    initials: "Y S & Y R"
+  },
+  {
+    text: "Which singer is known for 'Im Eshkachech Yerushalayim' at weddings?",
+    answers: ["Shwekey", "Avraham Fried", "MBD", "Simcha Leiner"],
+    correctIndex: 0,
+    source: "Yaakov Shwekey's version of 'Im Eshkachech' is widely used at weddings.",
+    funFact: "The song is often sung under the chuppah.",
+    clue: "His last name is Shwekey.",
+    initials: "Y S"
+  },
+  {
+    text: "Which group is known for humorous Purim and Chanukah parody videos?",
+    answers: ["Maccabeats", "Y-Studs", "8th Day", "Lev Tahor"],
+    correctIndex: 1,
+    source: "Y-Studs are known for creative Jewish parody videos.",
+    funFact: "They are an a cappella group from Yeshiva University alumni.",
+    clue: "Their name sounds like 'YU' plus 'studs'.",
+    initials: "Y S"
+  },
+  {
+    text: "Which singer is known for the song 'Shalom Aleichem' in a lively style?",
+    answers: ["Avraham Fried", "Shwekey", "MBD", "Baruch Levine"],
+    correctIndex: 0,
+    source: "Avraham Fried has a popular 'Shalom Aleichem' track.",
+    funFact: "He often opens concerts with upbeat songs.",
+    clue: "His last name means 'joy'.",
+    initials: "A F"
+  },
+  {
+    text: "Which group is known for the song 'Hashem Melech'?",
+    answers: ["Gad Elbaz & Nissim", "Maccabeats", "Lev Tahor", "8th Day"],
+    correctIndex: 0,
+    source: "Gad Elbaz and Nissim released a popular 'Hashem Melech'.",
+    funFact: "The song mixes Hebrew and English lyrics.",
+    clue: "One of the artists is a Sephardic Israeli singer.",
+    initials: "G E"
+  },
+  {
+    text: "Which singer is known for 'Tanya' and other Chabad-themed songs?",
+    answers: ["Avraham Fried", "Shwekey", "MBD", "Eitan Katz"],
+    correctIndex: 0,
+    source: "Avraham Fried has many songs inspired by Chabad teachings.",
+    funFact: "He is a Lubavitcher Chassid.",
+    clue: "His last name is Fried.",
+    initials: "A F"
+  },
+  {
+    text: "Which group is known for the song 'Adon Olam' in a cappella style?",
+    answers: ["Maccabeats", "Lev Tahor", "Y-Studs", "Miami Boys Choir"],
+    correctIndex: 0,
+    source: "The Maccabeats recorded a popular 'Adon Olam'.",
+    funFact: "They often reimagine classic tefillah texts.",
+    clue: "Their name references the Maccabees.",
+    initials: "M"
+  },
+  {
+    text: "Which singer is known for 'Mi She'asa Nissim'?",
+    answers: ["Shwekey", "Simcha Leiner", "Baruch Levine", "Avraham Fried"],
+    correctIndex: 2,
+    source: "Baruch Levine is known for 'Mi She'asa Nissim'.",
+    funFact: "He is also a composer and pianist.",
+    clue: "His last name is Levine.",
+    initials: "B L"
+  },
+  {
+    text: "Which group is known for the song 'Acheinu' with rich harmonies?",
+    answers: ["Lev Tahor", "Shalsheles", "Maccabeats", "8th Day"],
+    correctIndex: 0,
+    source: "Lev Tahor has a well-known 'Acheinu'.",
+    funFact: "They focus on vocal harmony and emotion.",
+    clue: "Their name means 'pure heart'.",
+    initials: "L T"
+  },
+  {
+    text: "Which singer is known for 'Ratziti SheTeida'?",
+    answers: ["Shwekey", "Avraham Fried", "MBD", "Gad Elbaz"],
+    correctIndex: 3,
+    source: "Gad Elbaz is known for 'Ratziti SheTeida'.",
+    funFact: "He blends Israeli pop with Jewish themes.",
+    clue: "His first name is Gad.",
+    initials: "G E"
+  },
+  {
+    text: "Which group is known for the song 'Simcha Shel Mitzvah'?",
+    answers: ["Miami Boys Choir", "Yeshiva Boys Choir", "Shalsheles Junior", "Maccabeats"],
+    correctIndex: 1,
+    source: "Yeshiva Boys Choir is known for 'Simcha Shel Mitzvah'.",
+    funFact: "They feature child soloists and big choruses.",
+    clue: "Their name includes 'Yeshiva Boys'.",
+    initials: "Y B C"
+  },
+  {
+    text: "Which singer is known for 'Vezakeini'?",
+    answers: ["Baruch Levine", "Shwekey", "Avraham Fried", "Simcha Leiner"],
+    correctIndex: 0,
+    source: "Baruch Levine is known for 'Vezakeini'.",
+    funFact: "The song is often sung at challah baking events.",
+    clue: "His initials are B.L.",
+    initials: "B L"
+  },
+  {
+    text: "Which group is known for 'Kol Hamispalel'?",
+    answers: ["Shalsheles", "Lev Tahor", "Miami Boys Choir", "Yeshiva Boys Choir"],
+    correctIndex: 0,
+    source: "Shalsheles recorded 'Kol Hamispalel'.",
+    funFact: "They often feature layered harmonies.",
+    clue: "Their name means 'chain'.",
+    initials: "S"
+  },
+  {
+    text: "Which singer is known for 'Ani Yehudi'?",
+    answers: ["Gad Elbaz", "Avraham Fried", "Shwekey", "MBD"],
+    correctIndex: 0,
+    source: "Gad Elbaz is known for 'Ani Yehudi'.",
+    funFact: "The song emphasizes Jewish pride.",
+    clue: "His last name is Elbaz.",
+    initials: "G E"
+  },
+  {
+    text: "Which group is known for 'Baruch Habah' in a choir style?",
+    answers: ["Miami Boys Choir", "Yeshiva Boys Choir", "Shalsheles Junior", "Lev Tahor"],
+    correctIndex: 0,
+    source: "Miami Boys Choir has a famous 'Baruch Habah'.",
+    funFact: "They often perform with choreography.",
+    clue: "Their name includes 'Miami'.",
+    initials: "M B C"
+  },
+  {
+    text: "Which singer is known for 'Ki Hirbeisa'?",
+    answers: ["Avraham Fried", "MBD", "Shwekey", "Baruch Levine"],
+    correctIndex: 1,
+    source: "Mordechai Ben David is known for 'Ki Hirbeisa'.",
+    funFact: "He has many classic slow songs.",
+    clue: "His initials are MBD.",
+    initials: "M B D"
+  },
+  {
+    text: "Which group is known for 'Hinei Ma Tov' in a cappella style?",
+    answers: ["Maccabeats", "Lev Tahor", "Y-Studs", "8th Day"],
+    correctIndex: 0,
+    source: "The Maccabeats recorded 'Hinei Ma Tov'.",
+    funFact: "They often sing about unity and joy.",
+    clue: "Their name references the Maccabees.",
+    initials: "M"
+  },
+  {
+    text: "Which singer is known for 'Yesh Li Hakol'?",
+    answers: ["Avraham Fried", "Shwekey", "MBD", "Gad Elbaz"],
+    correctIndex: 0,
+    source: "Avraham Fried is known for 'Yesh Li Hakol'.",
+    funFact: "The song expresses gratitude for spiritual wealth.",
+    clue: "His last name means 'joy'.",
+    initials: "A F"
+  },
+  {
+    text: "Which group is known for 'Im Eshkachech' in a choir arrangement?",
+    answers: ["Yeshiva Boys Choir", "Miami Boys Choir", "Shalsheles Junior", "Maccabeats"],
+    correctIndex: 0,
+    source: "Yeshiva Boys Choir has a popular 'Im Eshkachech'.",
+    funFact: "They often perform at large events.",
+    clue: "Their name includes 'Yeshiva Boys'.",
+    initials: "Y B C"
+  },
+  {
+    text: "Which singer is known for 'Kol Haolam Kulo' in a kumzitz style?",
+    answers: ["Eitan Katz", "Avraham Fried", "Shwekey", "MBD"],
+    correctIndex: 0,
+    source: "Eitan Katz is known for kumzitz-style 'Kol Haolam Kulo'.",
+    funFact: "He often leads large kumzitz gatherings.",
+    clue: "His last name is Katz.",
+    initials: "E K"
+  },
+  {
+    text: "Which group is known for 'Yesh Tikvah' English version?",
+    answers: ["Maccabeats", "8th Day", "Lev Tahor", "Y-Studs"],
+    correctIndex: 0,
+    source: "The Maccabeats recorded an English version of 'Yesh Tikvah'.",
+    funFact: "They adapt Hebrew songs into English.",
+    clue: "They are an a cappella group.",
+    initials: "M"
+  },
+  {
+    text: "Which singer is known for 'Rachem'?",
+    answers: ["Shwekey", "Avraham Fried", "MBD", "Baruch Levine"],
+    correctIndex: 0,
+    source: "Yaakov Shwekey is known for 'Rachem'.",
+    funFact: "The song is often sung during Selichos.",
+    clue: "His last name is Shwekey.",
+    initials: "Y S"
+  },
+  {
+    text: "Which group is known for 'Kol Dodi' in a choir style?",
+    answers: ["Shalsheles", "Miami Boys Choir", "Yeshiva Boys Choir", "Lev Tahor"],
+    correctIndex: 0,
+    source: "Shalsheles has a well-known 'Kol Dodi'.",
+    funFact: "They often sing about themes from Shir Hashirim.",
+    clue: "Their name means 'chain'.",
+    initials: "S"
+  },
+  {
+    text: "Which singer is known for 'Lo Lefached'?",
+    answers: ["Gad Elbaz", "Avraham Fried", "Shwekey", "MBD"],
+    correctIndex: 0,
+    source: "Gad Elbaz is known for 'Lo Lefached'.",
+    funFact: "The song encourages faith over fear.",
+    clue: "His first name is Gad.",
+    initials: "G E"
+  },
+  {
+    text: "Which group is known for 'Kol Hamispalel' in a youth choir version?",
+    answers: ["Shalsheles Junior", "Miami Boys Choir", "Yeshiva Boys Choir", "Maccabeats"],
+    correctIndex: 0,
+    source: "Shalsheles Junior recorded 'Kol Hamispalel'.",
+    funFact: "They are the youth version of Shalsheles.",
+    clue: "Their name adds 'Junior' to a familiar group.",
+    initials: "S J"
+  },
+  {
+    text: "Which singer is known for 'Tefillah L'Ani'?",
+    answers: ["Baruch Levine", "Shwekey", "Avraham Fried", "MBD"],
+    correctIndex: 0,
+    source: "Baruch Levine is known for 'Tefillah L'Ani'.",
+    funFact: "He often sets Tehillim texts to music.",
+    clue: "His initials are B.L.",
+    initials: "B L"
+  },
+  {
+    text: "Which group is known for 'Yesh Li Chaver'?",
+    answers: ["Lev Tahor", "Shalsheles", "Maccabeats", "8th Day"],
+    correctIndex: 0,
+    source: "Lev Tahor recorded 'Yesh Li Chaver'.",
+    funFact: "They focus on friendship and unity themes.",
+    clue: "Their name means 'pure heart'.",
+    initials: "L T"
+  },
+  {
+    text: "Which singer is known for 'Ben Bag Bag'?",
+    answers: ["Avraham Fried", "Shwekey", "MBD", "Simcha Leiner"],
+    correctIndex: 0,
+    source: "Avraham Fried is known for 'Ben Bag Bag'.",
+    funFact: "The song is based on a famous Mishnah.",
+    clue: "His last name means 'joy'.",
+    initials: "A F"
+  },
+  {
+    text: "Which group is known for 'Kol Haolam Kulo' in a choir version?",
+    answers: ["Miami Boys Choir", "Yeshiva Boys Choir", "Shalsheles Junior", "Maccabeats"],
+    correctIndex: 1,
+    source: "Yeshiva Boys Choir has a 'Kol Haolam Kulo' version.",
+    funFact: "They often adapt niggunim for kids.",
+    clue: "Their name includes 'Yeshiva Boys'.",
+    initials: "Y B C"
+  },
+  {
+    text: "Which singer is known for 'Shir Hamaalos' in a kumzitz style?",
+    answers: ["Eitan Katz", "Avraham Fried", "Shwekey", "MBD"],
+    correctIndex: 0,
+    source: "Eitan Katz is known for 'Shir Hamaalos' at kumzitzes.",
+    funFact: "He often uses simple arrangements to highlight the niggun.",
+    clue: "His last name is Katz.",
+    initials: "E K"
+  },
+  {
+    text: "Which group is known for 'Lecha Dodi' in a cappella style?",
+    answers: ["Maccabeats", "Lev Tahor", "Y-Studs", "8th Day"],
+    correctIndex: 0,
+    source: "The Maccabeats recorded 'Lecha Dodi'.",
+    funFact: "They often sing Shabbos songs.",
+    clue: "Their name references the Maccabees.",
+    initials: "M"
+  },
+  {
+    text: "Which singer is known for 'Kach Es Sheli'?",
+    answers: ["Shwekey", "Avraham Fried", "MBD", "Gad Elbaz"],
+    correctIndex: 0,
+    source: "Yaakov Shwekey is known for 'Kach Es Sheli'.",
+    funFact: "The song speaks about giving everything to Hashem.",
+    clue: "His last name is Shwekey.",
+    initials: "Y S"
+  },
+  {
+    text: "Which group is known for 'Od Yishama' in a choir style?",
+    answers: ["Miami Boys Choir", "Yeshiva Boys Choir", "Shalsheles Junior", "Lev Tahor"],
+    correctIndex: 0,
+    source: "Miami Boys Choir has a popular 'Od Yishama'.",
+    funFact: "They often perform wedding-themed songs.",
+    clue: "Their name includes 'Miami'.",
+    initials: "M B C"
+  },
+  {
+    text: "Which singer is known for 'Lulei Torascha'?",
+    answers: ["Baruch Levine", "Shwekey", "Avraham Fried", "MBD"],
+    correctIndex: 0,
+    source: "Baruch Levine is known for 'Lulei Torascha'.",
+    funFact: "The song expresses love for Torah.",
+    clue: "His initials are B.L.",
+    initials: "B L"
+  },
+  {
+    text: "Which group is known for 'Acheinu' in a youth choir version?",
+    answers: ["Shalsheles Junior", "Miami Boys Choir", "Yeshiva Boys Choir", "New York Boys Choir"],
+    correctIndex: 0,
+    source: "Shalsheles Junior recorded 'Acheinu'.",
+    funFact: "They adapt adult choir songs for kids.",
+    clue: "Their name adds 'Junior' to a familiar group.",
+    initials: "S J"
+  },
+  {
+    text: "Which singer is known for 'Yesh Tikvah' English duet?",
+    answers: ["Shwekey & Benny Friedman", "Maccabeats", "Avraham Fried", "Gad Elbaz"],
+    correctIndex: 0,
+    source: "Shwekey and Benny Friedman performed 'Yesh Tikvah' together.",
+    funFact: "The duet version is popular at concerts.",
+    clue: "It’s a collaboration of two big names.",
+    initials: "Y S & B F"
+  },
+  {
+    text: "Which group is known for 'Kol Haolam Kulo' in an upbeat band style?",
+    answers: ["8th Day", "Maccabeats", "Lev Tahor", "Shalsheles"],
+    correctIndex: 0,
+    source: "8th Day has an upbeat 'Kol Haolam Kulo'.",
+    funFact: "They often add rock elements to classic texts.",
+    clue: "Their name sounds like a day beyond Shabbos.",
+    initials: "8 D"
+  }
+];
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+      
+    const hintCosts = {
+      removeOne: 5,
+      clueSentence: 4,
+      firstLetter: 2,
+      initials: 6,
+      fiftyFifty: 7,
+      funFact: 3
+    };
+
+    let currentIndex = 0;
+    let score = 0;
+    let timer = 30;
+    let timerId = null;
+    let timerFrozen = false;
+    let hasUsedHintThisQuestion = false;
+    let hasAnswered = false;
+    let isRetry = false;
+    let secondChanceActive = false;
+    let doublePointsActive = false;
+
+    const powerupsOwned = {
+      double: 0,
+      second: 0,
+      freeze: 0
+    };
+
+    const questionTextEl = document.getElementById("questionText");
+    const answersContainerEl = document.getElementById("answersContainer");
+    const scoreEl = document.getElementById("score");
+    const timerCircleEl = document.getElementById("timerCircle");
+    const timerLabelEl = document.getElementById("timerLabel");
+    const statusTextEl = document.getElementById("statusText");
+    const nextBtnEl = document.getElementById("nextBtn");
+    const hintBtnEl = document.getElementById("hintBtn");
+    const powerupBtnEl = document.getElementById("powerupBtn");
+    const sourceToggleEl = document.getElementById("sourceToggle");
+    const sourceContentEl = document.getElementById("sourceContent");
+    const sourceArrowEl = document.getElementById("sourceArrow");
+    const x2BadgeEl = document.getElementById("x2Badge");
+
+    const hintModalBackdrop = document.getElementById("hintModalBackdrop");
+    const hintModalClose = document.getElementById("hintModalClose");
+    const powerupModalBackdrop = document.getElementById("powerupModalBackdrop");
+    const powerupModalClose = document.getElementById("powerupModalClose");
+
+    const puDoubleCountEl = document.getElementById("puDoubleCount");
+    const puSecondCountEl = document.getElementById("puSecondCount");
+    const puFreezeCountEl = document.getElementById("puFreezeCount");
+    const puDoubleBtn = document.getElementById("puDoubleBtn");
+    const puSecondBtn = document.getElementById("puSecondBtn");
+    const puFreezeBtn = document.getElementById("puFreezeBtn");
+
+    function init() {
+      loadQuestion();
+      updateScore(0);
+      setupEvents();
+    }
+
+    function loadQuestion() {
+      const q = questions[currentIndex];
+      questionTextEl.textContent = q.text;
+      answersContainerEl.innerHTML = "";
+      hasUsedHintThisQuestion = false;
+      hasAnswered = false;
+      isRetry = false;
+      secondChanceActive = false;
+      doublePointsActive = false;
+      timerFrozen = false;
+      statusTextEl.textContent = "";
+      statusTextEl.className = "status";
+      nextBtnEl.disabled = true;
+      sourceContentEl.style.display = "none";
+      sourceArrowEl.textContent = "▼";
+      sourceContentEl.textContent = "";
+      hintBtnEl.disabled = false;
+      x2BadgeEl.style.display = "none";
+      timerLabelEl.textContent = "Time left";
+
+      q.answers.forEach((ans, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "answer-btn";
+        btn.textContent = ans;
+        btn.dataset.index = idx;
+        btn.addEventListener("click", () => handleAnswer(idx, btn));
+        answersContainerEl.appendChild(btn);
+      });
+
+      resetTimer();
+    }
+
+    function resetTimer() {
+      clearInterval(timerId);
+      timer = 30;
+      timerFrozen = false;
+      updateTimerDisplay();
+      timerId = setInterval(() => {
+        if (!timerFrozen) {
+          timer--;
+          updateTimerDisplay();
+          if (timer <= 0) {
+            clearInterval(timerId);
+            handleTimeUp();
+          }
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      timerCircleEl.textContent = timer;
+      if (timer <= 5) {
+        timerCircleEl.style.borderColor = "#dc2626";
+        timerCircleEl.style.color = "#dc2626";
+      } else {
+        timerCircleEl.style.borderColor = "#2563eb";
+        timerCircleEl.style.color = "#2563eb";
+      }
+    }
+
+    function updateScore(delta) {
+      score += delta;
+      scoreEl.textContent = score;
+    }
+
+    function handleAnswer(idx, btn) {
+      if (hasAnswered && !secondChanceActive) return;
+
+      const q = questions[currentIndex];
+      const correctIdx = q.correctIndex;
+      const allBtns = Array.from(document.querySelectorAll(".answer-btn"));
+
+      allBtns.forEach(b => b.disabled = true);
+
+      const correctOnFirstTry = !isRetry && !hasAnswered;
+
+      if (idx === correctIdx) {
+        btn.classList.add("correct");
+        let basePoints = isRetry ? 5 : 10;
+        if (doublePointsActive) {
+          basePoints *= 2;
+          doublePointsActive = false;
+          x2BadgeEl.style.display = "none";
+        }
+        updateScore(basePoints);
+        statusTextEl.textContent = `Correct! +${basePoints} points`;
+        statusTextEl.className = "status correct";
+        hasAnswered = true;
+        clearInterval(timerId);
+        nextBtnEl.disabled = false;
+        showSource(q.source);
+
+        if (correctOnFirstTry && !hasUsedHintThisQuestion) {
+          maybeAwardRandomPowerup();
+        }
+      } else {
+        btn.classList.add("wrong");
+        if (secondChanceActive) {
+          statusTextEl.textContent = "Wrong, but Second Chance is active. Try again!";
+          statusTextEl.className = "status wrong";
+          secondChanceActive = false;
+          allBtns.forEach(b => {
+            if (!b.classList.contains("wrong")) b.disabled = false;
+          });
+        } else {
+          const penalty = -10;
+          updateScore(penalty);
+          statusTextEl.textContent = `Wrong. ${penalty} points`;
+          statusTextEl.className = "status wrong";
+          hasAnswered = true;
+          clearInterval(timerId);
+          nextBtnEl.disabled = false;
+          showSource(q.source);
+          if (doublePointsActive) {
+            doublePointsActive = false;
+            x2BadgeEl.style.display = "none";
+          }
+        }
+      }
+    }
+
+    function handleTimeUp() {
+      const penalty = -10;
+      updateScore(penalty);
+      statusTextEl.textContent = `Time's up. ${penalty} points`;
+      statusTextEl.className = "status wrong";
+      const allBtns = Array.from(document.querySelectorAll(".answer-btn"));
+      allBtns.forEach(b => b.disabled = true);
+      nextBtnEl.disabled = false;
+      const q = questions[currentIndex];
+      showSource(q.source);
+      if (doublePointsActive) {
+        doublePointsActive = false;
+        x2BadgeEl.style.display = "none";
+      }
+    }
+
+    function showSource(text) {
+      sourceContentEl.textContent = text;
+      sourceContentEl.style.display = "block";
+      sourceArrowEl.textContent = "▲";
+    }
+
+    function openHintModal() {
+      if (hasUsedHintThisQuestion) return;
+      hintModalBackdrop.style.display = "flex";
+    }
+    function closeHintModal() {
+      hintModalBackdrop.style.display = "none";
+    }
+
+    hintModalBackdrop.addEventListener("click", (e) => {
+      if (e.target === hintModalBackdrop) closeHintModal();
+    });
+    hintModalClose.addEventListener("click", closeHintModal);
+
+    document.querySelectorAll("#hintModalBackdrop .modal-item button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const type = btn.dataset.hint;
+        useHint(type);
+      });
+    });
+
+    function useHint(type) {
+      if (hasUsedHintThisQuestion) return;
+      const cost = hintCosts[type];
+      updateScore(-cost);
+      hasUsedHintThisQuestion = true;
+      hintBtnEl.disabled = true;
+      applyHintEffect(type);
+      closeHintModal();
+    }
+
+    function applyHintEffect(type) {
+      const q = questions[currentIndex];
+      const correctIdx = q.correctIndex;
+      const answerButtons = Array.from(document.querySelectorAll(".answer-btn"));
+
+      if (type === "removeOne") {
+        const wrongIndices = answerButtons
+          .map((b, i) => ({ b, i }))
+          .filter(obj => obj.i !== correctIdx);
+        if (wrongIndices.length > 0) {
+          const randomWrong = wrongIndices[Math.floor(Math.random() * wrongIndices.length)];
+          randomWrong.b.disabled = true;
+          randomWrong.b.style.opacity = 0.4;
+        }
+      } else if (type === "clueSentence") {
+        statusTextEl.textContent = "Clue: " + q.clue;
+        statusTextEl.className = "status";
+      } else if (type === "firstLetter") {
+        const firstLetter = q.answers[correctIdx].charAt(0);
+        statusTextEl.textContent = `Hint: The answer starts with "${firstLetter}".`;
+        statusTextEl.className = "status";
+      } else if (type === "initials") {
+        statusTextEl.textContent = `Hint: Initials are "${q.initials}".`;
+        statusTextEl.className = "status";
+      } else if (type === "fiftyFifty") {
+        const wrongIndices = answerButtons
+          .map((b, i) => ({ b, i }))
+          .filter(obj => obj.i !== correctIdx);
+        if (wrongIndices.length > 1) {
+          const keepWrong = wrongIndices[Math.floor(Math.random() * wrongIndices.length)];
+          wrongIndices.forEach(obj => {
+            if (obj.i !== keepWrong.i) {
+              obj.b.disabled = true;
+              obj.b.style.opacity = 0.4;
+            }
+          });
+        }
+      } else if (type === "funFact") {
+        statusTextEl.textContent = "Fun Fact: " + q.funFact;
+        statusTextEl.className = "status";
+      }
+    }
+
+    function openPowerupModal() {
+      powerupModalBackdrop.style.display = "flex";
+      updatePowerupDisplay();
+    }
+    function closePowerupModal() {
+      powerupModalBackdrop.style.display = "none";
+    }
+
+    powerupModalBackdrop.addEventListener("click", (e) => {
+      if (e.target === powerupModalBackdrop) closePowerupModal();
+    });
+    powerupModalClose.addEventListener("click", closePowerupModal);
+
+    function updatePowerupDisplay() {
+      puDoubleCountEl.textContent = powerupsOwned.double;
+      puSecondCountEl.textContent = powerupsOwned.second;
+      puFreezeCountEl.textContent = powerupsOwned.freeze;
+
+      puDoubleBtn.disabled = powerupsOwned.double <= 0 || hasAnswered;
+      puSecondBtn.disabled = powerupsOwned.second <= 0 || hasAnswered;
+      puFreezeBtn.disabled = powerupsOwned.freeze <= 0 || timerFrozen || hasAnswered;
+    }
+
+    puDoubleBtn.addEventListener("click", () => {
+      if (powerupsOwned.double > 0 && !hasAnswered) {
+        powerupsOwned.double--;
+        doublePointsActive = true;
+        x2BadgeEl.style.display = "block";
+        updatePowerupDisplay();
+        closePowerupModal();
+        statusTextEl.textContent = "Double Points activated for this question.";
+        statusTextEl.className = "status";
+      }
+    });
+
+    puSecondBtn.addEventListener("click", () => {
+      if (powerupsOwned.second > 0 && !hasAnswered) {
+        powerupsOwned.second--;
+        secondChanceActive = true;
+        updatePowerupDisplay();
+        closePowerupModal();
+        statusTextEl.textContent = "Second Chance activated for this question.";
+        statusTextEl.className = "status";
+      }
+    });
+
+    puFreezeBtn.addEventListener("click", () => {
+      if (powerupsOwned.freeze > 0 && !timerFrozen && !hasAnswered) {
+        powerupsOwned.freeze--;
+        timerFrozen = true;
+        updatePowerupDisplay();
+        closePowerupModal();
+        statusTextEl.textContent = "Timer frozen. Think as long as you like.";
+        statusTextEl.className = "status";
+        timerLabelEl.textContent = "Timer frozen";
+      }
+    });
+
+    function maybeAwardRandomPowerup() {
+      const roll = Math.random();
+      if (roll < 0.125) {
+        const types = ["double", "second", "freeze"];
+        const chosen = types[Math.floor(Math.random() * types.length)];
+        powerupsOwned[chosen]++;
+        updatePowerupDisplay();
+        let name =
+          chosen === "double" ? "Double Points" :
+          chosen === "second" ? "Second Chance" :
+          "Freeze Timer";
+        statusTextEl.textContent += `  🎁 You earned a power-up: ${name}!`;
+      }
+    }
+
+    function setupEvents() {
+      nextBtnEl.addEventListener("click", () => {
+        currentIndex++;
+        if (currentIndex >= questions.length) {
+          currentIndex = 0;
+        }
+        loadQuestion();
+      });
+
+      hintBtnEl.addEventListener("click", openHintModal);
+      powerupBtnEl.addEventListener("click", openPowerupModal);
+
+      sourceToggleEl.addEventListener("click", () => {
+        if (sourceContentEl.style.display === "none" || sourceContentEl.style.display === "") {
+          sourceContentEl.style.display = "block";
+          sourceArrowEl.textContent = "▲";
+        } else {
+          sourceContentEl.style.display = "none";
+          sourceArrowEl.textContent = "▼";
+        }
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
