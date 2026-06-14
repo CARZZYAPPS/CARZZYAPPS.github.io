@@ -107,7 +107,7 @@
         </p>
 
         <div id="timer">
-            <span id="seconds">0</span>.<span id="centiseconds">0</span>
+            <span id="minutes"></span><span id="seconds">00</span>.<span id="centiseconds">00</span>
         </div>
 
         <p id="message">&nbsp;</p>
@@ -119,6 +119,7 @@
 
             let s = 0;
             let cs = 0;
+            let m = 0;
             let score = 0;
             let ATScore = Number(localStorage.getItem('all-time-score')) || 0;
             let currStreak = 0;
@@ -135,6 +136,7 @@
             streak.innerHTML = currStreak;
             bestStreak.innerHTML = highestStreak;
 
+            const minutes = document.getElementById('minutes');
             const seconds = document.getElementById('seconds');
             const centiseconds = document.getElementById('centiseconds');
             const message = document.getElementById('message');
@@ -200,7 +202,21 @@
                         } else {
                             centiseconds.innerHTML = cs;
                         }
+                        if (s > 59) {
+                            m += 1;
+                            s = 0;
+                            cs = 0;
+                            minutes.innerHTML = m + ":";
+                            seconds.innerHTML = "0" + s;
+                            centiseconds.innerHTML = cs;
+                        }
+                        if (s < 10) {
+                            seconds.innerHTML = "0" + s;
+                        } else {
+                            seconds.innerHTML = s;
+                        }
                     }, 10)
+
                     startStop.style.backgroundColor = "#ff0000";
                     startStop.style.color = "#fff";
                     startStop.innerText = "Stop";
@@ -213,8 +229,9 @@
                 timer = null;
                 s = 0;
                 cs = 0;
-                seconds.innerHTML = s;
-                centiseconds.innerHTML = cs;
+                minutes.innerHTML = "";
+                seconds.innerHTML = "00";
+                centiseconds.innerHTML = "00";
                 startStop.style.backgroundColor = "#00a500"
                 startStop.innerText = "Start";
                 message.innerHTML = "&nbsp;";
