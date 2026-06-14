@@ -53,6 +53,7 @@
             }
 
             button {
+                color: white;
                 border: solid white 5px;
                 font-size: 50px;
                 width: 200px;
@@ -73,12 +74,11 @@
             }
 
             #start-stop {
-                background: #00ff00;
+                background: #00a500;
             }
 
             #reset {
                 background: #0000ff;
-                color: white;
             }
 
         </style>
@@ -148,8 +148,7 @@
                 if (timer) {
                     clearInterval(timer);
                     timer = null;
-                    startStop.style.backgroundColor = "#00ff00"
-                    startStop.style.color = "#000";
+                    startStop.style.backgroundColor = "#00a500"
                     startStop.innerText = "Start";
 
                     if (s > 0 && cs === 0) {
@@ -216,8 +215,7 @@
                 cs = 0;
                 seconds.innerHTML = s;
                 centiseconds.innerHTML = cs;
-                startStop.style.backgroundColor = "#00ff00"
-                startStop.style.color = "#000";
+                startStop.style.backgroundColor = "#00a500"
                 startStop.innerText = "Start";
                 message.innerHTML = "&nbsp;";
             }
