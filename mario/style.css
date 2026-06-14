@@ -6,7 +6,7 @@
 }
 
 body {
-  background: linear-gradient(#87ceeb, #4aa3ff);
+  background: #5c94fc;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,7 +15,7 @@ body {
 }
 
 .ui {
-  width: 900px;
+  width: 960px;
   max-width: 100%;
   margin-bottom: 10px;
 }
@@ -105,6 +105,34 @@ tr:nth-child(even) {
 
 #game {
   border: 3px solid #000;
-  background: linear-gradient(#87ceeb 0 60%, #6b8e23 60% 100%);
+  background: linear-gradient(#5c94fc 0 60%, #3aa63a 60% 100%);
   margin-top: 10px;
+  max-width: 100%;
+}
+
+.mobile-controls {
+  display: none;
+  margin-top: 10px;
+  gap: 20px;
+  justify-content: center;
+}
+
+.mobile-controls button {
+  width: 70px;
+  height: 70px;
+  font-size: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #ff9800;
+  color: white;
+}
+
+@media (max-width: 900px) {
+  #game {
+    width: 100%;
+    height: auto;
+  }
+  .mobile-controls {
+    display: flex;
+  }
 }
