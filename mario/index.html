@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Carzzy Runner</title>
+  <title>Carzzy Quest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="ui">
-    <h1>Carzzy Runner</h1>
+    <h1>Carzzy Quest</h1>
 
     <form id="player-form">
       <label>
@@ -51,7 +51,13 @@
     </div>
   </div>
 
-  <canvas id="game" width="800" height="400"></canvas>
+  <canvas id="game" width="960" height="480"></canvas>
+
+  <div class="mobile-controls">
+    <button id="btn-left">◀</button>
+    <button id="btn-jump">⬆</button>
+    <button id="btn-right">▶</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
