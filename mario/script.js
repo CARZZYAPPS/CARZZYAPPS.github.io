@@ -15,33 +15,91 @@ const statLast = document.getElementById("stat-last");
 const statAvg = document.getElementById("stat-avg");
 const leaderboardBody = document.getElementById("leaderboard-body");
 
+const btnLeft = document.getElementById("btn-left");
+const btnRight = document.getElementById("btn-right");
+const btnJump = document.getElementById("btn-jump");
+
+// assets (royalty-free)
+const playerImg = new Image();
+playerImg.src = "https://opengameart.org/sites/default/files/herochar.png";
+
+const coinImg = new Image();
+coinImg.src = "https://raw.githubusercontent.com/kenneyNL/kenney_game_assets/master/2D%20Pixel%20Art/Coins/coin_gold.png";
+
+const coinSound = new Audio("https://raw.githubusercontent.com/kenneyNL/kenney_sound_effects/master/Audio/coin.wav");
+coinSound.volume = 0.4;
+
+const jumpSound = new Audio("https://raw.githubusercontent.com/kenneyNL/kenney_sound_effects/master/Audio/jump.wav");
+jumpSound.volume = 0.4;
+
 let username = null;
 let score = 0;
 let gameRunning = false;
 let gameOver = false;
 
-const gravity = 0.6;
-const groundY = canvas.height * 0.75;
+const gravity = 0.7;
+const moveSpeed = 4.5;
+const jumpSpeed = 13;
+const friction = 0.85;
 
-const player = {
-  x: 80,
-  y: groundY - 40,
-  width: 32,
-  height: 40,
-  vy: 0,
-  onGround: true
+const camera = {
+  x: 0
 };
 
-const obstacles = [];
-let obstacleTimer = 0;
-const obstacleInterval = 120;
+const player = {
+  x: 100,
+  y: 0,
+  width: 32,
+  height: 48,
+  vx: 0,
+  vy: 0,
+  onGround: false
+};
 
 const keys = {
   ArrowLeft: false,
   ArrowRight: false,
-  Space: false,
-  ArrowUp: false
+  ArrowUp: false,
+  Space: false
 };
+
+const groundY = 360;
+
+const platforms = [
+  { x: 0, y: groundY, width: 2000, height: 40 },
+  { x: 300, y: 300, width: 120, height: 20 },
+  { x: 500, y: 260, width: 120, height: 20 },
+  { x: 750, y: 220, width: 120, height: 20 },
+  { x: 1000, y: 280, width: 120, height: 20 },
+  { x: 1300, y: 320, width: 120, height: 20 }
+];
+
+const enemies = [
+  makeGoomba(400, groundY - 32),
+  makeGoomba(650, groundY - 32),
+  makeGoomba(900, groundY - 32),
+  makeGoomba(1150, groundY - 32),
+  makeGoomba(1450, groundY - 32)
+];
+
+const coins = [
+  { x: 350, y: 250, width: 24, height: 24, collected: false },
+  { x: 520, y: 210, width: 24, height: 24, collected: false },
+  { x: 780, y: 170, width: 24, height: 24, collected: false },
+  { x: 1020, y: 240, width: 24, height: 24, collected: false },
+  { x: 1350, y: 280, width: 24, height: 24, collected: false }
+];
+
+function makeGoomba(x, y) {
+  return {
+    x,
+    y,
+    width: 32,
+    height: 32,
+    vx: -1.2,
+    alive: true
+  };
+}
 
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") e.preventDefault();
@@ -52,17 +110,41 @@ document.addEventListener("keyup", (e) => {
   if (keys.hasOwnProperty(e.code)) keys[e.code] = false;
 });
 
-// Load leaderboard on page load
+document.addEventListener("keydown", (e) => {
+  if (gameOver && e.code === "Enter") {
+    resetGame();
+    gameRunning = true;
+    hudStatus.textContent = "Playing…";
+  }
+});
+
+// mobile controls
+function press(key) {
+  keys[key] = true;
+}
+function release(key) {
+  keys[key] = false;
+}
+
+btnLeft.addEventListener("touchstart", () => press("ArrowLeft"));
+btnLeft.addEventListener("touchend", () => release("ArrowLeft"));
+
+btnRight.addEventListener("touchstart", () => press("ArrowRight"));
+btnRight.addEventListener("touchend", () => release("ArrowRight"));
+
+btnJump.addEventListener("touchstart", () => press("Space"));
+btnJump.addEventListener("touchend", () => release("Space"));
+
+// load leaderboard on page load
 loadLeaderboard();
 
-// Load stats when username changes (on blur)
+// load stats when username loses focus
 usernameInput.addEventListener("blur", () => {
   const value = usernameInput.value.trim();
   if (!value) return;
   loadStatsAndLeaderboard(value);
 });
 
-// Start game
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const value = usernameInput.value.trim();
@@ -78,12 +160,19 @@ function resetGame() {
   score = 0;
   hudScore.textContent = score;
   gameOver = false;
-  player.x = 80;
+  player.x = 100;
   player.y = groundY - player.height;
+  player.vx = 0;
   player.vy = 0;
-  player.onGround = true;
-  obstacles.length = 0;
-  obstacleTimer = 0;
+  player.onGround = false;
+  camera.x = 0;
+  enemies.forEach((e, i) => {
+    e.alive = true;
+    e.x = [400, 650, 900, 1150, 1450][i];
+    e.y = groundY - 32;
+    e.vx = -1.2;
+  });
+  coins.forEach((c) => (c.collected = false));
 }
 
 function loop() {
@@ -93,47 +182,98 @@ function loop() {
 }
 
 function update() {
-  const speed = 4;
-  if (keys.ArrowLeft) player.x = Math.max(0, player.x - speed);
-  if (keys.ArrowRight) player.x = Math.min(canvas.width - player.width, player.x + speed);
+  if (keys.ArrowLeft) player.vx -= 0.6;
+  if (keys.ArrowRight) player.vx += 0.6;
+
+  player.vx *= friction;
+  if (Math.abs(player.vx) < 0.1) player.vx = 0;
 
   if ((keys.Space || keys.ArrowUp) && player.onGround) {
-    player.vy = -12;
+    player.vy = -jumpSpeed;
     player.onGround = false;
+    jumpSound.currentTime = 0;
+    jumpSound.play();
   }
 
   player.vy += gravity;
+
+  player.x += player.vx;
   player.y += player.vy;
 
-  if (player.y + player.height >= groundY) {
-    player.y = groundY - player.height;
-    player.vy = 0;
-    player.onGround = true;
-  }
+  if (player.x < 0) player.x = 0;
 
-  obstacleTimer++;
-  if (obstacleTimer >= obstacleInterval) {
-    obstacleTimer = 0;
-    obstacles.push({
-      x: canvas.width + 30,
-      y: groundY - 30,
-      width: 30,
-      height: 30,
-      vx: -4
-    });
-  }
-
-  for (let i = obstacles.length - 1; i >= 0; i--) {
-    const o = obstacles[i];
-    o.x += o.vx;
-
-    if (o.x + o.width < 0) {
-      obstacles.splice(i, 1);
-      score += 10;
-      hudScore.textContent = score;
-    } else if (rectsCollide(player, o)) {
-      endGame();
+  player.onGround = false;
+  platforms.forEach((p) => {
+    if (rectsCollide(player, p)) {
+      if (player.y + player.height - player.vy <= p.y) {
+        player.y = p.y - player.height;
+        player.vy = 0;
+        player.onGround = true;
+      } else if (player.y - player.vy >= p.y + p.height) {
+        player.y = p.y + p.height;
+        player.vy = 0;
+      } else {
+        if (player.x < p.x) {
+          player.x = p.x - player.width;
+        } else {
+          player.x = p.x + p.width;
+        }
+        player.vx = 0;
+      }
     }
+  });
+
+  enemies.forEach((e) => {
+    if (!e.alive) return;
+    e.x += e.vx;
+    if (e.x < 0 || e.x > 1900) e.vx *= -1;
+
+    let onPlatform = false;
+    platforms.forEach((p) => {
+      if (
+        e.x + e.width > p.x &&
+        e.x < p.x + p.width &&
+        e.y + e.height <= p.y + 5 &&
+        e.y + e.height >= p.y - 5
+      ) {
+        onPlatform = true;
+      }
+    });
+    if (!onPlatform) {
+      e.vy = (e.vy || 0) + gravity;
+      e.y += e.vy;
+    }
+
+    if (rectsCollide(player, e)) {
+      if (player.vy > 0 && player.y + player.height - 8 <= e.y) {
+        e.alive = false;
+        player.vy = -jumpSpeed * 0.7;
+        score += 100;
+        hudScore.textContent = score;
+      } else {
+        endGame();
+      }
+    }
+  });
+
+  coins.forEach((c) => {
+    if (!c.collected && rectsCollide(player, c)) {
+      c.collected = true;
+      score += 50;
+      hudScore.textContent = score;
+      coinSound.currentTime = 0;
+      coinSound.play();
+    }
+  });
+
+  camera.x = player.x - canvas.width / 2;
+  if (camera.x < 0) camera.x = 0;
+
+  score = Math.max(score, Math.floor(player.x / 5));
+  hudScore.textContent = score;
+
+  if (player.y > canvas.height + 200) {
+    endGame();
   }
 }
 
@@ -149,22 +289,42 @@ function rectsCollide(a, b) {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = "#654321";
-  ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+  ctx.fillStyle = "#5c94fc";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = "#ff0000";
-  ctx.fillRect(player.x, player.y, player.width, player.height);
+  ctx.save();
+  ctx.translate(-camera.x, 0);
 
-  ctx.fillStyle = "#b71c1c";
-  ctx.fillRect(player.x, player.y - 10, player.width, 10);
-
-  obstacles.forEach((o) => {
-    ctx.fillStyle = "#8b4513";
-    ctx.fillRect(o.x, o.y, o.width, o.height);
-    ctx.fillStyle = "#000";
-    ctx.fillRect(o.x + 6, o.y + 8, 6, 6);
-    ctx.fillRect(o.x + o.width - 12, o.y + 8, 6, 6);
+  platforms.forEach((p) => {
+    if (p.y === groundY) {
+      ctx.fillStyle = "#3aa63a";
+      ctx.fillRect(p.x, p.y, p.width, p.height);
+    } else {
+      ctx.fillStyle = "#c96f2d";
+      ctx.fillRect(p.x, p.y, p.width, p.height);
+      ctx.fillStyle = "#e0a86b";
+      ctx.fillRect(p.x + 2, p.y + 2, p.width - 4, p.height - 4);
+    }
   });
+
+  coins.forEach((c) => {
+    if (!c.collected) {
+      ctx.drawImage(coinImg, c.x, c.y, c.width, c.height);
+    }
+  });
+
+  ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+
+  enemies.forEach((e) => {
+    if (!e.alive) return;
+    ctx.fillStyle = "#8b4513";
+    ctx.fillRect(e.x, e.y, e.width, e.height);
+    ctx.fillStyle = "#000";
+    ctx.fillRect(e.x + 6, e.y + 8, 6, 6);
+    ctx.fillRect(e.x + e.width - 12, e.y + 8, 6, 6);
+  });
+
+  ctx.restore();
 
   if (gameOver) {
     ctx.fillStyle = "rgba(0,0,0,0.6)";
@@ -195,14 +355,6 @@ function endGame() {
       hudStatus.textContent = "Failed to save score.";
     });
 }
-
-document.addEventListener("keydown", (e) => {
-  if (gameOver && e.code === "Enter") {
-    resetGame();
-    gameRunning = true;
-    hudStatus.textContent = "Playing…";
-  }
-});
 
 async function saveScore(username, score) {
   const res = await fetch(API_URL, {
@@ -248,7 +400,8 @@ function updateStatsFromResponse(stats) {
   statHigh.textContent = stats.highScore ?? "-";
   statGames.textContent = stats.gamesPlayed ?? "-";
   statLast.textContent = stats.lastScore ?? "-";
-  statAvg.textContent = stats.averageScore != null ? stats.averageScore.toFixed(1) : "-";
+  statAvg.textContent =
+    stats.averageScore != null ? stats.averageScore.toFixed(1) : "-";
 }
 
 function updateLeaderboardFromResponse(scores) {
