@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Just On Time</title>
+        <link rel="icon" href="/favicon.png">
+
+        <style>
+
+            body {
+                background: #0a0a0a;
+                color: #00d1b2;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                text-align: center;
+                padding-top: 25px;
+                user-select: none;
+            }
+
+            #logo {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+            }
+
+            #stats {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .best-scores {
+                font-size: 14px;
+                color: #ffd700;
+            }
+
+            h1 {
+                font-size: 50px;
+                margin-top: 85px;
+                margin-bottom: 50px;
+            }
+
+            #timer {
+                font-size: 150px;
+            }
+
+            #message {
+                color: #ffd700;
+                font-size: 25px;
+            }
+
+            button {
+                border: solid white 5px;
+                font-size: 50px;
+                width: 200px;
+                padding: 10px;
+                border-radius: 50px;
+                cursor: pointer;
+                margin: 30px 20px;
+                transition: 0.15s;
+            }
+
+            button:hover {
+                transform: scale(1.05);
+                box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.5);
+            }
+
+            button:active {
+                transform: scale(0.98);
+            }
+
+            #start-stop {
+                background: #00ff00;
+            }
+
+            #reset {
+                background: #0000ff;
+                color: white;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div id="logo">
+            <a href="https://carzzyapps.github.io">
+                <img src="/Carzzy Apps Logo.png" style="width: 150px; height: 50px;">
+            </a>
+        </div>
+
+        <div id="stats">
+            Session Score: <span id="session-score"></span>
+            <div class="best-scores">All Time Score: <span id="all-time-score"></span></div>
+            Streak: <span id="streak"></span>
+            <div class="best-scores">Highest Streak: <span id="highest-streak"></span></div>
+        </div>
+
+        <h1>Just On Time</h1>
+
+        <div id="timer">
+            <span id="seconds">0</span>.<span id="centiseconds">0</span>
+        </div>
+
+        <p id="message">&nbsp;</p>
+
+        <button id="start-stop" onclick="doTimer()">Start</button>
+        <button id="reset" onclick="resetTimer()">Reset</button>
+
+        <script>
+
+            let s = 0;
+            let cs = 0;
+            let score = 0;
+            let ATScore = Number(localStorage.getItem('all-time-score')) || 0;
+            let currStreak = 0;
+            let highestStreak = Number(localStorage.getItem('highest-streak')) || 0;
+            let stopMessage;
+
+            const sessionScore = document.getElementById('session-score');
+            const allTimeScore = document.getElementById('all-time-score');
+            const streak = document.getElementById('streak');
+            const bestStreak = document.getElementById('highest-streak');
+
+            sessionScore.innerHTML = score;
+            allTimeScore.innerHTML = ATScore;
+            streak.innerHTML = currStreak;
+            bestStreak.innerHTML = highestStreak;
+
+            const seconds = document.getElementById('seconds');
+            const centiseconds = document.getElementById('centiseconds');
+            const message = document.getElementById('message');
+
+            const startStop = document.getElementById('start-stop');
+            const reset = document.getElementById('reset');
+
+            let timer = null;
+
+            function doTimer() {
+                if (timer) {
+                    clearInterval(timer);
+                    timer = null;
+                    startStop.style.backgroundColor = "#00ff00"
+                    startStop.style.color = "#000";
+                    startStop.innerText = "Start";
+
+                    if (s > 0 && cs === 0) {
+                        stopMessage = "You did it! Now try to build a streak!";
+                        message.style.color = '#0f0';
+
+                        score += 1;
+                        ATScore += 1;
+                        currStreak += 1;
+                        sessionScore.innerHTML = score;
+                        allTimeScore.innerHTML = ATScore;
+                        streak.innerHTML = currStreak;
+                        localStorage.setItem('all-time-score', ATScore);
+                        if (currStreak > highestStreak) {
+                            highestStreak += 1;
+                            bestStreak.innerHTML = highestStreak;
+                            localStorage.setItem('highest-streak', currStreak);
+                        }
+
+                    } else if (cs >= 95 || (s > 0 && cs <= 5)) {
+                        stopMessage = "So Close! Try again.";
+                        message.style.color = '#ffd700';
+                        currStreak = 0;
+                        streak.innerHTML = currStreak;
+                    } else if (cs >= 90 || (s > 0 && cs <= 10)) {
+                        stopMessage = "Off by just a bit! Try again.";
+                        message.style.color = '#ffd700';
+                        currStreak = 0;
+                        streak.innerHTML = currStreak;
+                    } else {
+                        stopMessage = "You can do better than that. Try again.";
+                        message.style.color = '#f00';
+                        currStreak = 0;
+                        streak.innerHTML = currStreak;
+                    }
+
+                    message.innerHTML = stopMessage;
+
+                } else {
+                    timer = setInterval(() => {
+                        cs += 1;
+                        if (cs > 99) {
+                            s +=1;
+                            cs = 0;
+                        }
+                        seconds.innerHTML = s;
+                        if (cs < 10) {
+                            centiseconds.innerHTML = "0" + cs;
+                        } else {
+                            centiseconds.innerHTML = cs;
+                        }
+                    }, 10)
+                    startStop.style.backgroundColor = "#ff0000";
+                    startStop.style.color = "#fff";
+                    startStop.innerText = "Stop";
+                    message.innerHTML = "&nbsp;";
+                }
+            }
+
+            function resetTimer() {
+                clearInterval(timer);
+                timer = null;
+                s = 0;
+                cs = 0;
+                seconds.innerHTML = s;
+                centiseconds.innerHTML = cs;
+                startStop.style.backgroundColor = "#00ff00"
+                startStop.style.color = "#000";
+                startStop.innerText = "Start";
+                message.innerHTML = "&nbsp;";
+            }
+
+        </script>
+
+    </body>
+
+</html>
