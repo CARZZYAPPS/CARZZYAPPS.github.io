@@ -21,7 +21,7 @@ const btnJump = document.getElementById("btn-jump");
 
 // assets (royalty-free)
 const playerImg = new Image();
-playerImg.src = "https://opengameart.org/sites/default/files/herochar.png";
+playerImg.src = "Runner.png";
 
 const coinImg = new Image();
 coinImg.src = "https://raw.githubusercontent.com/kenneyNL/kenney_game_assets/master/2D%20Pixel%20Art/Coins/coin_gold.png";
