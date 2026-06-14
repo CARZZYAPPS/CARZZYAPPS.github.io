@@ -1,4 +1,4 @@
-let scores = []; // in-memory
+let scores = []; // in-memory; resets on redeploy
 
 export default function handler(req, res) {
   if (req.method === "POST") {
