@@ -266,7 +266,7 @@ function update() {
     }
   });
 
-  camera.x = player.x - canvas.width / 2;
+  camera.x = 0;
   if (camera.x < 0) camera.x = 0;
 
   score = Math.max(score, Math.floor(player.x / 5));
