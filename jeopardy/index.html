@@ -7,11 +7,11 @@
     #board { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; width: 90%; margin: auto; }
     .cell { background: #003f7f; padding: 20px; cursor: pointer; font-size: 22px; }
     .category { background: #005fbf; font-weight: bold; }
-    #popup, #adminPanel {
+    #popup, #editPopup {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center;
     }
-    #popupBox, #adminBox {
+    #popupBox, #editBox {
       background: white; color: black; padding: 20px; width: 450px; max-height: 90%; overflow-y: auto;
     }
     button { padding: 10px; margin: 5px; }
@@ -23,12 +23,9 @@
 <h1>Jeopardy</h1>
 <h2 id="score">Score: 0</h2>
 
-<!-- Hidden admin trigger -->
-<input id="adminTrigger" placeholder="Type here…" style="margin-bottom:10px;">
-
 <div id="board"></div>
 
-<!-- Question Popup -->
+<!-- Gameplay Popup -->
 <div id="popup">
   <div id="popupBox">
     <h2 id="questionText"></h2>
@@ -40,31 +37,29 @@
   </div>
 </div>
 
-<!-- Admin Panel -->
-<div id="adminPanel">
-  <div id="adminBox">
-    <h2>Edit Questions</h2>
+<!-- Edit Popup -->
+<div id="editPopup">
+  <div id="editBox">
+    <h2>Edit Question</h2>
 
     <label>Category</label>
-    <input id="catInput">
+    <input id="editCat">
 
     <label>Question</label>
-    <textarea id="qInput"></textarea>
+    <textarea id="editQ"></textarea>
 
     <label>Answer</label>
-    <textarea id="aInput"></textarea>
+    <textarea id="editA"></textarea>
 
     <label>Value</label>
-    <select id="vInput">
+    <select id="editV">
       <option>200</option><option>400</option><option>600</option>
       <option>800</option><option>1000</option>
     </select>
 
-    <button onclick="addQuestion()">Add / Update Question</button>
-    <button onclick="closeAdmin()">Close</button>
-
-    <h3>Existing Questions</h3>
-    <div id="questionList"></div>
+    <button onclick="saveEdit()">Save</button>
+    <button onclick="deleteQuestion()">Delete</button>
+    <button onclick="closeEdit()">Close</button>
   </div>
 </div>
 
@@ -72,10 +67,14 @@
 let data = JSON.parse(localStorage.getItem("jeopardyData") || "[]");
 let score = 0;
 let currentValue = 0;
+let adminMode = false;
+let editingIndex = null;
 
-// Obfuscated password ("asdk")
-const keyParts = ["a", "sd", "k"];
-const adminPassword = keyParts.join("");
+// Obfuscated password "asdk"
+const p1 = "a";
+const p2 = "sd";
+const p3 = "k";
+const adminPassword = p1 + p2 + p3;
 
 // Save to localStorage
 function saveData() {
@@ -109,7 +108,7 @@ function buildBoard() {
     categories.forEach(cat => {
       const q = data.find(x => x.category === cat && Number(x.value) === value);
       if (q) {
-        board.innerHTML += `<div class='cell' onclick='openQuestion(${JSON.stringify(q)})'>${value}</div>`;
+        board.innerHTML += `<div class='cell' onclick='cellClick(${data.indexOf(q)})'>${value}</div>`;
       } else {
         board.innerHTML += `<div class='cell'></div>`;
       }
@@ -117,7 +116,19 @@ function buildBoard() {
   }
 }
 
-// Open question popup
+// Handle clicking a question
+function cellClick(index) {
+  const q = data[index];
+  editingIndex = index;
+
+  if (adminMode) {
+    openEdit(q);
+  } else {
+    openQuestion(q);
+  }
+}
+
+// Gameplay popup
 function openQuestion(q) {
   currentValue = Number(q.value);
 
@@ -157,60 +168,57 @@ function closePopup() {
   document.getElementById("answerText").style.display = "none";
 }
 
-// Admin Mode
-function openAdmin() {
-  document.getElementById("adminPanel").style.display = "flex";
-  renderQuestionList();
+// Edit popup
+function openEdit(q) {
+  document.getElementById("editCat").value = q.category;
+  document.getElementById("editQ").value = q.question;
+  document.getElementById("editA").value = q.answer;
+  document.getElementById("editV").value = q.value;
+
+  document.getElementById("editPopup").style.display = "flex";
 }
 
-function closeAdmin() {
-  document.getElementById("adminPanel").style.display = "none";
-}
+function saveEdit() {
+  data[editingIndex] = {
+    category: document.getElementById("editCat").value,
+    question: document.getElementById("editQ").value,
+    answer: document.getElementById("editA").value,
+    value: document.getElementById("editV").value,
+    dailyDouble: "FALSE"
+  };
 
-function addQuestion() {
-  const cat = document.getElementById("catInput").value;
-  const q = document.getElementById("qInput").value;
-  const a = document.getElementById("aInput").value;
-  const v = document.getElementById("vInput").value;
-
-  data.push({ category: cat, question: q, answer: a, value: v, dailyDouble: "FALSE" });
   saveData();
   buildBoard();
-  renderQuestionList();
+  closeEdit();
 }
 
-function deleteQuestion(index) {
-  data.splice(index, 1);
+function deleteQuestion() {
+  data.splice(editingIndex, 1);
   saveData();
   buildBoard();
-  renderQuestionList();
+  closeEdit();
 }
 
-function renderQuestionList() {
-  const list = document.getElementById("questionList");
-  list.innerHTML = "";
-
-  data.forEach((q, i) => {
-    list.innerHTML += `
-      <div style="border:1px solid #ccc; padding:10px; margin:5px; background:white; color:black;">
-        <b>${q.category}</b> - $${q.value}<br>
-        ${q.question}<br>
-        <button onclick="deleteQuestion(${i})">Delete</button>
-      </div>
-    `;
-  });
+function closeEdit() {
+  document.getElementById("editPopup").style.display = "none";
 }
 
-// Admin unlock listener
-document.getElementById("adminTrigger").addEventListener("input", (e) => {
-  if (e.target.value.toLowerCase() === "admin") {
+// Keyboard listener for admin unlock
+let buffer = "";
+
+document.addEventListener("keydown", (e) => {
+  buffer += e.key.toLowerCase();
+  if (buffer.length > 10) buffer = buffer.slice(-10);
+
+  if (buffer.includes("admin")) {
     const attempt = prompt("Enter password:");
     if (attempt === adminPassword) {
-      openAdmin();
+      adminMode = true;
+      alert("Admin mode activated");
     } else {
       alert("Incorrect password");
     }
-    e.target.value = "";
+    buffer = "";
   }
 });
 
