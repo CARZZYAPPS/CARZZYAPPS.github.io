@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jeopardy Game</title>
+  <style>
+    body { font-family: Arial; background: #001f3f; color: white; text-align: center; }
+    #board { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; width: 90%; margin: auto; }
+    .cell { background: #003f7f; padding: 20px; cursor: pointer; font-size: 22px; }
+    .category { background: #005fbf; font-weight: bold; }
+    #popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+             background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; }
+    #popupBox { background: white; color: black; padding: 20px; width: 400px; }
+    button { padding: 10px; margin: 5px; }
+  </style>
+</head>
+<body>
+
+<h1>Jeopardy</h1>
+<h2 id="score">Score: 0</h2>
+<div id="board"></div>
+
+<div id="popup">
+  <div id="popupBox">
+    <h2 id="questionText"></h2>
+    <p id="answerText" style="display:none;"></p>
+    <button onclick="showAnswer()">Show Answer</button>
+    <button onclick="correct()">Correct</button>
+    <button onclick="wrong()">Wrong</button>
+    <button onclick="closePopup()">Close</button>
+  </div>
+</div>
+
+<script>
+const SHEET_URL = "YOUR_WEB_APP_URL_HERE"; // ← Replace this
+let data = [];
+let score = 0;
+let currentValue = 0;
+
+// Load data from Google Sheet
+async function loadData() {
+  const res = await fetch(SHEET_URL);
+  data = await res.json();
+
+  assignRandomDailyDoubles(); // ← Random Daily Doubles
+
+  buildBoard();
+}
+
+// Randomly assign Daily Doubles
+function assignRandomDailyDoubles() {
+  const count = 2; // Number of Daily Doubles
+  let pool = [...data];
+
+  for (let i = 0; i < count; i++) {
+    const index = Math.floor(Math.random() * pool.length);
+    const chosen = pool[index];
+    chosen.dailyDouble = "TRUE";
+    pool.splice(index, 1);
+  }
+}
+
+// Build the Jeopardy board
+function buildBoard() {
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+
+  const categories = [...new Set(data.map(q => q.category))];
+
+  categories.forEach(cat => {
+    board.innerHTML += `<div class='cell category'>${cat}</div>`;
+  });
+
+  for (let value of [200, 400, 600, 800, 1000]) {
+    categories.forEach(cat => {
+      const q = data.find(x => x.category === cat && Number(x.value) === value);
+      if (q) {
+        board.innerHTML += `<div class='cell' onclick='openQuestion(${JSON.stringify(q)})'>${value}</div>`;
+      } else {
+        board.innerHTML += `<div class='cell'></div>`;
+      }
+    });
+  }
+}
+
+// Open question popup
+function openQuestion(q) {
+  currentValue = Number(q.value);
+
+  if (q.dailyDouble === "TRUE") {
+    document.getElementById("questionText").innerText =
+      "🎉 DAILY DOUBLE! 🎉\n\n" + q.question;
+  } else {
+    document.getElementById("questionText").innerText = q.question;
+  }
+
+  document.getElementById("answerText").innerText = q.answer;
+  document.getElementById("popup").style.display = "flex";
+}
+
+// Show answer
+function showAnswer() {
+  document.getElementById("answerText").style.display = "block";
+}
+
+// Score updates
+function correct() {
+  score += currentValue;
+  updateScore();
+  closePopup();
+}
+
+function wrong() {
+  score -= currentValue;
+  updateScore();
+  closePopup();
+}
+
+function updateScore() {
+  document.getElementById("score").innerText = "Score: " + score;
+}
+
+// Close popup
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+  document.getElementById("answerText").style.display = "none";
+}
+
+loadData();
+</script>
+
+</body>
+</html>
