@@ -7,18 +7,28 @@
     #board { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; width: 90%; margin: auto; }
     .cell { background: #003f7f; padding: 20px; cursor: pointer; font-size: 22px; }
     .category { background: #005fbf; font-weight: bold; }
-    #popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-             background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; }
-    #popupBox { background: white; color: black; padding: 20px; width: 400px; }
+    #popup, #adminPanel {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center;
+    }
+    #popupBox, #adminBox {
+      background: white; color: black; padding: 20px; width: 450px; max-height: 90%; overflow-y: auto;
+    }
     button { padding: 10px; margin: 5px; }
+    input, select, textarea { width: 100%; margin: 5px 0; padding: 8px; }
   </style>
 </head>
 <body>
 
 <h1>Jeopardy</h1>
 <h2 id="score">Score: 0</h2>
+
+<!-- Hidden admin trigger -->
+<input id="adminTrigger" placeholder="Type here…" style="margin-bottom:10px;">
+
 <div id="board"></div>
 
+<!-- Question Popup -->
 <div id="popup">
   <div id="popupBox">
     <h2 id="questionText"></h2>
@@ -30,37 +40,62 @@
   </div>
 </div>
 
+<!-- Admin Panel -->
+<div id="adminPanel">
+  <div id="adminBox">
+    <h2>Edit Questions</h2>
+
+    <label>Category</label>
+    <input id="catInput">
+
+    <label>Question</label>
+    <textarea id="qInput"></textarea>
+
+    <label>Answer</label>
+    <textarea id="aInput"></textarea>
+
+    <label>Value</label>
+    <select id="vInput">
+      <option>200</option><option>400</option><option>600</option>
+      <option>800</option><option>1000</option>
+    </select>
+
+    <button onclick="addQuestion()">Add / Update Question</button>
+    <button onclick="closeAdmin()">Close</button>
+
+    <h3>Existing Questions</h3>
+    <div id="questionList"></div>
+  </div>
+</div>
+
 <script>
-const SHEET_URL = "YOUR_WEB_APP_URL_HERE"; // ← Replace this
-let data = [];
+let data = JSON.parse(localStorage.getItem("jeopardyData") || "[]");
 let score = 0;
 let currentValue = 0;
 
-// Load data from Google Sheet
-async function loadData() {
-  const res = await fetch(SHEET_URL);
-  data = await res.json();
+// Obfuscated password ("asdk")
+const keyParts = ["a", "sd", "k"];
+const adminPassword = keyParts.join("");
 
-  assignRandomDailyDoubles(); // ← Random Daily Doubles
-
-  buildBoard();
+// Save to localStorage
+function saveData() {
+  localStorage.setItem("jeopardyData", JSON.stringify(data));
 }
 
-// Randomly assign Daily Doubles
+// Random Daily Doubles
 function assignRandomDailyDoubles() {
-  const count = 2; // Number of Daily Doubles
+  data.forEach(q => q.dailyDouble = "FALSE");
   let pool = [...data];
-
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < 2; i++) {
     const index = Math.floor(Math.random() * pool.length);
-    const chosen = pool[index];
-    chosen.dailyDouble = "TRUE";
+    pool[index].dailyDouble = "TRUE";
     pool.splice(index, 1);
   }
 }
 
-// Build the Jeopardy board
+// Build board
 function buildBoard() {
+  assignRandomDailyDoubles();
   const board = document.getElementById("board");
   board.innerHTML = "";
 
@@ -97,12 +132,10 @@ function openQuestion(q) {
   document.getElementById("popup").style.display = "flex";
 }
 
-// Show answer
 function showAnswer() {
   document.getElementById("answerText").style.display = "block";
 }
 
-// Score updates
 function correct() {
   score += currentValue;
   updateScore();
@@ -119,13 +152,69 @@ function updateScore() {
   document.getElementById("score").innerText = "Score: " + score;
 }
 
-// Close popup
 function closePopup() {
   document.getElementById("popup").style.display = "none";
   document.getElementById("answerText").style.display = "none";
 }
 
-loadData();
+// Admin Mode
+function openAdmin() {
+  document.getElementById("adminPanel").style.display = "flex";
+  renderQuestionList();
+}
+
+function closeAdmin() {
+  document.getElementById("adminPanel").style.display = "none";
+}
+
+function addQuestion() {
+  const cat = document.getElementById("catInput").value;
+  const q = document.getElementById("qInput").value;
+  const a = document.getElementById("aInput").value;
+  const v = document.getElementById("vInput").value;
+
+  data.push({ category: cat, question: q, answer: a, value: v, dailyDouble: "FALSE" });
+  saveData();
+  buildBoard();
+  renderQuestionList();
+}
+
+function deleteQuestion(index) {
+  data.splice(index, 1);
+  saveData();
+  buildBoard();
+  renderQuestionList();
+}
+
+function renderQuestionList() {
+  const list = document.getElementById("questionList");
+  list.innerHTML = "";
+
+  data.forEach((q, i) => {
+    list.innerHTML += `
+      <div style="border:1px solid #ccc; padding:10px; margin:5px; background:white; color:black;">
+        <b>${q.category}</b> - $${q.value}<br>
+        ${q.question}<br>
+        <button onclick="deleteQuestion(${i})">Delete</button>
+      </div>
+    `;
+  });
+}
+
+// Admin unlock listener
+document.getElementById("adminTrigger").addEventListener("input", (e) => {
+  if (e.target.value.toLowerCase() === "admin") {
+    const attempt = prompt("Enter password:");
+    if (attempt === adminPassword) {
+      openAdmin();
+    } else {
+      alert("Incorrect password");
+    }
+    e.target.value = "";
+  }
+});
+
+buildBoard();
 </script>
 
 </body>
