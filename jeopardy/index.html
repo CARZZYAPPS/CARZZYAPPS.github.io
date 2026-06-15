@@ -28,7 +28,7 @@
       border-radius: 4px;
       cursor: pointer;
     }
-    .btn-admin {
+    .btn-editor {
       background: #ff851b;
       color: #000;
     }
@@ -42,6 +42,24 @@
     }
     .container {
       padding: 20px;
+    }
+    .scoreboard {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 20px;
+    }
+    .team {
+      background: #001530;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .team h2 {
+      margin: 0 0 10px 0;
+    }
+    .team button {
+      margin: 0 5px;
     }
     .board {
       display: grid;
@@ -103,13 +121,13 @@
       justify-content: flex-end;
       gap: 8px;
     }
-    .admin-panel {
+    .editor-panel {
       margin-bottom: 15px;
       background: #001530;
       padding: 10px;
       border-radius: 6px;
     }
-    .admin-panel input {
+    .editor-panel input {
       margin-right: 8px;
       padding: 4px 6px;
       border-radius: 4px;
@@ -120,53 +138,52 @@
 <body>
   <header>
     <h1 id="gameTitle">My Jeopardy Board</h1>
-    <div>
-      <button class="btn-admin" id="adminToggleBtn">Admin Mode</button>
-    </div>
+    <button class="btn-editor" id="editorToggleBtn">Editor Mode</button>
   </header>
 
   <div class="container">
-    <div id="adminPanel" class="admin-panel" style="display:none;">
-      <div>
-        <strong>Admin mode enabled</strong>
+
+    <!-- SCOREBOARD -->
+    <div class="scoreboard">
+      <div class="team">
+        <h2>Team A</h2>
+        <div id="scoreA">0</div>
+        <button onclick="changeScore('A', 100)">+100</button>
+        <button onclick="changeScore('A', -100)">-100</button>
       </div>
-      <div style="margin-top:8px;">
-        <label>
-          Title:
-          <input type="text" id="titleInput" />
-        </label>
-      </div>
-      <div style="margin-top:8px;">
-        <small>Click any clue to edit its text and value.</small>
-      </div>
-      <div style="margin-top:8px;">
-        <button class="btn-save" id="saveBoardBtn">Save Board</button>
+      <div class="team">
+        <h2>Team B</h2>
+        <div id="scoreB">0</div>
+        <button onclick="changeScore('B', 100)">+100</button>
+        <button onclick="changeScore('B', -100)">-100</button>
       </div>
     </div>
 
+    <!-- EDITOR PANEL -->
+    <div id="editorPanel" class="editor-panel" style="display:none;">
+      <strong>Editor mode enabled</strong>
+      <div style="margin-top:8px;">
+        Title:
+        <input type="text" id="titleInput" />
+      </div>
+      <div style="margin-top:8px;">
+        <small>Click any clue to edit it.</small>
+      </div>
+      <button class="btn-save" id="saveBoardBtn">Save Board</button>
+    </div>
+
+    <!-- GAME BOARD -->
     <div class="board" id="board"></div>
   </div>
 
-  <!-- Clue edit modal -->
+  <!-- EDIT MODAL -->
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal">
       <h2>Edit Clue</h2>
-      <label>
-        Category:
-        <input type="text" id="modalCategory" />
-      </label>
-      <label>
-        Value:
-        <input type="number" id="modalValue" />
-      </label>
-      <label>
-        Prompt (what you show on the board):
-        <textarea id="modalPrompt" rows="2"></textarea>
-      </label>
-      <label>
-        Answer (for host reference):
-        <textarea id="modalAnswer" rows="2"></textarea>
-      </label>
+      <label>Category:<input type="text" id="modalCategory" /></label>
+      <label>Value:<input type="number" id="modalValue" /></label>
+      <label>Prompt:<textarea id="modalPrompt" rows="2"></textarea></label>
+      <label>Answer:<textarea id="modalAnswer" rows="2"></textarea></label>
       <div class="modal-actions">
         <button class="btn-cancel" id="modalCancelBtn">Cancel</button>
         <button class="btn-save" id="modalSaveBtn">Save</button>
@@ -175,37 +192,52 @@
   </div>
 
   <script>
-    // --- Simple data model in JS + localStorage ---
+    const EDITOR_CODE = "asdk";
+
     const DEFAULT_BOARD = {
       title: "My Jeopardy Board",
-      categories: [
-        { name: "Category 1", clues: [100, 200, 300, 400, 500].map(v => ({
-          value: v, prompt: "Clue " + v, answer: "Answer " + v
-        })) },
-        { name: "Category 2", clues: [100, 200, 300, 400, 500].map(v => ({
-          value: v, prompt: "Clue " + v, answer: "Answer " + v
-        })) },
-        { name: "Category 3", clues: [100, 200, 300, 400, 500].map(v => ({
-          value: v, prompt: "Clue " + v, answer: "Answer " + v
-        })) },
-        { name: "Category 4", clues: [100, 200, 300, 400, 500].map(v => ({
-          value: v, prompt: "Clue " + v, answer: "Answer " + v
-        })) },
-        { name: "Category 5", clues: [100, 200, 300, 400, 500].map(v => ({
-          value: v, prompt: "Clue " + v, answer: "Answer " + v
-        })) },
-      ]
+      categories: Array(5).fill(0).map((_, i) => ({
+        name: "Category " + (i + 1),
+        clues: [100,200,300,400,500].map(v => ({
+          value: v,
+          prompt: "Clue " + v,
+          answer: "Answer " + v
+        }))
+      }))
     };
 
-    const STORAGE_KEY = "jeopardyBoardV1";
+    const STORAGE_KEY = "jeopardyBoardV2";
     let boardData = loadBoard();
-    let adminMode = false;
-    let editingCell = null; // {catIndex, clueIndex}
+    let editorMode = false;
+    let editingCell = null;
+
+    let scoreA = 0;
+    let scoreB = 0;
+
+    function changeScore(team, amount) {
+      if (team === "A") {
+        scoreA += amount;
+        document.getElementById("scoreA").textContent = scoreA;
+      } else {
+        scoreB += amount;
+        document.getElementById("scoreB").textContent = scoreB;
+      }
+    }
+
+    function loadBoard() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return JSON.parse(JSON.stringify(DEFAULT_BOARD));
+      return JSON.parse(raw);
+    }
+
+    function saveBoard() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(boardData));
+    }
 
     const gameTitleEl = document.getElementById("gameTitle");
     const boardEl = document.getElementById("board");
-    const adminPanelEl = document.getElementById("adminPanel");
-    const adminToggleBtn = document.getElementById("adminToggleBtn");
+    const editorPanelEl = document.getElementById("editorPanel");
+    const editorToggleBtn = document.getElementById("editorToggleBtn");
     const titleInput = document.getElementById("titleInput");
     const saveBoardBtn = document.getElementById("saveBoardBtn");
 
@@ -217,89 +249,62 @@
     const modalCancelBtn = document.getElementById("modalCancelBtn");
     const modalSaveBtn = document.getElementById("modalSaveBtn");
 
-    function loadBoard() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return JSON.parse(JSON.stringify(DEFAULT_BOARD));
-      try {
-        return JSON.parse(raw);
-      } catch {
-        return JSON.parse(JSON.stringify(DEFAULT_BOARD));
-      }
-    }
-
-    function saveBoard() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(boardData));
-    }
-
     function renderBoard() {
       gameTitleEl.textContent = boardData.title;
       titleInput.value = boardData.title;
 
       boardEl.innerHTML = "";
 
-      // Render categories header row
       boardData.categories.forEach((cat, catIndex) => {
         const catDiv = document.createElement("div");
         catDiv.className = "category";
         catDiv.textContent = cat.name;
-        catDiv.addEventListener("click", () => {
-          if (!adminMode) return;
-          const newName = prompt("Category name:", cat.name);
-          if (newName !== null && newName.trim() !== "") {
-            cat.name = newName.trim();
-            renderBoard();
-          }
-        });
+        if (editorMode) {
+          catDiv.onclick = () => {
+            const newName = prompt("Category name:", cat.name);
+            if (newName) {
+              cat.name = newName;
+              renderBoard();
+            }
+          };
+        }
         boardEl.appendChild(catDiv);
       });
 
-      // Render clues grid (5 rows)
-      const maxClues = Math.max(...boardData.categories.map(c => c.clues.length));
-      for (let row = 0; row < maxClues; row++) {
+      for (let row = 0; row < 5; row++) {
         boardData.categories.forEach((cat, catIndex) => {
           const clue = cat.clues[row];
           const clueDiv = document.createElement("div");
           clueDiv.className = "clue";
-          if (!clue) {
-            clueDiv.textContent = "";
-            boardEl.appendChild(clueDiv);
-            return;
-          }
-
           clueDiv.textContent = clue.value;
 
-          clueDiv.addEventListener("click", () => {
-            if (adminMode) {
+          clueDiv.onclick = () => {
+            if (editorMode) {
               openEditModal(catIndex, row);
             } else {
-              // play mode: reveal prompt
-              if (!clueDiv.classList.contains("revealed")) {
-                clueDiv.classList.add("revealed");
-                clueDiv.textContent = clue.prompt;
-              } else {
-                clueDiv.classList.remove("revealed");
-                clueDiv.textContent = clue.value;
-              }
+              clueDiv.classList.toggle("revealed");
+              clueDiv.textContent = clueDiv.classList.contains("revealed")
+                ? clue.prompt
+                : clue.value;
             }
-          });
+          };
 
           boardEl.appendChild(clueDiv);
         });
       }
     }
 
-    function toggleAdminMode() {
-      if (!adminMode) {
-        const pwd = prompt("Enter admin password (set anything you want):", "");
-        // Simple demo: any non-empty password enables admin
-        if (!pwd) return;
-        adminMode = true;
-        adminPanelEl.style.display = "block";
-        adminToggleBtn.textContent = "Exit Admin";
+    function toggleEditorMode() {
+      if (!editorMode) {
+        const code = prompt("Enter editor code:");
+        if (code !== EDITOR_CODE) return;
+        editorMode = true;
+        editorPanelEl.style.display = "block";
+        editorToggleBtn.textContent = "Exit Editor";
       } else {
-        adminMode = false;
-        adminPanelEl.style.display = "none";
-        adminToggleBtn.textContent = "Admin Mode";
+        editorMode = false;
+        editorPanelEl.style.display = "none";
+        editorToggleBtn.textContent = "Editor Mode";
       }
     }
 
@@ -327,29 +332,27 @@
       const cat = boardData.categories[catIndex];
       const clue = cat.clues[clueIndex];
 
-      cat.name = modalCategory.value || cat.name;
-      clue.value = Number(modalValue.value) || clue.value;
-      clue.prompt = modalPrompt.value || clue.prompt;
-      clue.answer = modalAnswer.value || clue.answer;
+      cat.name = modalCategory.value;
+      clue.value = Number(modalValue.value);
+      clue.prompt = modalPrompt.value;
+      clue.answer = modalAnswer.value;
 
       saveBoard();
       renderBoard();
       closeModal();
     }
 
-    // Event wiring
-    adminToggleBtn.addEventListener("click", toggleAdminMode);
-    saveBoardBtn.addEventListener("click", () => {
-      boardData.title = titleInput.value || boardData.title;
+    editorToggleBtn.onclick = toggleEditorMode;
+    saveBoardBtn.onclick = () => {
+      boardData.title = titleInput.value;
       saveBoard();
       renderBoard();
-      alert("Board saved locally.");
-    });
+      alert("Board saved.");
+    };
 
-    modalCancelBtn.addEventListener("click", closeModal);
-    modalSaveBtn.addEventListener("click", saveModalChanges);
+    modalCancelBtn.onclick = closeModal;
+    modalSaveBtn.onclick = saveModalChanges;
 
-    // Initial render
     renderBoard();
   </script>
 </body>
