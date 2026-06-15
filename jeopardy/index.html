@@ -1,229 +1,356 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Jeopardy Game</title>
+  <meta charset="UTF-8" />
+  <title>Jeopardy Board</title>
   <style>
-    body { font-family: Arial; background: #001f3f; color: white; text-align: center; }
-    #board { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; width: 90%; margin: auto; }
-    .cell { background: #003f7f; padding: 20px; cursor: pointer; font-size: 22px; }
-    .category { background: #005fbf; font-weight: bold; }
-    #popup, #editPopup {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center;
+    body {
+      font-family: Arial, sans-serif;
+      background: #001f3f;
+      color: #fff;
+      margin: 0;
+      padding: 0;
     }
-    #popupBox, #editBox {
-      background: white; color: black; padding: 20px; width: 450px; max-height: 90%; overflow-y: auto;
+    header {
+      padding: 10px 20px;
+      background: #001530;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    button { padding: 10px; margin: 5px; }
-    input, select, textarea { width: 100%; margin: 5px 0; padding: 8px; }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-admin {
+      background: #ff851b;
+      color: #000;
+    }
+    .btn-save {
+      background: #2ecc40;
+      color: #000;
+    }
+    .btn-cancel {
+      background: #ff4136;
+      color: #000;
+    }
+    .container {
+      padding: 20px;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+    }
+    .category {
+      background: #0074d9;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+    }
+    .clue {
+      background: #001530;
+      text-align: center;
+      padding: 20px 5px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+    .clue.revealed {
+      background: #111;
+      color: #ffdc00;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    .modal {
+      background: #001530;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+    }
+    .modal h2 {
+      margin-top: 0;
+    }
+    .modal label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .modal input, .modal textarea {
+      width: 100%;
+      margin-top: 4px;
+      padding: 6px;
+      border-radius: 4px;
+      border: none;
+      font-size: 14px;
+    }
+    .modal-actions {
+      margin-top: 15px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .admin-panel {
+      margin-bottom: 15px;
+      background: #001530;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .admin-panel input {
+      margin-right: 8px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      border: none;
+    }
   </style>
 </head>
 <body>
+  <header>
+    <h1 id="gameTitle">My Jeopardy Board</h1>
+    <div>
+      <button class="btn-admin" id="adminToggleBtn">Admin Mode</button>
+    </div>
+  </header>
 
-<h1>Jeopardy</h1>
-<h2 id="score">Score: 0</h2>
+  <div class="container">
+    <div id="adminPanel" class="admin-panel" style="display:none;">
+      <div>
+        <strong>Admin mode enabled</strong>
+      </div>
+      <div style="margin-top:8px;">
+        <label>
+          Title:
+          <input type="text" id="titleInput" />
+        </label>
+      </div>
+      <div style="margin-top:8px;">
+        <small>Click any clue to edit its text and value.</small>
+      </div>
+      <div style="margin-top:8px;">
+        <button class="btn-save" id="saveBoardBtn">Save Board</button>
+      </div>
+    </div>
 
-<div id="board"></div>
-
-<!-- Gameplay Popup -->
-<div id="popup">
-  <div id="popupBox">
-    <h2 id="questionText"></h2>
-    <p id="answerText" style="display:none;"></p>
-    <button onclick="showAnswer()">Show Answer</button>
-    <button onclick="correct()">Correct</button>
-    <button onclick="wrong()">Wrong</button>
-    <button onclick="closePopup()">Close</button>
+    <div class="board" id="board"></div>
   </div>
-</div>
 
-<!-- Edit Popup -->
-<div id="editPopup">
-  <div id="editBox">
-    <h2>Edit Question</h2>
-
-    <label>Category</label>
-    <input id="editCat">
-
-    <label>Question</label>
-    <textarea id="editQ"></textarea>
-
-    <label>Answer</label>
-    <textarea id="editA"></textarea>
-
-    <label>Value</label>
-    <select id="editV">
-      <option>200</option><option>400</option><option>600</option>
-      <option>800</option><option>1000</option>
-    </select>
-
-    <button onclick="saveEdit()">Save</button>
-    <button onclick="deleteQuestion()">Delete</button>
-    <button onclick="closeEdit()">Close</button>
+  <!-- Clue edit modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <h2>Edit Clue</h2>
+      <label>
+        Category:
+        <input type="text" id="modalCategory" />
+      </label>
+      <label>
+        Value:
+        <input type="number" id="modalValue" />
+      </label>
+      <label>
+        Prompt (what you show on the board):
+        <textarea id="modalPrompt" rows="2"></textarea>
+      </label>
+      <label>
+        Answer (for host reference):
+        <textarea id="modalAnswer" rows="2"></textarea>
+      </label>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="modalCancelBtn">Cancel</button>
+        <button class="btn-save" id="modalSaveBtn">Save</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<script>
-let data = JSON.parse(localStorage.getItem("jeopardyData") || "[]");
-let score = 0;
-let currentValue = 0;
-let adminMode = false;
-let editingIndex = null;
+  <script>
+    // --- Simple data model in JS + localStorage ---
+    const DEFAULT_BOARD = {
+      title: "My Jeopardy Board",
+      categories: [
+        { name: "Category 1", clues: [100, 200, 300, 400, 500].map(v => ({
+          value: v, prompt: "Clue " + v, answer: "Answer " + v
+        })) },
+        { name: "Category 2", clues: [100, 200, 300, 400, 500].map(v => ({
+          value: v, prompt: "Clue " + v, answer: "Answer " + v
+        })) },
+        { name: "Category 3", clues: [100, 200, 300, 400, 500].map(v => ({
+          value: v, prompt: "Clue " + v, answer: "Answer " + v
+        })) },
+        { name: "Category 4", clues: [100, 200, 300, 400, 500].map(v => ({
+          value: v, prompt: "Clue " + v, answer: "Answer " + v
+        })) },
+        { name: "Category 5", clues: [100, 200, 300, 400, 500].map(v => ({
+          value: v, prompt: "Clue " + v, answer: "Answer " + v
+        })) },
+      ]
+    };
 
-// Obfuscated password "asdk"
-const p1 = "a";
-const p2 = "sd";
-const p3 = "k";
-const adminPassword = p1 + p2 + p3;
+    const STORAGE_KEY = "jeopardyBoardV1";
+    let boardData = loadBoard();
+    let adminMode = false;
+    let editingCell = null; // {catIndex, clueIndex}
 
-// Save to localStorage
-function saveData() {
-  localStorage.setItem("jeopardyData", JSON.stringify(data));
-}
+    const gameTitleEl = document.getElementById("gameTitle");
+    const boardEl = document.getElementById("board");
+    const adminPanelEl = document.getElementById("adminPanel");
+    const adminToggleBtn = document.getElementById("adminToggleBtn");
+    const titleInput = document.getElementById("titleInput");
+    const saveBoardBtn = document.getElementById("saveBoardBtn");
 
-// Random Daily Doubles
-function assignRandomDailyDoubles() {
-  data.forEach(q => q.dailyDouble = "FALSE");
-  let pool = [...data];
-  for (let i = 0; i < 2; i++) {
-    const index = Math.floor(Math.random() * pool.length);
-    pool[index].dailyDouble = "TRUE";
-    pool.splice(index, 1);
-  }
-}
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalCategory = document.getElementById("modalCategory");
+    const modalValue = document.getElementById("modalValue");
+    const modalPrompt = document.getElementById("modalPrompt");
+    const modalAnswer = document.getElementById("modalAnswer");
+    const modalCancelBtn = document.getElementById("modalCancelBtn");
+    const modalSaveBtn = document.getElementById("modalSaveBtn");
 
-// Build board
-function buildBoard() {
-  assignRandomDailyDoubles();
-  const board = document.getElementById("board");
-  board.innerHTML = "";
-
-  const categories = [...new Set(data.map(q => q.category))];
-
-  categories.forEach(cat => {
-    board.innerHTML += `<div class='cell category'>${cat}</div>`;
-  });
-
-  for (let value of [200, 400, 600, 800, 1000]) {
-    categories.forEach(cat => {
-      const q = data.find(x => x.category === cat && Number(x.value) === value);
-      if (q) {
-        board.innerHTML += `<div class='cell' onclick='cellClick(${data.indexOf(q)})'>${value}</div>`;
-      } else {
-        board.innerHTML += `<div class='cell'></div>`;
+    function loadBoard() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return JSON.parse(JSON.stringify(DEFAULT_BOARD));
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return JSON.parse(JSON.stringify(DEFAULT_BOARD));
       }
-    });
-  }
-}
-
-// Handle clicking a question
-function cellClick(index) {
-  const q = data[index];
-  editingIndex = index;
-
-  if (adminMode) {
-    openEdit(q);
-  } else {
-    openQuestion(q);
-  }
-}
-
-// Gameplay popup
-function openQuestion(q) {
-  currentValue = Number(q.value);
-
-  if (q.dailyDouble === "TRUE") {
-    document.getElementById("questionText").innerText =
-      "🎉 DAILY DOUBLE! 🎉\n\n" + q.question;
-  } else {
-    document.getElementById("questionText").innerText = q.question;
-  }
-
-  document.getElementById("answerText").innerText = q.answer;
-  document.getElementById("popup").style.display = "flex";
-}
-
-function showAnswer() {
-  document.getElementById("answerText").style.display = "block";
-}
-
-function correct() {
-  score += currentValue;
-  updateScore();
-  closePopup();
-}
-
-function wrong() {
-  score -= currentValue;
-  updateScore();
-  closePopup();
-}
-
-function updateScore() {
-  document.getElementById("score").innerText = "Score: " + score;
-}
-
-function closePopup() {
-  document.getElementById("popup").style.display = "none";
-  document.getElementById("answerText").style.display = "none";
-}
-
-// Edit popup
-function openEdit(q) {
-  document.getElementById("editCat").value = q.category;
-  document.getElementById("editQ").value = q.question;
-  document.getElementById("editA").value = q.answer;
-  document.getElementById("editV").value = q.value;
-
-  document.getElementById("editPopup").style.display = "flex";
-}
-
-function saveEdit() {
-  data[editingIndex] = {
-    category: document.getElementById("editCat").value,
-    question: document.getElementById("editQ").value,
-    answer: document.getElementById("editA").value,
-    value: document.getElementById("editV").value,
-    dailyDouble: "FALSE"
-  };
-
-  saveData();
-  buildBoard();
-  closeEdit();
-}
-
-function deleteQuestion() {
-  data.splice(editingIndex, 1);
-  saveData();
-  buildBoard();
-  closeEdit();
-}
-
-function closeEdit() {
-  document.getElementById("editPopup").style.display = "none";
-}
-
-// Keyboard listener for admin unlock
-let buffer = "";
-
-document.addEventListener("keydown", (e) => {
-  buffer += e.key.toLowerCase();
-  if (buffer.length > 10) buffer = buffer.slice(-10);
-
-  if (buffer.includes("admin")) {
-    const attempt = prompt("Enter password:");
-    if (attempt === adminPassword) {
-      adminMode = true;
-      alert("Admin mode activated");
-    } else {
-      alert("Incorrect password");
     }
-    buffer = "";
-  }
-});
 
-buildBoard();
-</script>
+    function saveBoard() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(boardData));
+    }
 
+    function renderBoard() {
+      gameTitleEl.textContent = boardData.title;
+      titleInput.value = boardData.title;
+
+      boardEl.innerHTML = "";
+
+      // Render categories header row
+      boardData.categories.forEach((cat, catIndex) => {
+        const catDiv = document.createElement("div");
+        catDiv.className = "category";
+        catDiv.textContent = cat.name;
+        catDiv.addEventListener("click", () => {
+          if (!adminMode) return;
+          const newName = prompt("Category name:", cat.name);
+          if (newName !== null && newName.trim() !== "") {
+            cat.name = newName.trim();
+            renderBoard();
+          }
+        });
+        boardEl.appendChild(catDiv);
+      });
+
+      // Render clues grid (5 rows)
+      const maxClues = Math.max(...boardData.categories.map(c => c.clues.length));
+      for (let row = 0; row < maxClues; row++) {
+        boardData.categories.forEach((cat, catIndex) => {
+          const clue = cat.clues[row];
+          const clueDiv = document.createElement("div");
+          clueDiv.className = "clue";
+          if (!clue) {
+            clueDiv.textContent = "";
+            boardEl.appendChild(clueDiv);
+            return;
+          }
+
+          clueDiv.textContent = clue.value;
+
+          clueDiv.addEventListener("click", () => {
+            if (adminMode) {
+              openEditModal(catIndex, row);
+            } else {
+              // play mode: reveal prompt
+              if (!clueDiv.classList.contains("revealed")) {
+                clueDiv.classList.add("revealed");
+                clueDiv.textContent = clue.prompt;
+              } else {
+                clueDiv.classList.remove("revealed");
+                clueDiv.textContent = clue.value;
+              }
+            }
+          });
+
+          boardEl.appendChild(clueDiv);
+        });
+      }
+    }
+
+    function toggleAdminMode() {
+      if (!adminMode) {
+        const pwd = prompt("Enter admin password (set anything you want):", "");
+        // Simple demo: any non-empty password enables admin
+        if (!pwd) return;
+        adminMode = true;
+        adminPanelEl.style.display = "block";
+        adminToggleBtn.textContent = "Exit Admin";
+      } else {
+        adminMode = false;
+        adminPanelEl.style.display = "none";
+        adminToggleBtn.textContent = "Admin Mode";
+      }
+    }
+
+    function openEditModal(catIndex, clueIndex) {
+      editingCell = { catIndex, clueIndex };
+      const cat = boardData.categories[catIndex];
+      const clue = cat.clues[clueIndex];
+
+      modalCategory.value = cat.name;
+      modalValue.value = clue.value;
+      modalPrompt.value = clue.prompt;
+      modalAnswer.value = clue.answer;
+
+      modalBackdrop.style.display = "flex";
+    }
+
+    function closeModal() {
+      modalBackdrop.style.display = "none";
+      editingCell = null;
+    }
+
+    function saveModalChanges() {
+      if (!editingCell) return;
+      const { catIndex, clueIndex } = editingCell;
+      const cat = boardData.categories[catIndex];
+      const clue = cat.clues[clueIndex];
+
+      cat.name = modalCategory.value || cat.name;
+      clue.value = Number(modalValue.value) || clue.value;
+      clue.prompt = modalPrompt.value || clue.prompt;
+      clue.answer = modalAnswer.value || clue.answer;
+
+      saveBoard();
+      renderBoard();
+      closeModal();
+    }
+
+    // Event wiring
+    adminToggleBtn.addEventListener("click", toggleAdminMode);
+    saveBoardBtn.addEventListener("click", () => {
+      boardData.title = titleInput.value || boardData.title;
+      saveBoard();
+      renderBoard();
+      alert("Board saved locally.");
+    });
+
+    modalCancelBtn.addEventListener("click", closeModal);
+    modalSaveBtn.addEventListener("click", saveModalChanges);
+
+    // Initial render
+    renderBoard();
+  </script>
 </body>
 </html>
