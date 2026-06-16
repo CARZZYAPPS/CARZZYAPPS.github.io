@@ -7,7 +7,7 @@ const DEFAULT_BOARD = {
   title: "My Jeopardy Board",
   categories: Array(5).fill(0).map((_, i) => ({
     name: "Category " + (i + 1),
-    clues: [100, 200, 300, 400, 500].map(v => ({
+    clues: [200, 400, 600, 800, 1000 ].map(v => ({
       value: v,
       prompt: "Clue " + v,
       answer: "Answer " + v,
