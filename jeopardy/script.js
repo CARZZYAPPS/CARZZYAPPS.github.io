@@ -66,6 +66,8 @@ const blackoutOverlay = document.getElementById("blackoutOverlay");
 
 // LOAD/SAVE
 
+
+
 function loadBoard() {
   const raw = localStorage.getItem(STORAGE_KEY_BOARD);
   if (!raw) return JSON.parse(JSON.stringify(DEFAULT_BOARD));
@@ -122,6 +124,9 @@ function renderBoard() {
     header.textContent = cat.name;
     boardEl.appendChild(header);
   });
+
+  
+
 
   const maxClues = Math.max(...boardData.categories.map(c => c.clues.length));
 
@@ -293,6 +298,9 @@ modalCorrectBtn.addEventListener("click", () => {
 
   renderScoreboard();
   renderBoard();
+
+  advanceToNextTeam(); // <-- NEW LINE
+
   closeClueModal();
 });
 
@@ -309,6 +317,9 @@ modalWrongBtn.addEventListener("click", () => {
 
   renderScoreboard();
   renderBoard();
+
+  advanceToNextTeam(); // <-- NEW LINE
+
   closeClueModal();
 });
 
@@ -463,20 +474,21 @@ startGameBtn.addEventListener("click", () => {
     cycles++;
 
     if (cycles >= maxCycles) {
-      clearInterval(interval);
+  clearInterval(interval);
 
-      // Pick random team different from previous if possible
-      let newIndex = Math.floor(Math.random() * teams.length);
-      if (teams.length > 1 && newIndex === activeTeamIndex) {
-        newIndex = (newIndex + 1) % teams.length;
-      }
-      activeTeamIndex = newIndex;
+  let newIndex = Math.floor(Math.random() * teams.length);
+  if (teams.length > 1 && newIndex === activeTeamIndex) {
+    newIndex = (newIndex + 1) % teams.length;
+  }
+  activeTeamIndex = newIndex;
 
-      teamEls.forEach(el => el.classList.remove("flash", "active"));
-      teamEls[activeTeamIndex].classList.add("active");
+  renderScoreboard(); // <-- THIS FIXES IT
 
-      saveGameState();
-    }
+  teamEls.forEach(el => el.classList.remove("flash", "active"));
+  teamEls[activeTeamIndex].classList.add("active");
+
+  saveGameState();
+}
   }, 100);
 });
 
@@ -531,3 +543,11 @@ function init() {
 }
 
 init();
+
+
+function advanceToNextTeam() {
+  activeTeamIndex = (activeTeamIndex + 1) % teams.length;
+  saveGameState();
+  renderScoreboard();
+}
+
