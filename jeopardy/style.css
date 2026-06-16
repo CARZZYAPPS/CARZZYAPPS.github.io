@@ -1,0 +1,262 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #0b1a3b;
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+#gameTitle {
+  margin: 0;
+  font-size: 28px;
+}
+
+.top-buttons button {
+  margin-left: 8px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.scoreboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.scoreboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.team {
+  background: #123c7a;
+  padding: 8px 12px;
+  border-radius: 6px;
+  min-width: 120px;
+  text-align: center;
+  position: relative;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+
+.team-name {
+  font-weight: bold;
+}
+
+.team-score {
+  margin-top: 4px;
+}
+
+.team.active {
+  border: 2px solid #ffdc00;
+  box-shadow: 0 0 12px #ffdc00;
+}
+
+.scoreboard-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+#howToPlayBtn {
+  background: #1e90ff;
+  color: #fff;
+}
+
+#editorToggleBtn {
+  background: #ffa500;
+  color: #000;
+}
+
+#manageTeamsBtn {
+  background: #1e90ff;
+  color: #fff;
+}
+
+#startGameBtn {
+  background: #32cd32;
+  color: #000;
+}
+
+.btn-save {
+  background: #32cd32;
+  color: #000;
+}
+
+.btn-cancel {
+  background: #ff4c4c;
+  color: #fff;
+}
+
+.btn-reset {
+  background: #ff4c4c;
+  color: #fff;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.category-header {
+  background: #003399;
+  text-align: center;
+  padding: 8px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.clue-cell {
+  background: #0047ab;
+  text-align: center;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.clue-cell:hover {
+  background: #005fd1;
+  transform: translateY(-1px);
+}
+
+.clue-cell.used {
+  background: #001a33;
+  color: #777;
+  cursor: pointer;
+}
+
+.editor-panel {
+  background: #111c3f;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+.editor-row {
+  margin-bottom: 8px;
+}
+
+.editor-row label {
+  margin-right: 6px;
+}
+
+#titleInput {
+  width: 60%;
+  padding: 4px;
+}
+
+/* MODALS */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #ffffff;
+  color: #000;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal-text {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.modal-actions {
+  margin-top: 12px;
+  text-align: right;
+}
+
+.modal-actions button {
+  margin-left: 6px;
+}
+
+.modal-timer {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+/* END GAME RESET */
+
+#endGameResetContainer {
+  margin-top: 10px;
+  text-align: center;
+  display: none;
+}
+
+#endGameResetBtn {
+  background: #ff4c4c;
+  color: #fff;
+}
+
+/* BLACKOUT OVERLAY */
+
+#blackoutOverlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #fff;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+#blackoutMessage {
+  font-size: 24px;
+  text-align: center;
+}
+
+/* TEAM FLASH ANIMATION */
+
+@keyframes teamFlash {
+  0% { box-shadow: 0 0 0px #ffdc00; }
+  50% { box-shadow: 0 0 15px #ffdc00; }
+  100% { box-shadow: 0 0 0px #ffdc00; }
+}
+
+.team.flash {
+  animation: teamFlash 0.3s linear;
+}
