@@ -1,360 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Jeopardy Board</title>
-  <link rel="icon" href="/favicon.png">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #001f3f;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      padding: 10px 20px;
-      background: #001530;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-    button {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .btn-editor {
-      background: #ff851b;
-      color: #000;
-    }
-    .btn-save {
-      background: #2ecc40;
-      color: #000;
-    }
-    .btn-cancel {
-      background: #ff4136;
-      color: #000;
-    }
-    .container {
-      padding: 20px;
-    }
-    .scoreboard {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-bottom: 20px;
-    }
-    .team {
-      background: #001530;
-      padding: 10px 20px;
-      border-radius: 6px;
-      text-align: center;
-    }
-    .team h2 {
-      margin: 0 0 10px 0;
-    }
-    .team button {
-      margin: 0 5px;
-    }
-    .board {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 4px;
-    }
-    .category {
-      background: #0074d9;
-      text-align: center;
-      padding: 10px;
-      font-weight: bold;
-    }
-    .clue {
-      background: #001530;
-      text-align: center;
-      padding: 20px 5px;
-      cursor: pointer;
-      font-size: 20px;
-    }
-    .clue.revealed {
-      background: #111;
-      color: #ffdc00;
-    }
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-    .modal {
-      background: #001530;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 500px;
-      width: 90%;
-    }
-    .modal h2 {
-      margin-top: 0;
-    }
-    .modal label {
-      display: block;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    .modal input, .modal textarea {
-      width: 100%;
-      margin-top: 4px;
-      padding: 6px;
-      border-radius: 4px;
-      border: none;
-      font-size: 14px;
-    }
-    .modal-actions {
-      margin-top: 15px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-    .editor-panel {
-      margin-bottom: 15px;
-      background: #001530;
-      padding: 10px;
-      border-radius: 6px;
-    }
-    .editor-panel input {
-      margin-right: 8px;
-      padding: 4px 6px;
-      border-radius: 4px;
-      border: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="blackoutOverlay">
+    <div id="blackoutMessage">Please respect our privacy.</div>
+  </div>
+
   <header>
     <h1 id="gameTitle">My Jeopardy Board</h1>
-    <button class="btn-editor" id="editorToggleBtn">Editor Mode</button>
+    <div class="top-buttons">
+      <button id="howToPlayBtn">How to Play</button>
+      <button id="editorToggleBtn">Editor Mode</button>
+    </div>
   </header>
 
-  <div class="container">
-
-    <!-- SCOREBOARD -->
-    <div class="scoreboard">
-      <div class="team">
-        <h2>Team A</h2>
-        <div id="scoreA">0</div>
-        <button onclick="changeScore('A', 100)">+100</button>
-        <button onclick="changeScore('A', -100)">-100</button>
+  <!-- HOW TO PLAY MODAL -->
+  <div class="modal-backdrop" id="howToPlayBackdrop">
+    <div class="modal">
+      <h2>How to Play</h2>
+      <div class="modal-text">
+        <p><strong>Setup:</strong></p>
+        <ul>
+          <li>Create teams using the Add/Edit Teams button.</li>
+          <li(Optional) Use Editor Mode (code: <strong>asdk</strong>) to customize categories and clues.</li>
+        </ul>
+        <p><strong>Gameplay:</strong></p>
+        <ul>
+          <li>Click <strong>Start Game</strong> to randomly select a starting team.</li>
+          <li>Teams take turns choosing a clue from the board.</li>
+          <li>When a clue is opened, Jeopardy music plays for 32 seconds.</li>
+          <li>Click <strong>Show Answer</strong> to reveal the answer and then mark Correct or Wrong.</li>
+          <li>If the timer ends before Show Answer is clicked, the answer auto-reveals and is auto-marked Wrong.</li>
+          <li>Clues can be reopened later, but they cannot be scored again.</li>
+        </ul>
+        <p><strong>Resetting:</strong></p>
+        <ul>
+          <li>Use <strong>Reset Board</strong> in Editor Mode to clear used clues and scores mid-game.</li>
+          <li>When all clues are used, a Reset Board button appears outside Editor Mode.</li>
+          <li>Reloading the page does <strong>not</strong> reset the board; state is saved.</li>
+        </ul>
       </div>
-      <div class="team">
-        <h2>Team B</h2>
-        <div id="scoreB">0</div>
-        <button onclick="changeScore('B', 100)">+100</button>
-        <button onclick="changeScore('B', -100)">-100</button>
+      <div class="modal-actions">
+        <button id="howToPlayCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- SCOREBOARD + CONTROL BUTTONS -->
+    <div class="scoreboard-header">
+      <div class="scoreboard" id="scoreboard"></div>
+      <div class="scoreboard-controls">
+        <button id="manageTeamsBtn">Add/Edit Teams</button>
+        <button id="startGameBtn">Start Game</button>
       </div>
     </div>
 
     <!-- EDITOR PANEL -->
-    <div id="editorPanel" class="editor-panel" style="display:none;">
-      <strong>Editor mode enabled</strong>
-      <div style="margin-top:8px;">
-        Title:
-        <input type="text" id="titleInput" />
+    <div id="editorPanel" class="editor-panel">
+      <div class="editor-row">
+        <label>Title:</label>
+        <input type="text" id="titleInput">
       </div>
-      <div style="margin-top:8px;">
-        <small>Click any clue to edit it.</small>
+      <div class="editor-row">
+        <small>Click any clue to edit it while in Editor Mode.</small>
       </div>
-      <button class="btn-save" id="saveBoardBtn">Save Board</button>
+      <div class="editor-row">
+        <button class="btn-save" id="saveBoardBtn">Save Board</button>
+        <button class="btn-reset" id="resetBoardBtn">Reset Board</button>
+      </div>
     </div>
 
     <!-- GAME BOARD -->
     <div class="board" id="board"></div>
+
+    <!-- END-OF-GAME RESET BUTTON (OUTSIDE EDITOR) -->
+    <div id="endGameResetContainer">
+      <button id="endGameResetBtn">Reset Board</button>
+    </div>
   </div>
 
-  <!-- EDIT MODAL -->
+  <!-- CLUE MODAL -->
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal">
-      <h2>Edit Clue</h2>
-      <label>Category:<input type="text" id="modalCategory" /></label>
-      <label>Value:<input type="number" id="modalValue" /></label>
-      <label>Prompt:<textarea id="modalPrompt" rows="2"></textarea></label>
-      <label>Answer:<textarea id="modalAnswer" rows="2"></textarea></label>
+      <h2 id="modalClueTitle">Clue</h2>
+      <div id="modalContent"></div>
+      <div class="modal-timer" id="modalTimer"></div>
       <div class="modal-actions">
-        <button class="btn-cancel" id="modalCancelBtn">Cancel</button>
-        <button class="btn-save" id="modalSaveBtn">Save</button>
+        <button id="modalShowAnswerBtn">Show Answer</button>
+        <button class="btn-save" id="modalCorrectBtn">Correct</button>
+        <button class="btn-cancel" id="modalWrongBtn">Wrong</button>
+        <button class="btn-cancel" id="modalCloseBtn">Close</button>
       </div>
     </div>
   </div>
 
-  <script>
-    const EDITOR_CODE = "asdk";
+  <!-- AUDIO -->
+  <audio id="jeopardyMusic" src="jeopardy_music.mp3" preload="auto"></audio>
 
-    const DEFAULT_BOARD = {
-      title: "My Jeopardy Board",
-      categories: Array(5).fill(0).map((_, i) => ({
-        name: "Category " + (i + 1),
-        clues: [100,200,300,400,500].map(v => ({
-          value: v,
-          prompt: "Clue " + v,
-          answer: "Answer " + v
-        }))
-      }))
-    };
-
-    const STORAGE_KEY = "jeopardyBoardV2";
-    let boardData = loadBoard();
-    let editorMode = false;
-    let editingCell = null;
-
-    let scoreA = 0;
-    let scoreB = 0;
-
-    function changeScore(team, amount) {
-      if (team === "A") {
-        scoreA += amount;
-        document.getElementById("scoreA").textContent = scoreA;
-      } else {
-        scoreB += amount;
-        document.getElementById("scoreB").textContent = scoreB;
-      }
-    }
-
-    function loadBoard() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return JSON.parse(JSON.stringify(DEFAULT_BOARD));
-      return JSON.parse(raw);
-    }
-
-    function saveBoard() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(boardData));
-    }
-
-    const gameTitleEl = document.getElementById("gameTitle");
-    const boardEl = document.getElementById("board");
-    const editorPanelEl = document.getElementById("editorPanel");
-    const editorToggleBtn = document.getElementById("editorToggleBtn");
-    const titleInput = document.getElementById("titleInput");
-    const saveBoardBtn = document.getElementById("saveBoardBtn");
-
-    const modalBackdrop = document.getElementById("modalBackdrop");
-    const modalCategory = document.getElementById("modalCategory");
-    const modalValue = document.getElementById("modalValue");
-    const modalPrompt = document.getElementById("modalPrompt");
-    const modalAnswer = document.getElementById("modalAnswer");
-    const modalCancelBtn = document.getElementById("modalCancelBtn");
-    const modalSaveBtn = document.getElementById("modalSaveBtn");
-
-    function renderBoard() {
-      gameTitleEl.textContent = boardData.title;
-      titleInput.value = boardData.title;
-
-      boardEl.innerHTML = "";
-
-      boardData.categories.forEach((cat, catIndex) => {
-        const catDiv = document.createElement("div");
-        catDiv.className = "category";
-        catDiv.textContent = cat.name;
-        if (editorMode) {
-          catDiv.onclick = () => {
-            const newName = prompt("Category name:", cat.name);
-            if (newName) {
-              cat.name = newName;
-              renderBoard();
-            }
-          };
-        }
-        boardEl.appendChild(catDiv);
-      });
-
-      for (let row = 0; row < 5; row++) {
-        boardData.categories.forEach((cat, catIndex) => {
-          const clue = cat.clues[row];
-          const clueDiv = document.createElement("div");
-          clueDiv.className = "clue";
-          clueDiv.textContent = clue.value;
-
-          clueDiv.onclick = () => {
-            if (editorMode) {
-              openEditModal(catIndex, row);
-            } else {
-              clueDiv.classList.toggle("revealed");
-              clueDiv.textContent = clueDiv.classList.contains("revealed")
-                ? clue.prompt
-                : clue.value;
-            }
-          };
-
-          boardEl.appendChild(clueDiv);
-        });
-      }
-    }
-
-    function toggleEditorMode() {
-      if (!editorMode) {
-        const code = prompt("Enter editor code:");
-        if (code !== EDITOR_CODE) return;
-        editorMode = true;
-        editorPanelEl.style.display = "block";
-        editorToggleBtn.textContent = "Exit Editor";
-      } else {
-        editorMode = false;
-        editorPanelEl.style.display = "none";
-        editorToggleBtn.textContent = "Editor Mode";
-      }
-    }
-
-    function openEditModal(catIndex, clueIndex) {
-      editingCell = { catIndex, clueIndex };
-      const cat = boardData.categories[catIndex];
-      const clue = cat.clues[clueIndex];
-
-      modalCategory.value = cat.name;
-      modalValue.value = clue.value;
-      modalPrompt.value = clue.prompt;
-      modalAnswer.value = clue.answer;
-
-      modalBackdrop.style.display = "flex";
-    }
-
-    function closeModal() {
-      modalBackdrop.style.display = "none";
-      editingCell = null;
-    }
-
-    function saveModalChanges() {
-      if (!editingCell) return;
-      const { catIndex, clueIndex } = editingCell;
-      const cat = boardData.categories[catIndex];
-      const clue = cat.clues[clueIndex];
-
-      cat.name = modalCategory.value;
-      clue.value = Number(modalValue.value);
-      clue.prompt = modalPrompt.value;
-      clue.answer = modalAnswer.value;
-
-      saveBoard();
-      renderBoard();
-      closeModal();
-    }
-
-    editorToggleBtn.onclick = toggleEditorMode;
-    saveBoardBtn.onclick = () => {
-      boardData.title = titleInput.value;
-      saveBoard();
-      renderBoard();
-      alert("Board saved.");
-    };
-
-    modalCancelBtn.onclick = closeModal;
-    modalSaveBtn.onclick = saveModalChanges;
-
-    renderBoard();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
