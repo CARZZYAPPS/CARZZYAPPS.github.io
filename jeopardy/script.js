@@ -40,6 +40,7 @@ const titleInput = document.getElementById("titleInput");
 const saveBoardBtn = document.getElementById("saveBoardBtn");
 const resetBoardBtn = document.getElementById("resetBoardBtn");
 
+
 const scoreboardEl = document.getElementById("scoreboard");
 const manageTeamsBtn = document.getElementById("manageTeamsBtn");
 const startGameBtn = document.getElementById("startGameBtn");
@@ -241,6 +242,27 @@ resetBoardBtn.addEventListener("click", () => {
   if (!confirm("Reset board and scores?")) return;
   resetBoardState();
 });
+
+// SHARE BOARD (COPY LINK) — only works in Editor Mode
+document.getElementById("shareBoardBtn").addEventListener("click", async () => {
+  if (!document.body.classList.contains("editor-mode")) {
+    alert("You can only share a board while in Editor Mode.");
+    return;
+  }
+
+  try {
+    const json = JSON.stringify(boardData);
+    const encoded = encodeURIComponent(btoa(json));
+    const link = `${location.origin}${location.pathname}?board=${encoded}`;
+
+    await navigator.clipboard.writeText(link);
+    alert("Share link copied to clipboard!");
+  } catch (err) {
+    console.error("Copy failed:", err);
+    alert("Could not copy link.");
+  }
+});
+
 
 function openClueEditor(catIndex, clueIndex) {
   const clue = boardData.categories[catIndex].clues[clueIndex];
@@ -573,7 +595,7 @@ function advanceToNextTeam() {
   renderScoreboard();
 }
 
-// SHARE BOARD (COPY LINK)
+/* SHARE BOARD (COPY LINK)
 document.getElementById("shareBoardBtn").addEventListener("click", async () => {
   try {
     // Convert board to JSON
