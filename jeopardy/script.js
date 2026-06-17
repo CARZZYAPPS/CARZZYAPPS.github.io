@@ -573,17 +573,24 @@ function advanceToNextTeam() {
   renderScoreboard();
 }
 
-// SHARE BOARD
-document.getElementById("shareBoardBtn").addEventListener("click", () => {
-  // Convert board to JSON
-  const json = JSON.stringify(boardData);
+// SHARE BOARD (COPY LINK)
+document.getElementById("shareBoardBtn").addEventListener("click", async () => {
+  try {
+    // Convert board to JSON
+    const json = JSON.stringify(boardData);
 
-  // Encode it safely for a URL
-  const encoded = encodeURIComponent(btoa(json));
+    // Encode it safely for a URL
+    const encoded = encodeURIComponent(btoa(json));
 
-  // Build the shareable link
-  const link = `${location.origin}${location.pathname}?board=${encoded}`;
+    // Build the shareable link
+    const link = `${location.origin}${location.pathname}?board=${encoded}`;
 
-  // Show it to the user
-  prompt("Use this link to share your board:", link);
+    // Copy to clipboard
+    await navigator.clipboard.writeText(link);
+
+    alert("Share link copied to clipboard!");
+  } catch (err) {
+    console.error("Copy failed:", err);
+    alert("Could not copy link. Your browser may not allow clipboard access.");
+  }
 });
