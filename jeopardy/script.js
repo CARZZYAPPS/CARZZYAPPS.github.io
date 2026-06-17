@@ -78,6 +78,8 @@ function loadBoard() {
     return JSON.parse(JSON.stringify(DEFAULT_BOARD));
   }
 }
+let boardData = loadBoard();   // ⭐ REQUIRED
+
 
 // CHECK FOR SHARED BOARD IN URL
 (function loadSharedBoardFromURL() {
