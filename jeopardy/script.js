@@ -78,6 +78,28 @@ function loadBoard() {
   }
 }
 
+// CHECK FOR SHARED BOARD IN URL
+(function loadSharedBoardFromURL() {
+  const params = new URLSearchParams(location.search);
+  const encoded = params.get("board");
+
+  if (encoded) {
+    try {
+      const json = atob(decodeURIComponent(encoded));
+      const sharedBoard = JSON.parse(json);
+
+      // Replace current board with shared one
+      boardData = sharedBoard;
+      saveBoard(); // store it locally
+
+      console.log("Loaded shared board from URL.");
+    } catch (e) {
+      console.error("Failed to load shared board:", e);
+    }
+  }
+})();
+
+
 function saveBoard() {
   localStorage.setItem(STORAGE_KEY_BOARD, JSON.stringify(boardData));
 }
@@ -551,3 +573,17 @@ function advanceToNextTeam() {
   renderScoreboard();
 }
 
+// SHARE BOARD
+document.getElementById("shareBoardBtn").addEventListener("click", () => {
+  // Convert board to JSON
+  const json = JSON.stringify(boardData);
+
+  // Encode it safely for a URL
+  const encoded = encodeURIComponent(btoa(json));
+
+  // Build the shareable link
+  const link = `${location.origin}${location.pathname}?board=${encoded}`;
+
+  // Show it to the user
+  prompt("Use this link to share your board:", link);
+});
