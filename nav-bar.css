@@ -13,7 +13,7 @@ nav {
 }
 
 .logo {
-    position: absolute;
+    position: relative;
     left: 35px;
 }
 
@@ -21,7 +21,7 @@ nav {
     color: #00d1b2;
     font-size: 35px;
     display: inline;
-    margin-left: calc(75px + 5vw);
+    margin-left: 5vw;
 }
 
 .nav-links {
