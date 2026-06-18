@@ -5,3 +5,108 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
       <title>Hoops 2K: Ultimate Slam Edition</title>
       <link rel="stylesheet" href="style.css">
+      </head>
+<body>
+    <div id="game-container">
+
+        <!-- MENU LAYER -->
+        <div id="menu-layer">
+            <h1>HOOPS 2K: SLAM KING</h1>
+
+            <button class="mode-btn" onclick="selectMode('practice')">
+                🏀 Free Practice (Just Shoot/Dunk)
+            </button>
+
+            <button class="mode-btn" onclick="selectMode('dunkKing')">
+                👑 Dunk King (Insane Dunks! 60s)
+            </button>
+
+            <button class="mode-btn" onclick="selectMode('timeAttack')">
+                ⏱️ Sudden Death (Time Attack)
+            </button>
+
+            <button class="mode-btn" onclick="selectMode('oneOnOne')">
+                🛡️ 1v1 Defender Challenge
+            </button>
+
+            <button class="mode-btn" onclick="selectMode('overdrive')">
+                🔥 Arcade Overdrive (All FX)
+            </button>
+        </div>
+
+        <!-- GAME CANVAS -->
+        <canvas id="gameCanvas" width="900" height="550"></canvas>
+
+        <!-- UI LAYER -->
+        <div id="ui-layer">
+
+            <!-- SCORE -->
+            <div class="hud-box" style="border-bottom-color: #00ffcc;">
+                SCORE: <span id="score">0</span>
+            </div>
+
+            <!-- DUNK + OPTIONS -->
+            <div class="hud-box" style="border-bottom-color: #ffcc00;">
+
+                <span id="dunk-picker-label" style="display:none; color: #ff007f;">
+                    DUNK [1-6]:
+                </span>
+
+                <select id="dunk-style-select" style="display:none;" onchange="updateSelectedDunk(this.value)">
+                    <option value="normal">⚡ Standard Power Slam</option>
+                    <option value="helicopter">🛸 Helicopter Spinner</option>
+                    <option value="meteor">☄️ Stratosphere Meteor</option>
+                    <option value="backbreaker">☠️ Inverted Backbreaker</option>
+                    <option value="windmill">🌪️ Windmill Crank</option>
+                    <option value="betweenLegs">🦵 Through The Legs</option>
+                </select>
+
+                <label id="poster-label" style="display:none; color:#ff3333; font-weight:bold; gap:4px; align-items:center;">
+                    <input type="checkbox" id="poster-defender-toggle" onchange="togglePosterDefender(this.checked)">
+                    Poster Target
+                </label>
+
+                <span style="margin-left: 5px;">SFX:</span>
+
+                <select id="dunk-sfx-select">
+                    <option value="boom">💥 Arcade Boom</option>
+                    <option value="laser">⚡ Laser Burst</option>
+                    <option value="zap">🔌 Electric Zap</option>
+                    <option value="metal">🎸 Metal Riff</option>
+                </select>
+
+                <label style="margin-left: 5px; display:flex; align-items:center; gap:4px;">
+                    <input type="checkbox" id="crowd-toggle" checked>
+                    Crowd
+                </label>
+            </div>
+
+            <!-- TIMER -->
+            <div class="hud-box" id="hud-center-box" style="border-bottom-color: #ffaa00;">
+                TIME: <span id="time">60</span>s
+            </div>
+
+            <!-- STREAK -->
+            <div class="hud-box" id="hud-right-box">
+                STREAK: <span id="streak">0</span>
+            </div>
+        </div>
+
+        <!-- FEEDBACK TEXT -->
+        <div id="feedback">BOOMSHAKALAKA!</div>
+
+        <!-- CONTROLS PROMPT -->
+        <div id="prompt">
+            ARROWS: MOVE | SPACE: SLAM / SHOOT | KEYS 1-6 CHOOSES DUNK STYLE!
+        </div>
+
+        <!-- METER BAR -->
+        <div id="meter-container">
+            <div id="perfect-zone"></div>
+            <div id="meter-bar"></div>
+        </div>
+
+    </div>
+   <script src="script.js"></script>
+</body>
+
