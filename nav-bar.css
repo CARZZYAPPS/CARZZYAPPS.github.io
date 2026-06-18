@@ -43,7 +43,7 @@ nav {
 }
 
 @media (max-width: 1000px) {
-    h1 {
+    .nav-head {
         display: none;
     }
 }
