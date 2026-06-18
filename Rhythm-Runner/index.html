@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rhythm DJ</title>
     <link rel="icon" type="image/x-icon" href="/favicon.png">
+    <link rel="stylesheet" href="/nav-bar.css">
     <style>
+        h2 {font-size: 32px;}
         body { background: #0a0a0a; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; touch-action: manipulation; }
         #ui-layer { text-align: center; z-index: 10; background: rgba(15,15,15,0.95); padding: 30px; border-radius: 15px; border: 1px solid #00d1b2; position: absolute; box-shadow: 0 0 30px rgba(0,209,178,0.3); min-width: 280px; }
         canvas { background: #050505; border-bottom: 4px solid #00d1b2; width: 100%; max-width: 800px; }
@@ -31,9 +33,16 @@
 </head>
 <body>
 
-    <div id="logo">
-    <a href="https://carzzyapps.github.io"><img src="/Carzzy Apps Logo.png" style="width:150px;height:50px;"></a>
-    </div>
+    <nav>
+        <a class="logo" href="/"><img src="https://carzzyapps.github.io/Carzzy Apps Logo.png" style="width:150px;height:50px;"></a>
+        <h1 class="nav-head">Carzzy Apps</h1>
+        <span class="nav-links">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="Leaderboards">Leaderboards</a>
+            <a class="nav-link" href="scymores-games">Scymore's Games</a>
+        </span>
+    </nav>
+    
     <div class="stats">
         SCORE: <span id="score">0</span><br>
         <div id="best-label">BEST: <span id="best-score">0</span></div>
@@ -42,7 +51,7 @@
 
     <div id="ui-layer">
         <img src="rhythm-dj.png" style="width: 60px; length: 60px;">
-        <h1 id="title">RHYTHM DJ</h1>
+        <h2 id="title">RHYTHM DJ</h2>
         <p><b>JUMP</b> spikes 🔼 | <b>DUCK</b> drones 🔽</p>
         <button id="startBtn" class="menu-btn">START GAME</button>
     </div>
