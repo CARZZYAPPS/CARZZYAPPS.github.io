@@ -7,7 +7,7 @@ const DEFAULT_BOARD = {
   title: "My Jeopardy Board",
   categories: Array(5).fill(0).map((_, i) => ({
     name: "Category " + (i + 1),
-    clues: [200, 400, 600, 800, 1000 ].map(v => ({
+    clues: [200, 400, 600, 800, 1000].map(v => ({
       value: v,
       prompt: "Clue " + v,
       answer: "Answer " + v,
@@ -16,8 +16,73 @@ const DEFAULT_BOARD = {
   }))
 };
 
+// LOAD/SAVE FUNCTIONS
+
+function loadBoard() {
+  const raw = localStorage.getItem(STORAGE_KEY_BOARD);
+  if (!raw) return JSON.parse(JSON.stringify(DEFAULT_BOARD));
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return JSON.parse(JSON.stringify(DEFAULT_BOARD));
+  }
+}
+
+function loadGameState() {
+  const raw = localStorage.getItem(STORAGE_KEY_STATE);
+  if (!raw) {
+    return {
+      teams: null,
+      activeTeamIndex: 0
+    };
+  }
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return {
+      teams: null,
+      activeTeamIndex: 0
+    };
+  }
+}
+
+// ⭐ INITIALIZE DATA (correct order)
 let boardData = loadBoard();
 let gameState = loadGameState();
+
+// CHECK FOR SHARED BOARD IN URL
+(function loadSharedBoardFromURL() {
+  const params = new URLSearchParams(location.search);
+  const encoded = params.get("board");
+
+  if (encoded) {
+    try {
+      const json = atob(decodeURIComponent(encoded));
+      const sharedBoard = JSON.parse(json);
+
+      boardData = sharedBoard;
+      saveBoard();
+
+      console.log("Loaded shared board from URL.");
+    } catch (e) {
+      console.error("Failed to load shared board:", e);
+    }
+  }
+})();
+
+function saveBoard() {
+  localStorage.setItem(STORAGE_KEY_BOARD, JSON.stringify(boardData));
+}
+
+function saveGameState() {
+  const state = {
+    teams,
+    activeTeamIndex
+  };
+  localStorage.setItem(STORAGE_KEY_STATE, JSON.stringify(state));
+}
+
+// GAME STATE VARIABLES
 
 let editorMode = false;
 let activeTeamIndex = gameState.activeTeamIndex ?? 0;
@@ -40,7 +105,6 @@ const titleInput = document.getElementById("titleInput");
 const saveBoardBtn = document.getElementById("saveBoardBtn");
 const resetBoardBtn = document.getElementById("resetBoardBtn");
 
-
 const scoreboardEl = document.getElementById("scoreboard");
 const manageTeamsBtn = document.getElementById("manageTeamsBtn");
 const startGameBtn = document.getElementById("startGameBtn");
@@ -62,78 +126,9 @@ const howToPlayBackdrop = document.getElementById("howToPlayBackdrop");
 const howToPlayCloseBtn = document.getElementById("howToPlayCloseBtn");
 
 const jeopardyMusic = document.getElementById("jeopardyMusic");
-
 const blackoutOverlay = document.getElementById("blackoutOverlay");
 
-// LOAD/SAVE
-
-
-
-function loadBoard() {
-  const raw = localStorage.getItem(STORAGE_KEY_BOARD);
-  if (!raw) return JSON.parse(JSON.stringify(DEFAULT_BOARD));
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return JSON.parse(JSON.stringify(DEFAULT_BOARD));
-  }
-}
-let boardData = loadBoard();   // ⭐ REQUIRED
-
-
-// CHECK FOR SHARED BOARD IN URL
-(function loadSharedBoardFromURL() {
-  const params = new URLSearchParams(location.search);
-  const encoded = params.get("board");
-
-  if (encoded) {
-    try {
-      const json = atob(decodeURIComponent(encoded));
-      const sharedBoard = JSON.parse(json);
-
-      // Replace current board with shared one
-      boardData = sharedBoard;
-      saveBoard(); // store it locally
-
-      console.log("Loaded shared board from URL.");
-    } catch (e) {
-      console.error("Failed to load shared board:", e);
-    }
-  }
-})();
-
-
-function saveBoard() {
-  localStorage.setItem(STORAGE_KEY_BOARD, JSON.stringify(boardData));
-}
-
-function loadGameState() {
-  const raw = localStorage.getItem(STORAGE_KEY_STATE);
-  if (!raw) {
-    return {
-      teams: null,
-      activeTeamIndex: 0
-    };
-  }
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return {
-      teams: null,
-      activeTeamIndex: 0
-    };
-  }
-}
-
-function saveGameState() {
-  const state = {
-    teams,
-    activeTeamIndex
-  };
-  localStorage.setItem(STORAGE_KEY_STATE, JSON.stringify(state));
-}
-
-// RENDER
+// RENDER FUNCTIONS
 
 function renderTitle() {
   gameTitleEl.textContent = boardData.title;
@@ -149,9 +144,6 @@ function renderBoard() {
     header.textContent = cat.name;
     boardEl.appendChild(header);
   });
-
-  
-
 
   const maxClues = Math.max(...boardData.categories.map(c => c.clues.length));
 
@@ -230,6 +222,8 @@ function updateEditorVisibility() {
   editorPanelEl.style.display = editorMode ? "block" : "none";
 }
 
+// TITLE EDITING
+
 titleInput.addEventListener("input", () => {
   boardData.title = titleInput.value;
   renderTitle();
@@ -247,7 +241,7 @@ resetBoardBtn.addEventListener("click", () => {
 
 // SHARE BOARD (COPY LINK) — only works in Editor Mode
 document.getElementById("shareBoardBtn").addEventListener("click", async () => {
-  if (!document.body.classList.contains("editor-mode")) {
+  if (!editorMode) {
     alert("You can only share a board while in Editor Mode.");
     return;
   }
@@ -265,6 +259,7 @@ document.getElementById("shareBoardBtn").addEventListener("click", async () => {
   }
 });
 
+// CLUE EDITOR
 
 function openClueEditor(catIndex, clueIndex) {
   const clue = boardData.categories[catIndex].clues[clueIndex];
@@ -292,7 +287,7 @@ function openClueModal(catIndex, clueIndex) {
   modalClueTitle.textContent = boardData.categories[catIndex].name + " - $" + clue.value;
   modalContent.textContent = clue.prompt;
   modalTimer.textContent = "";
-  clueAlreadyScored = clue.used; // if used, no scoring
+  clueAlreadyScored = clue.used;
 
   modalShowAnswerBtn.style.display = "inline-block";
   modalCorrectBtn.style.display = clueAlreadyScored ? "none" : "inline-block";
@@ -345,7 +340,7 @@ modalCorrectBtn.addEventListener("click", () => {
   renderScoreboard();
   renderBoard();
 
-  advanceToNextTeam(); // <-- NEW LINE
+  advanceToNextTeam();
 
   closeClueModal();
 });
@@ -364,7 +359,7 @@ modalWrongBtn.addEventListener("click", () => {
   renderScoreboard();
   renderBoard();
 
-  advanceToNextTeam(); // <-- NEW LINE
+  advanceToNextTeam();
 
   closeClueModal();
 });
@@ -407,11 +402,9 @@ function handleTimerEndAutoReveal() {
   if (!currentClue) return;
   const clue = boardData.categories[currentClue.catIndex].clues[currentClue.clueIndex];
 
-  // Auto reveal answer
   modalContent.textContent = clue.answer;
   modalShowAnswerBtn.style.display = "none";
 
-  // Auto mark wrong if not already scored
   if (!clue.used) {
     teams[activeTeamIndex].score -= clue.value;
     clue.used = true;
@@ -422,7 +415,6 @@ function handleTimerEndAutoReveal() {
   renderScoreboard();
   renderBoard();
 
-  // After auto-wrong, hide scoring buttons (no override)
   modalCorrectBtn.style.display = "none";
   modalWrongBtn.style.display = "none";
 }
@@ -474,7 +466,6 @@ manageTeamsBtn.addEventListener("click", () => {
   const arr = newNames.split(",").map(s => s.trim()).filter(s => s.length > 0);
   if (arr.length === 0) return;
 
-  // Keep scores if same length, otherwise reset scores
   if (arr.length === teams.length) {
     teams = arr.map((name, i) => ({
       name,
@@ -506,10 +497,9 @@ startGameBtn.addEventListener("click", () => {
     return;
   }
 
-  // Flash all teams briefly
   let index = 0;
   let cycles = 0;
-  const maxCycles = 20; // number of flashes
+  const maxCycles = 20;
 
   const interval = setInterval(() => {
     teamEls.forEach(el => el.classList.remove("active", "flash"));
@@ -520,21 +510,21 @@ startGameBtn.addEventListener("click", () => {
     cycles++;
 
     if (cycles >= maxCycles) {
-  clearInterval(interval);
+      clearInterval(interval);
 
-  let newIndex = Math.floor(Math.random() * teams.length);
-  if (teams.length > 1 && newIndex === activeTeamIndex) {
-    newIndex = (newIndex + 1) % teams.length;
-  }
-  activeTeamIndex = newIndex;
+      let newIndex = Math.floor(Math.random() * teams.length);
+      if (teams.length > 1 && newIndex === activeTeamIndex) {
+        newIndex = (newIndex + 1) % teams.length;
+      }
+      activeTeamIndex = newIndex;
 
-  renderScoreboard(); // <-- THIS FIXES IT
+      renderScoreboard();
 
-  teamEls.forEach(el => el.classList.remove("flash", "active"));
-  teamEls[activeTeamIndex].classList.add("active");
+      teamEls.forEach(el => el.classList.remove("flash", "active"));
+      teamEls[activeTeamIndex].classList.add("active");
 
-  saveGameState();
-}
+      saveGameState();
+    }
   }, 100);
 });
 
@@ -565,7 +555,6 @@ document.addEventListener("keydown", e => {
 function triggerBlackout() {
   blackoutOverlay.style.display = "flex";
 
-  // Try fullscreen (may be blocked by browser)
   const docEl = document.documentElement;
   if (docEl.requestFullscreen) {
     docEl.requestFullscreen().catch(() => {});
@@ -590,31 +579,8 @@ function init() {
 
 init();
 
-
 function advanceToNextTeam() {
   activeTeamIndex = (activeTeamIndex + 1) % teams.length;
   saveGameState();
   renderScoreboard();
 }
-
-/* SHARE BOARD (COPY LINK)
-document.getElementById("shareBoardBtn").addEventListener("click", async () => {
-  try {
-    // Convert board to JSON
-    const json = JSON.stringify(boardData);
-
-    // Encode it safely for a URL
-    const encoded = encodeURIComponent(btoa(json));
-
-    // Build the shareable link
-    const link = `${location.origin}${location.pathname}?board=${encoded}`;
-
-    // Copy to clipboard
-    await navigator.clipboard.writeText(link);
-
-    alert("Share link copied to clipboard!");
-  } catch (err) {
-    console.error("Copy failed:", err);
-    alert("Could not copy link. Your browser may not allow clipboard access.");
-  }
-});
