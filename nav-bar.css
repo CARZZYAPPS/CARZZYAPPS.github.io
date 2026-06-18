@@ -14,13 +14,14 @@ nav {
 
 .logo {
     position: absolute;
-    left: 5vw;
+    left: 35px;
 }
 
 .nav-head {
     color: #00d1b2;
     font-size: 35px;
     display: inline;
+    margin-left: calc(75px + 5vw);
 }
 
 .nav-links {
