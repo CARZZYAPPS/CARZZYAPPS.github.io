@@ -2,108 +2,99 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Jeopardy Board</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Jeopardy Game</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="blackoutOverlay">
-    <div id="blackoutMessage">Please respect our privacy.</div>
+    <div class="blackout-text">Screen Blacked Out</div>
   </div>
 
-  <header>
-    <h1 id="gameTitle">My Jeopardy Board</h1>
-    <div class="top-buttons">
-      <button id="shareBoardBtn">Share Board</button>
-      <button id="howToPlayBtn">How to Play</button>
-      <button id="editorToggleBtn">Board Editor</button>
-      
+  <div class="app-container">
+    <header class="top-bar">
+      <div class="title-area">
+        <h1 id="gameTitle">My Jeopardy Board</h1>
+      </div>
+      <div class="top-buttons">
+        <button id="howToPlayBtn">How to Play</button>
+        <button id="startGameBtn">Start Game</button>
+        <button id="endGameBtn">End Game</button>
+      </div>
+    </header>
+
+    <main class="main-layout">
+      <section class="board-section">
+        <div id="board" class="board-grid"></div>
+      </section>
+
+      <section class="side-section">
+        <div class="scoreboard-container">
+          <h2>Scoreboard</h2>
+          <div id="scoreboard" class="scoreboard"></div>
+
+          <button id="manageTeamsBtn">Add / Edit Teams</button>
+          <button id="resetTeamsBtn">Reset Teams</button>
+        </div>
+
+        <div id="endGameResetContainer" class="endgame-container" style="display:none;">
+          <p>All clues used. Reset board and scores?</p>
+          <button id="endGameResetBtn">Reset Board</button>
+        </div>
+
+        <div class="editor-controls">
+          <button id="editorToggleBtn">Toggle Editor Mode</button>
+          <div id="editorPanel" class="editor-panel">
+            <h3>Editor Mode</h3>
+            <label>
+              Board Title:
+              <input id="titleInput" type="text">
+            </label>
+            <div class="editor-buttons">
+              <button id="saveBoardBtn">Save Board</button>
+              <button id="resetBoardBtn">Reset Board & Scores</button>
+              <button id="shareBoardBtn">Share Board</button>
+            </div>
+            <p class="editor-note">Editor code required to enter.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- CLUE MODAL -->
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="modal">
+      <h2 id="modalClueTitle"></h2>
+      <div id="modalContent" class="modal-content"></div>
+      <div id="modalTimer" class="modal-timer"></div>
+      <div class="modal-buttons">
+        <button id="modalShowAnswerBtn">Show Answer</button>
+        <button id="modalCorrectBtn">Correct</button>
+        <button id="modalWrongBtn">Wrong</button>
+        <button id="modalCloseBtn">Close</button>
+      </div>
     </div>
-  </header>
+  </div>
 
   <!-- HOW TO PLAY MODAL -->
-  <div class="modal-backdrop" id="howToPlayBackdrop">
+  <div id="howToPlayBackdrop" class="modal-backdrop">
     <div class="modal">
       <h2>How to Play</h2>
-      <div class="modal-text">
-        <p><strong>Setup:</strong></p>
-        <ul>
-          <li>Create teams using the Add/Edit Teams button.</li>
-          <li(Optional) Use Editor Mode (code: <strong>asdk</strong>) to customize categories and clues.</li>
-        </ul>
-        <p><strong>Gameplay:</strong></p>
-        <ul>
-          <li>Click <strong>Start Game</strong> to randomly select a starting team.</li>
-          <li>Teams take turns choosing a clue from the board.</li>
-          <li>When a clue is opened, Jeopardy music plays for 32 seconds.</li>
-          <li>Click <strong>Show Answer</strong> to reveal the answer and then mark Correct or Wrong.</li>
-          <li>If the timer ends before Show Answer is clicked, the answer auto-reveals and is auto-marked Wrong.</li>
-          <li>Clues can be reopened later, but they cannot be scored again.</li>
-        </ul>
-        <p><strong>Resetting:</strong></p>
-        <ul>
-          <li>Use <strong>Reset Board</strong> in Editor Mode to clear used clues and scores mid-game.</li>
-          <li>When all clues are used, a Reset Board button appears outside Editor Mode.</li>
-          <li>Reloading the page does <strong>not</strong> reset the board; state is saved.</li>
-        </ul>
+      <div class="modal-content">
+        <p>
+          Choose a clue, read the prompt, and let teams answer in the form of a question.
+          Use the timer and music for tension. Mark answers correct or wrong to update scores.
+          Editor Mode lets you customize categories and clues and share boards via URL.
+        </p>
       </div>
-      <div class="modal-actions">
+      <div class="modal-buttons">
         <button id="howToPlayCloseBtn">Close</button>
       </div>
     </div>
   </div>
 
-  <div class="container">
-    <!-- SCOREBOARD + CONTROL BUTTONS -->
-    <div class="scoreboard-header">
-      <div class="scoreboard" id="scoreboard"></div>
-      <div class="scoreboard-controls">
-        <button id="manageTeamsBtn">Add/Edit Teams</button>
-        <button id="startGameBtn">Start Game</button>
-        
-      </div>
-    </div>
-
-    <!-- EDITOR PANEL -->
-    <div id="editorPanel" class="editor-panel">
-      <div class="editor-row">
-        <label>Title:</label>
-        <input type="text" id="titleInput">
-      </div>
-      <div class="editor-row">
-        <small>Click any clue to edit it while in Editor Mode.</small>
-      </div>
-      <div class="editor-row">
-        <button class="btn-save" id="saveBoardBtn">Save Board</button>
-        <button class="btn-reset" id="resetBoardBtn">Reset Board</button>
-      </div>
-    </div>
-
-    <!-- GAME BOARD -->
-    <div class="board" id="board"></div>
-
-    <!-- END-OF-GAME RESET BUTTON (OUTSIDE EDITOR) -->
-    <div id="endGameResetContainer">
-      <button id="endGameResetBtn">Reset Board</button>
-    </div>
-  </div>
-
-  <!-- CLUE MODAL -->
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal">
-      <h2 id="modalClueTitle">Clue</h2>
-      <div id="modalContent"></div>
-      <div class="modal-timer" id="modalTimer"></div>
-      <div class="modal-actions">
-        <button id="modalShowAnswerBtn">Show Answer</button>
-        <button class="btn-save" id="modalCorrectBtn">Correct</button>
-        <button class="btn-cancel" id="modalWrongBtn">Wrong</button>
-        <button class="btn-cancel" id="modalCloseBtn">Close</button>
-      </div>
-    </div>
-  </div>
-
   <!-- AUDIO -->
-  <audio id="jeopardyMusic" src="jeopardy_music.mp3" preload="auto"></audio>
+  <audio id="jeopardyMusic" src="jeopardy-theme.mp3"></audio>
 
   <script src="script.js"></script>
 </body>
