@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rhythm DJ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="logo">
+        <a href="https://carzzyapps.github.io">
+            <img src="/Carzzy Apps Logo.png" style="width:150px;height:50px;">
+        </a>
+    </div>
+
+    <div class="stats">
+        SCORE: <span id="score">0</span><br>
+        <div id="best-label">BEST: <span id="best-score">0</span></div>
+    </div>
+
+    <div id="usernameDisplay"></div>
+
+    <div id="ui-layer">
+        <h1 id="title">RHYTHM DJ</h1>
+        <p><b>JUMP</b> spikes | <b>DUCK</b> drones</p>
+
+        <button id="startBtn" class="menu-btn">START GAME</button>
+        <button id="leaderboardBtn" class="menu-btn">LEADERBOARD</button>
+        <button id="changeUsernameBtn" class="menu-btn">CHANGE USERNAME</button>
+    </div>
+
+    <!-- USERNAME PROMPT -->
+    <div id="usernamePrompt">
+        <h3>ENTER USERNAME</h3>
+        <input id="usernameInput" type="text" maxlength="20">
+        <button id="saveUsernameBtn" class="menu-btn">SAVE</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="controls" id="controls">
+        <button class="action-btn" id="jumpBtn">JUMP</button>
+        <button class="action-btn" id="duckBtn">DUCK</button>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
