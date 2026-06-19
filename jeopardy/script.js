@@ -16,7 +16,7 @@ const DEFAULT_BOARD = {
   }))
 };
 
-// LOAD/SAVE FUNCTIONS
+// LOAD/SAVE
 
 function loadBoard() {
   const raw = localStorage.getItem(STORAGE_KEY_BOARD);
@@ -46,7 +46,6 @@ function loadGameState() {
   }
 }
 
-// ⭐ INITIALIZE DATA (correct order)
 let boardData = loadBoard();
 let gameState = loadGameState();
 
@@ -82,7 +81,7 @@ function saveGameState() {
   localStorage.setItem(STORAGE_KEY_STATE, JSON.stringify(state));
 }
 
-// GAME STATE VARIABLES
+// GAME STATE
 
 let editorMode = false;
 let activeTeamIndex = gameState.activeTeamIndex ?? 0;
@@ -97,6 +96,7 @@ let timerRemaining = 0;
 let clueAlreadyScored = false;
 
 // DOM ELEMENTS
+
 const gameTitleEl = document.getElementById("gameTitle");
 const boardEl = document.getElementById("board");
 const editorPanelEl = document.getElementById("editorPanel");
@@ -107,7 +107,9 @@ const resetBoardBtn = document.getElementById("resetBoardBtn");
 
 const scoreboardEl = document.getElementById("scoreboard");
 const manageTeamsBtn = document.getElementById("manageTeamsBtn");
+const resetTeamsBtn = document.getElementById("resetTeamsBtn");
 const startGameBtn = document.getElementById("startGameBtn");
+const endGameBtn = document.getElementById("endGameBtn");
 
 const endGameResetContainer = document.getElementById("endGameResetContainer");
 const endGameResetBtn = document.getElementById("endGameResetBtn");
@@ -128,7 +130,7 @@ const howToPlayCloseBtn = document.getElementById("howToPlayCloseBtn");
 const jeopardyMusic = document.getElementById("jeopardyMusic");
 const blackoutOverlay = document.getElementById("blackoutOverlay");
 
-// RENDER FUNCTIONS
+// RENDER
 
 function renderTitle() {
   gameTitleEl.textContent = boardData.title;
@@ -239,7 +241,8 @@ resetBoardBtn.addEventListener("click", () => {
   resetBoardState();
 });
 
-// SHARE BOARD (COPY LINK) — only works in Editor Mode
+// SHARE BOARD (EDITOR MODE ONLY)
+
 document.getElementById("shareBoardBtn").addEventListener("click", async () => {
   if (!editorMode) {
     alert("You can only share a board while in Editor Mode.");
@@ -295,7 +298,7 @@ function openClueModal(catIndex, clueIndex) {
 
   modalBackdrop.style.display = "flex";
 
-  startMusicAndTimer(clue);
+  startMusicAndTimer();
 }
 
 function closeClueModal() {
@@ -364,7 +367,7 @@ modalWrongBtn.addEventListener("click", () => {
   closeClueModal();
 });
 
-function startMusicAndTimer(clue) {
+function startMusicAndTimer() {
   try {
     jeopardyMusic.currentTime = 0;
     jeopardyMusic.play();
@@ -419,7 +422,7 @@ function handleTimerEndAutoReveal() {
   modalWrongBtn.style.display = "none";
 }
 
-// RESET BOARD
+// RESET BOARD (scores + used flags, keep teams)
 
 function resetBoardState() {
   boardData.categories.forEach(cat => {
@@ -483,6 +486,20 @@ manageTeamsBtn.addEventListener("click", () => {
   renderScoreboard();
 });
 
+// RESET TEAMS (outside editor mode)
+
+resetTeamsBtn.addEventListener("click", () => {
+  if (!confirm("Reset teams (names and scores)?")) return;
+
+  teams = [
+    { name: "Team 1", score: 0 },
+    { name: "Team 2", score: 0 }
+  ];
+  activeTeamIndex = 0;
+  saveGameState();
+  renderScoreboard();
+});
+
 // START GAME RANDOM TEAM SELECTION
 
 startGameBtn.addEventListener("click", () => {
@@ -526,6 +543,30 @@ startGameBtn.addEventListener("click", () => {
       saveGameState();
     }
   }, 100);
+});
+
+// END GAME BUTTON (outside editor mode, top right)
+
+endGameBtn.addEventListener("click", () => {
+  if (!confirm("Are you sure you want to end the game and reset the board scores?")) return;
+
+  boardData.categories.forEach(cat => {
+    cat.clues.forEach(clue => {
+      clue.used = false;
+    });
+  });
+
+  teams.forEach(team => {
+    team.score = 0;
+  });
+
+  activeTeamIndex = 0;
+  saveBoard();
+  saveGameState();
+  renderBoard();
+  renderScoreboard();
+
+  alert("Game ended. Scores reset, teams kept.");
 });
 
 // HOW TO PLAY MODAL
@@ -577,10 +618,10 @@ function init() {
   updateEditorVisibility();
 }
 
-init();
-
 function advanceToNextTeam() {
   activeTeamIndex = (activeTeamIndex + 1) % teams.length;
   saveGameState();
   renderScoreboard();
 }
+
+init();
