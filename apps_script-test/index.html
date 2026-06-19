@@ -1,49 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rhythm Runner</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rhythm Runner</title>
+
+<style>
+    body {
+        background: #0a0a0a;
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    #logo {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+    }
+
+    #ui-layer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(20,20,20,0.95);
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid #00d1b2;
+    }
+
+    .menu-btn {
+        padding: 12px 30px;
+        background: #00d1b2;
+        border: none;
+        border-radius: 30px;
+        color: white;
+        font-weight: bold;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    #usernamePrompt {
+        display:none;
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:#111;
+        padding:25px;
+        border-radius:12px;
+        border:1px solid #00d1b2;
+        width:260px;
+    }
+
+    #usernameInput {
+        width:90%;
+        padding:10px;
+        border-radius:8px;
+        border:1px solid #00d1b2;
+        background:#0a0a0a;
+        color:white;
+        text-align:center;
+    }
+
+    #usernameDisplay {
+        position:absolute;
+        top:20px;
+        left:200px;
+        color:#00d1b2;
+        font-size:16px;
+    }
+
+    #changeUsernameBtn {
+        display: none;
+    }
+
+    canvas {
+        background: #050505;
+        width: 100%;
+        max-width: 800px;
+        border-bottom: 4px solid #00d1b2;
+        margin-top: 140px;
+    }
+
+    .stats {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: #00d1b2;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    #best-label {
+        color: #ffd700;
+        font-size: 14px;
+    }
+
+    .controls {
+        position: fixed;
+        bottom: 30px;
+        display: none;
+        gap: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .action-btn {
+        width: 95px;
+        height: 95px;
+        background: rgba(0, 209, 178, 0.2);
+        border: 3px solid #00d1b2;
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+    }
+</style>
 </head>
 <body>
 
-    <div id="logo">
-        <a href="https://carzzyapps.github.io">
-            <img src="/Carzzy Apps Logo.png" style="width:150px;height:50px;">
-        </a>
-    </div>
+<div id="logo">
+    <a href="https://carzzyapps.github.io">
+        <img src="/Carzzy Apps Logo.png" style="width:150px;height:50px;">
+    </a>
+</div>
 
-    <div class="stats">
-        SCORE: <span id="score">0</span><br>
-        <div id="best-label">BEST: <span id="best-score">0</span></div>
-    </div>
+<div class="stats">
+    SCORE: <span id="score">0</span><br>
+    <div id="best-label">BEST: <span id="best-score">0</span></div>
+</div>
 
-    <div id="usernameDisplay"></div>
+<div id="usernameDisplay"></div>
 
-    <div id="ui-layer">
-        <h1 id="title">RHYTHM DJ</h1>
-        <p><b>JUMP</b> spikes | <b>DUCK</b> drones</p>
+<div id="ui-layer">
+    <h1 id="title">RHYTHM RUNNER</h1>
+    <p><b>JUMP</b> spikes | <b>DUCK</b> drones</p>
 
-        <button id="startBtn" class="menu-btn">START GAME</button>
-        <button id="leaderboardBtn" class="menu-btn">LEADERBOARD</button>
-        <button id="changeUsernameBtn" class="menu-btn">CHANGE USERNAME</button>
-    </div>
+    <button id="startBtn" class="menu-btn">START GAME</button>
+    <button id="leaderboardBtn" class="menu-btn">LEADERBOARD</button>
+    <button id="changeUsernameBtn" class="menu-btn">CHANGE USERNAME</button>
+</div>
 
-    <!-- USERNAME PROMPT -->
-    <div id="usernamePrompt">
-        <h3>ENTER USERNAME</h3>
-        <input id="usernameInput" type="text" maxlength="20">
-        <button id="saveUsernameBtn" class="menu-btn">SAVE</button>
-    </div>
+<!-- USERNAME PROMPT -->
+<div id="usernamePrompt">
+    <h3>ENTER USERNAME</h3>
+    <input id="usernameInput" type="text" maxlength="20">
+    <button id="saveUsernameBtn" class="menu-btn">SAVE</button>
+</div>
 
-    <canvas id="gameCanvas"></canvas>
+<canvas id="gameCanvas"></canvas>
 
-    <div class="controls" id="controls">
-        <button class="action-btn" id="jumpBtn">JUMP</button>
-        <button class="action-btn" id="duckBtn">DUCK</button>
-    </div>
+<div class="controls" id="controls">
+    <button class="action-btn" id="jumpBtn">JUMP</button>
+    <button class="action-btn" id="duckBtn">DUCK</button>
+</div>
 
-    <script src="game.js"></script>
+<script>
+// USERNAME SYSTEM
+let username = localStorage.getItem("rr_username") || null;
+
+// Hide or show change button on load
+if (!username) {
+    document.getElementById("changeUsernameBtn").style.display = "none";
+} else {
+    document.getElementById("changeUsernameBtn").style.display = "block";
+}
+
+function updateUsernameDisplay() {
+    if (username) {
+        document.getElementById("usernameDisplay").innerText = "USER: " + username;
+        document.getElementById("changeUsernameBtn").style.display = "block";
+    }
+}
+
+function askForUsername() {
+    document.getElementById("usernamePrompt").style.display = "block";
+    document.getElementById("usernameInput").value = username || "";
+}
+
+document.getElementById("saveUsernameBtn").onclick = () => {
+    const input = document.getElementById("usernameInput").value.trim();
+
+    if (input.length < 2) {
+        alert("Username must be at least 2 characters");
+        return;
+    }
+
+    username = input;
+    localStorage.setItem("rr_username", username);
+
+    document.getElementById("usernamePrompt").style.display = "none";
+    updateUsernameDisplay();
+};
+
+document.getElementById("changeUsernameBtn").onclick = () => {
+    askForUsername();
+};
+
+document.getElementById("leaderboardBtn").onclick = () => {
+    window.location.href = "https://carzzyapps.github.io/leaderboards/rhythm-runner";
+};
+
+updateUsernameDisplay();
+
+// SUBMIT SCORE (username + score + timestamp)
+async function submitScore(name, score) {
+    const url = "YOUR_WEB_APP_URL"; // replace with your Apps Script URL
+
+    const payload = { 
+        username: name, 
+        score: score,
+        timestamp: new Date().toISOString()
+    };
+
+    try {
+        await fetch(url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+    } catch (err) {
+        console.log("Score submit failed:", err);
+    }
+}
+
+// SIMPLE GAME LOGIC
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const controls = document.getElementById('controls');
+
+let gameActive = false;
+let score = 0;
+let bestScore = Number(localStorage.getItem('rr_best_pro')) || 0;
+document.getElementById('best-score').innerText = bestScore;
+
+let player = { x: 60, y: 0, w: 35, h: 45, dy: 0, grounded: true };
+let obstacles = [];
+let gravity = 0.8;
+let groundY = 0;
+let gameSpeed = 6.5;
+let spawnTimer = 0;
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = 350;
+    groundY = canvas.height - 50;
+    player.y = groundY - player.h;
+}
+window.onresize = resize;
+resize();
+
+function jump() {
+    if (player.grounded && gameActive) {
+        player.dy = -15;
+        player.grounded = false;
+    }
+}
+
+document.getElementById('jumpBtn').onclick = jump;
+
+function update() {
+    if (!gameActive) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // ground
+    ctx.strokeStyle = "#00d1b2";
+    ctx.beginPath();
+    ctx.moveTo(0, groundY);
+    ctx.lineTo(canvas.width, groundY);
+    ctx.stroke();
+
+    // spawn obstacles
+    spawnTimer++;
+    if (spawnTimer > 60) {
+        obstacles.push({ x: canvas.width, w: 30, h: 45, passed: false });
+        spawnTimer = 0;
+    }
+
+    // update obstacles
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+        let o = obstacles[i];
+        o.x -= gameSpeed;
+
+        ctx.fillStyle = "#00d1b2";
+        ctx.fillRect(o.x, groundY - o.h, o.w, o.h);
+
+        // collision
+        if (o.x < player.x + player.w && o.x + o.w > player.x &&
+            groundY - o.h < player.y + player.h) {
+            gameOver();
+        }
+
+        // scoring
+        if (!o.passed && o.x + o.w < player.x) {
+            o.passed = true;
+            score += 10;
+            document.getElementById('score').innerText = score;
+        }
+
+        if (o.x < -50) obstacles.splice(i, 1);
+    }
+
+    // player physics
+    if (!player.grounded) {
+        player.dy += gravity;
+        player.y += player.dy;
+    }
+
+    if (player.y > groundY - player.h) {
+        player.y = groundY - player.h;
+        player.dy = 0;
+        player.grounded = true;
+    }
+
+    // draw player
+    ctx.fillStyle = "#111";
+    ctx.strokeStyle = "#00d1b2";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.rect(player.x, player.y, player.w, player.h);
+    ctx.fill();
+    ctx.stroke();
+
+    requestAnimationFrame(update);
+}
+
+function gameOver() {
+    gameActive = false;
+
+    if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('rr_best_pro', bestScore);
+        document.getElementById('best-score').innerText = bestScore;
+    }
+
+    if (username) {
+        submitScore(username, score);
+    }
+
+    document.getElementById('ui-layer').style.display = 'block';
+    document.getElementById('title').innerText = "SYSTEM CRASH";
+    controls.style.display = 'none';
+}
+
+document.getElementById('startBtn').onclick = () => {
+    if (!username) {
+        askForUsername();
+        return;
+    }
+
+    score = 0;
+    obstacles = [];
+    gameSpeed = 6.5;
+    spawnTimer = 0;
+
+    document.getElementById('score').innerText = "0";
+    document.getElementById('ui-layer').style.display = 'none';
+    controls.style.display = 'flex';
+
+    gameActive = true;
+    update();
+};
+</script>
+
 </body>
 </html>
