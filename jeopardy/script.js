@@ -1,7 +1,8 @@
-    const EDITOR_CODE = ["W", "F", "N", "k", "a", "z", "=", "="]
+    const EDITOR_CODE = asdk
+        /*["W", "F", "N", "k", "a", "z", "=", "="]
   .join("")
   .replace(/ /g, "")
-  |> atob;
+  |> atob;*/
     const MUSIC_DURATION = 32;
     const STORAGE_KEY_BOARD = "jeopardyBoardV2";
     const STORAGE_KEY_STATE = "jeopardyGameStateV2";
