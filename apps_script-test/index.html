@@ -204,6 +204,7 @@
 
             document.getElementById("usernamePrompt").style.display = "none";
             updateUsernameDisplay();
+            submitScore(username, score);
         };
 
         document.getElementById("changeUsernameBtn").onclick = () => {
@@ -212,7 +213,6 @@
 
 
         updateUsernameDisplay();
-        submitScore(username, score);
 
         // SUBMIT SCORE (username + score + timestamp)
         async function submitScore(name, score) {
