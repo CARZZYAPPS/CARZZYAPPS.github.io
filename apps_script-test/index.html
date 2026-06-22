@@ -155,6 +155,7 @@
     <!-- USERNAME PROMPT -->
     <div id="usernamePrompt">
         <h3>ENTER USERNAME</h3>
+        If you already have one, make sure not to misspell it.<br><br>
         <input id="usernameInput" type="text" maxlength="20">
         <button id="saveUsernameBtn" class="menu-btn">SAVE</button>
     </div>
@@ -197,7 +198,7 @@
                 return;
             }
 
-            username = input;
+            username = input.toUpperCase();
             localStorage.setItem("rr_username", username);
 
             document.getElementById("usernamePrompt").style.display = "none";
