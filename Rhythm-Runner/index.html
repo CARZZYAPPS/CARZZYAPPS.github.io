@@ -421,11 +421,11 @@
             if (score > bestScore) {
                 bestScore = score;
                 localStorage.setItem('rr_best_pro', bestScore);
-                document.getElementById('best-score').innerText = bestScore;
+                document.getElementById('best-score').innerText = bestScore;        
+            }
             if (username) {
                 submitScore(username, score);
-            }            
-            }
+            }    
 
             document.getElementById('ui-layer').style.display = 'block';
             document.getElementById('title').innerText = "SYSTEM CRASH";
