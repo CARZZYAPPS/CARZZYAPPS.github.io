@@ -337,8 +337,7 @@
 
     let player = { x: 60, y: 0, w: 35, h: 45, baseH: 45, dy: 0, jumpPower: -15, grounded: true, isDucking: false };
     let obstacles = [], gravity = 0.8, groundY = 0;
-    //game speed settings
-    let gameSpeed = 10, spawnTimer = 0;
+    let gameSpeed = 6.5, spawnTimer = 0;
     let isJumpKeyPressed = false;
 
     function resize() {
@@ -397,32 +396,9 @@
       ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
 
       spawnTimer++;
-
-let minGap = 40;                 // minimum frames between obstacles
-let maxGap = 140;                // maximum frames between obstacles
-let speedFactor = Math.max(1, 10 - gameSpeed);  // reduces gap as speed increases
-
-let nextSpawn = Math.floor(
-  Math.random() * (maxGap - minGap) + minGap * speedFactor
-);
-
-if (spawnTimer > nextSpawn) {
-  // spawn obstacle
-  const isDrone = Math.random() > 0.8;
-  obstacles.push({
-    x: canvas.width,
-    w: 30,
-    h: isDrone ? 1000 : 45,
-    y: isDrone ? groundY - 1030 : groundY - 45,
-    visualY: isDrone ? groundY - 55 : groundY - 45,
-    type: isDrone ? 'drone' : 'spike',
-    passed: false
-  });
-
-  spawnTimer = 0;
-      }
-
-      const isDrone = Math.random() > 0.8;
+      let nextSpawn = Math.floor(Math.random() * (85 - 35) + 35);
+      if (spawnTimer > Math.max(nextSpawn, 75 - gameSpeed)) {
+        const isDrone = Math.random() > 0.8;
         obstacles.push({
           x: canvas.width, w: 30,
           h: isDrone ? 1000 : 45,
