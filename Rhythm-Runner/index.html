@@ -337,7 +337,7 @@
 
     let player = { x: 60, y: 0, w: 35, h: 45, baseH: 45, dy: 0, jumpPower: -15, grounded: true, isDucking: false };
     let obstacles = [], gravity = 0.8, groundY = 0;
-    let gameSpeed = 6.5, spawnTimer = 0;
+    let gameSpeed = 10, spawnTimer = 0;
     let isJumpKeyPressed = false;
 
     function resize() {
@@ -495,7 +495,7 @@
       bgMusic.src = playlist[currentTrackIndex];
       score = 0;
       obstacles = [];
-      gameSpeed = 6.5;
+      gameSpeed = 10;
       spawnTimer = 0;
 
       document.getElementById('score').innerText = "0";
