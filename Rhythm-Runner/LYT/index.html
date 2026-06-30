@@ -142,8 +142,8 @@
 
   <div class="stats">
     SCORE: <span id="score">0</span><br>
-    <div id="best-label">BEST: <span id="best-score">0</span><span
-        title="Not based on highest score of username.&#13;Based on highest score saved in the browsing data."> ⓘ</span>
+    <div id="best-label">BEST: <span id="best-score">0</span>
+      <span title="Not based on highest score of user.&#13;Based on highest score saved in the browsing data."> ⓘ</span>
     </div>
   </div>
 
@@ -162,9 +162,10 @@
   <div id="usernamePrompt">
     <h3>ENTER USERNAME</h3>
     If you already have one, make sure not to misspell it. (<a href="https://carzzyapps.github.io/Leaderboards/RR"
-      style="color: #00d1b2" target="_blank">Check out the Leaderboard</a> to confirm your username).<br>
+      style="color: #00d1b2" target="_blank" title="Opens in a new tab">Check out the Leaderboard</a> to confirm your username).<br><br>
       To add a new user or switch to a different user, enter "rr", save, and then reenter the username.<br>
       To change the username of the current user, just enter the new username without first entering "rr".<br><br>
+    <strong style="color: red;">WARNING:</strong> Not following the correct procedures for when and when not to enter "rr" first will result in incorrectly storing the data.<br><br>
     <input id="usernameInput" type="text" maxlength="20" placeholder="Do not use your real name">
     <button id="saveUsernameBtn" class="menu-btn">SAVE</button>
   </div>
@@ -177,7 +178,7 @@
   </div>
 
   <script>
-    alert('Due to the new leaderboard update, some usernames may have been slightly changed. Check the leaderboard to confirm what your username is before entering it.\nDo not use an existing username unless it is your own.\nDo not use "anonymous" as a username.');
+    alert('Due to the new leaderboard update, some usernames may have been slightly changed. Check the leaderboard to confirm what your username is before entering it.\nDo not use an existing username unless it is your own.\nDo not use "anonymous" as a username.\n\nFailure to comply with our rules will result in removal from the leaderboard.');
     // USERNAME SYSTEM
     let username = localStorage.getItem("rr_username") || null;
     // Hide or show change button on load
@@ -221,7 +222,7 @@
     };
 
     updateUsernameDisplay();
-    
+
 // SUBMIT SCORE (username + score)
   async function submitScore(name, score) {
     let playerToken = localStorage.getItem('game_token');
@@ -253,10 +254,10 @@
 
   async function syncAccount() {
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUqQ31FsONw4J5ibyvLFzIoSMvcd8qfkFwbc_j-BXEO0S3pTiqARVZ4mOm5C3rI-7sIA/exec";
-    
+
     // 1. Get the name from the input field
     let nameInput = document.getElementById("usernameInput").value.trim();
-    
+
     if (nameInput.length < 2) {
       alert("Username must be at least 2 characters");
       return;
@@ -277,11 +278,11 @@
         // 3. SUCCESS: Save BOTH to browser storage
         localStorage.setItem('game_token', tokenResult);
         localStorage.setItem('rr_username', nameInput.toUpperCase());
-        
+
         // 4. Update the game variables and UI
         username = nameInput.toUpperCase();
         updateUsernameDisplay();
-        
+
         // 5. Close the prompt
         document.getElementById("usernamePrompt").style.display = "none";
         alert("Success! You are now logged in as " + username);
@@ -336,7 +337,7 @@
 
     let player = { x: 60, y: 0, w: 35, h: 45, baseH: 45, dy: 0, jumpPower: -15, grounded: true, isDucking: false };
     let obstacles = [], gravity = 0.8, groundY = 0;
-    let gameSpeed = 6.5, spawnTimer = 0;
+    let gameSpeed = 10, spawnTimer = 0;
     let isJumpKeyPressed = false;
 
     function resize() {
@@ -494,7 +495,7 @@
       bgMusic.src = playlist[currentTrackIndex];
       score = 0;
       obstacles = [];
-      gameSpeed = 6.5;
+      gameSpeed = 10;
       spawnTimer = 0;
 
       document.getElementById('score').innerText = "0";
@@ -505,8 +506,7 @@
       bgMusic.play().catch(e => { });
       update();
     };
-  </script>
-  <script>
+
     //tawk.to script
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function () {
