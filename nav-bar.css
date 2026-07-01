@@ -18,15 +18,14 @@ nav {
 }
 
 .logo {
-    position: absolute;
-    left: 35px;
+    margin-left: 35px;
 }
 
 .nav-head {
     color: #00d1b2;
     font-size: 35px;
     display: inline;
-    margin-left: calc(125px + 5vw);
+    margin-left: 5vw;
 }
 
 .nav-links {
