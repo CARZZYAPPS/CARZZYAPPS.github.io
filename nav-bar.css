@@ -54,7 +54,7 @@ nav {
     }
 }
 
-@media (max-width: 725px) {
+@media (max-width: 800px) {
     .logo {
         display: none;
     }
