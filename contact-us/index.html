@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en-US">
 
@@ -48,19 +49,27 @@
             	background: linear-gradient(135deg,rgba(0, 209, 178, 1) 0%, rgba(0, 130, 144, 1) 100%);
                 color: white;;
                 border: none;
-                border-radius: 30px;
+                border-radius: 10px;
                 font-size: 30px;
-                padding: 7px 20px;
+                padding: 10px 20px;
+                width: 495px;
                 transition: 0.25s;
             }
             
             .submit-btn:hover {
-                transform: scale(1.1);
+                transform: scale(1.05);
                 box-shadow: 0px 0px 15px rgba(0, 209, 178, 0.5);
             }
             
             .submit-btn:active {
                transform: scale(0.98);
+            }
+
+            footer {
+                margin-top: 50px;
+                margin-bottom: 30px;
+                font-size: 12.8px;
+                color: #444;
             }
             
         </style>
@@ -86,9 +95,10 @@
             <input type="text" name="Username" id="uname" placeholder="Username" required><br><br>
             <input type="email" name="Email address" id="email" placeholder="Email" required><br><br>
             <textarea rows="10" name="Comments" id="textbox" placeholder="Your questions, comments, or ideas here" required></textarea><br><br>
-			      <button type="submit" class="submit-btn">Send</button>
+			<button type="submit" class="submit-btn">Send</button>
         </form>
 
+        <footer>Avis & DeBus v1.0.0 PRO</footer>
 
 </body>
 </html>
