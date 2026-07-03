@@ -87,14 +87,12 @@
 
         <form action="https://formcarry.com/s/-sOSEHZlugr" method="post">
             <input type="text" name="Username" id="uname" placeholder="Username" required><br><br>
-			<script>
-				let username = document.getElementById('uname').value;
-				setInterval(() => {
-					username = username.toUpperCase();
-				}, 1);
-			</script>
             <input type="email" name="Email address" id="email" placeholder="Email" required><br><br>
             <textarea rows="10" name="Comments" id="textbox" placeholder="Your questions, comments, or ideas here" required></textarea><br><br>
+			<script>
+				let username = document.getElementById('uname').value;
+				username = username.toUpperCase();
+			</script>
 			<button type="submit" class="submit-btn">Send</button>
         </form>
 
