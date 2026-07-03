@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="An Endless Runner where You Jump Spikes and Duck Drones. With music!">
+  <meta name="description" content="An endless runner where you jump spikes and duck drones. With music!">
   <meta name="keywords" content="RR, Rhythm Runner, Rhythm DJ, Carzzy Apps">
   <meta name="author" content="Avis, DeBus">
   <title>Rhythm Runner</title>
@@ -133,8 +133,7 @@
 <body>
 
   <nav>
-    <a class="logo" href="/"><img src="https://carzzyapps.github.io/Carzzy Apps Logo.png"
-        style="width:150px;height:50px;"></a>
+    <a class="logo" href="/"><img src="https://carzzyapps.github.io/Carzzy%20Apps%20Logo.png" style="width:150px;height:50px;" alt="Carzzy Apps Logo"></a>
     <h1 class="nav-head">Carzzy Apps</h1>
     <span class="nav-links">
       <a class="nav-link" href="/">Home</a>
@@ -146,14 +145,14 @@
   <div class="stats">
     SCORE: <span id="score">0</span><br>
     <div id="best-label">BEST: <span id="best-score">0</span>
-      <span title="Not based on highest score of user.&#13;Based on highest score saved in the browsing data."> ⓘ</span>
+      <span title="Not based on highest score of user.&#10;Based on highest score saved in the browsing data."> ⓘ</span>
     </div>
   </div>
 
   <div id="usernameDisplay"></div>
 
   <div id="ui-layer">
-    <img src="https://carzzyapps.github.io/Rhythm-Runner/rhythm-dj.png" style="width: 60px;">
+    <img src="https://carzzyapps.github.io/Rhythm-Runner/rhythm-dj.png" style="width: 60px;" alt="Rhythm Runner Icon">
     <h2 id="title">RHYTHM RUNNER</h2>
     <p><b>JUMP</b> spikes | <b>DUCK</b> drones</p>
 
@@ -218,7 +217,7 @@
       updateUsernameDisplay();
 
       submitScore(username, 0);
-    };
+    }
 
     document.getElementById("changeUsernameBtn").onclick = () => {
       askForUsername();
@@ -511,6 +510,29 @@
       update();
     };
 
+    document.getElementById("usernamePrompt").addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById("saveUsernameBtn").onclick = () => {
+          const input = document.getElementById("usernameInput").value.trim();
+
+          if (input.length < 2) {
+            alert("Username must be at least 2 characters");
+            return;
+          }
+
+          username = input.toUpperCase();
+          localStorage.setItem("rr_username", username);
+
+          document.getElementById("usernamePrompt").style.display = "none";
+          updateUsernameDisplay();
+
+          submitScore(username, 0);
+        }
+      }
+    })
+        
+    
     //tawk.to script
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function () {
