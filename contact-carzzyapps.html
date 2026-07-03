@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contact Us | Carzzy Apps</title>
+        <link rel="icon" href="https://carzzyapps.github.io/favicon.ico">
+        <link rel="stylesheet" href="https://carzzyapps.github.io/nav-bar.css">
+    
+        <style>
+
+            body {
+                background: #0a0a0a;
+                color: #00d1b2;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                padding-top: 100px;
+                text-align: center;
+            }
+
+            h2 {
+                font-size: 32px;
+            }
+            
+            input {
+            	height: 30px;
+            }
+            
+            
+            input, textarea {
+                background: #ddd;
+            	color: #3a3a3a;
+            	border: outset 5px #00d1b2;
+                border-radius: 10px;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 17px;
+                font-weight: 500;
+                width: 50ch;
+                padding: 7px;
+            }
+            
+            input::placeholder, textarea::placeholder {
+            	font-size: 17px;
+            }
+            
+            .submit-btn {
+            	background: linear-gradient(135deg,rgba(0, 209, 178, 1) 0%, rgba(0, 130, 144, 1) 100%);
+                color: white;;
+                border: none;
+                border-radius: 30px;
+                font-size: 30px;
+                padding: 7px 20px;
+                transition: 0.25s;
+            }
+            
+            .submit-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0px 0px 15px rgba(0, 209, 178, 0.5);
+            }
+            
+            .submit-btn:active {
+               transform: scale(0.98);
+            }
+            
+        </style>
+
+    </head>
+
+    <body>
+
+        <nav>
+            <a class="logo" href="/"><img src="https://carzzyapps.github.io/Carzzy Apps Logo.png"
+                    style="width:150px;height:50px;"></a>
+            <h1 class="nav-head">Carzzy Apps</h1>
+            <span class="nav-links">
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="Leaderboards">Leaderboards</a>
+                <a class="nav-link" href="scymores-games">Scymore's Games</a>
+            </span>
+        </nav>
+
+        <h2>Contact Us</h2>
+
+        <form action="" method="post">
+            
+            <input type="text" name="uname" id="uname" placeholder="Username" required><br><br>
+            <input type="email" name="email" id="email" placeholder="Email (Optional)"><br><br>
+            <textarea rows="10" placeholder="Your questions, comments, or ideas here"></textarea><br><br>
+			<button type="submit" class="submit-btn">Send</button>
+        </form>
+
+
+</body>
+</html>
