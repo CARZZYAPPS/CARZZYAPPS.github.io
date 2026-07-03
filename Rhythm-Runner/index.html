@@ -510,7 +510,7 @@
       update();
     };
 
-    document.getElementById("usernamePrompt").addEventListener('keydown', (e) => {
+    document.getElementById("usernamePrompt").addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
         const input = document.getElementById("usernameInput").value.trim();
