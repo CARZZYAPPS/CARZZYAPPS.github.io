@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +14,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family:"Segoe UI", sans-serif;
+      font-family:"Segoe UI", Verdana, Tahoma, sans-serif;
     }
 
     body {
@@ -452,6 +453,17 @@
       }
     }
 
+    function encodeBoardData(board) {
+      const json = JSON.stringify(board);
+      return encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
+    }
+
+    function decodeBoardData(encoded) {
+      const raw = atob(decodeURIComponent(encoded));
+      const json = decodeURIComponent(escape(raw));
+      return JSON.parse(json);
+    }
+
     let boardData = loadBoard();
     let gameState = loadGameState();
 
@@ -460,8 +472,7 @@
       const encoded = params.get("board");
       if (encoded) {
         try {
-          const json = atob(decodeURIComponent(encoded));
-          const sharedBoard = JSON.parse(json);
+          const sharedBoard = decodeBoardData(encoded);
           boardData = sharedBoard;
           saveBoard();
           console.log("Loaded shared board from URL.");
@@ -471,8 +482,16 @@
       }
     })();
 
+    function updateURLBoardParam() {
+      const params = new URLSearchParams(location.search);
+      params.set("board", encodeBoardData(boardData));
+      const newUrl = location.pathname + "?" + params.toString();
+      history.replaceState(null, "", newUrl);
+    }
+
     function saveBoard() {
       localStorage.setItem(STORAGE_KEY_BOARD, JSON.stringify(boardData));
+      updateURLBoardParam();
     }
 
     function saveGameState() {
@@ -540,6 +559,15 @@
         const header = document.createElement("div");
         header.className = "category-header";
         header.textContent = cat.name;
+        header.addEventListener("click", () => {
+          if (!editorMode) return;
+          const newName = prompt("Edit category name:", cat.name);
+          if (newName !== null) {
+            boardData.categories[catIndex].name = newName.trim() || cat.name;
+            renderBoard();
+            saveBoard();
+          }
+        });
         boardEl.appendChild(header);
       });
 
