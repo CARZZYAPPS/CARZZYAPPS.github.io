@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Miles ↔ Km Converter | Carzzy Apps</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="stylesheet" href="/nav-bar.css">
+    
+        <style>
+
+            body {
+                background: #0a0a0a;
+                color: #00d1b2;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                padding-top: 100px;
+                text-align: center;
+            }
+
+            h2 {
+                font-size: 32px;
+            }
+
+            h3 {
+                font-size: 24px;
+            }
+
+            .convert {
+                display: inline-block;
+                margin: 10px 50px 30px;
+            }
+
+            input {
+                width: 210px;
+                height: 30px;
+                font-size: 20px;
+                padding-left: 5px;
+                border: #00d1b2 5px outset;
+            }
+
+            .convert-btn {
+                display: block;
+                background: linear-gradient(135deg,rgb(0 209 178) 0%, rgb(0 130 144) 100%);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                margin: 10px;
+                width: 225px;
+                font-size: 18px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+            .convert-btn:hover {
+                transform: scale(1.05);
+            }
+
+            .convert-btn:active {
+                transform: scale(1);
+                transition: 0.15s;
+            }
+
+            .result {
+                margin-top: 15px;
+                font-size: 20px;
+            }
+
+            footer {
+                margin-top: 10px;
+                margin-bottom: 30px;
+                font-size: 12.8px;
+                color: #444;
+            }
+            
+        </style>
+
+    </head>
+
+    <body>
+
+        <nav>
+            <a class="logo" href="/"><img src="https://carzzyapps.github.io/Carzzy Apps Logo.png"
+                    style="width:150px;height:50px;" alt="Carzzy Apps Logo"></a>
+            <h1 class="nav-head">Carzzy Apps</h1>
+            <span class="nav-links">
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="Leaderboards">Leaderboards</a>
+                <a class="nav-link" href="scymores-games">Scymore's Games</a>
+            </span>
+        </nav>
+
+        <h2>Miles ↔ Kilometers Converter</h2>
+
+            <div class="convert">
+                <h3>Miles to Kilometers</h3>
+                <input type="number" id="miles" placeholder="Miles">
+                <button class="convert-btn" id="mi-to-km" onclick="convertMi()">CONVERT</button>
+                <div class="result">
+                    <b>Result:</b> <span id="km-result"><br>&nbsp;</span>
+                </div>
+            </div>
+
+            <div class="convert">
+                <h3>Kilometers to Miles</h3>
+                <input type="number" id="km" placeholder="Kilometers">
+                <button class="convert-btn" id="km-to-mi" onclick="convertKm()">CONVERT</button>
+                <div class="result">
+                    <b>Result:</b> <span id="mi-result"><br>&nbsp;</span>
+                </div>
+            </div>
+
+
+        <footer>Avis & DeBus v1.0.0 PRO</footer>
+
+        <script>
+
+            const milesKm = 1.60934;
+            const milesBtn = document.getElementById('miles-to-km');
+            const kmBtn = document.getElementById('km-to-mi');
+            const miInput = document.getElementById('miles');
+            const kmInput = document.getElementById('km');
+            let result;
+
+            function convertMi() {
+                result = miInput.value * milesKm;
+                document.getElementById('km-result').innerHTML = "<br>" + result + " Km";
+            }
+
+            function convertKm() {
+                result = kmInput.value / milesKm;
+                document.getElementById('mi-result').innerHTML = "<br>" + result + " Mi";
+            }
+
+        </script>
+
+</body>
+</html>
