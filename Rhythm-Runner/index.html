@@ -511,23 +511,10 @@
       update();
     };
 
-    document.getElementById("usernamePrompt").addEventListener('keypress', (e) => {
+    document.getElementById("usernamePrompt").addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        const input = document.getElementById("usernameInput").value.trim();
-
-        if (input.length < 2) {
-          alert("Username must be at least 2 characters");
-          return;
-        }
-
-        username = input.toUpperCase();
-        localStorage.setItem("rr_username", username);
-
-        document.getElementById("usernamePrompt").style.display = "none";
-        updateUsernameDisplay();
-
-        submitScore(username, 0);
+        document.getElementById('saveUsernameBtn').click();
       }
     });
         
