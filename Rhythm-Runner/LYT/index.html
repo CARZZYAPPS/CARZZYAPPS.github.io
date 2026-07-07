@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An endless runner where you jump spikes and duck drones. With music!">
+  <meta name="keywords" content="RR, Rhythm Runner, Rhythm DJ, Carzzy Apps">
+  <meta name="author" content="Avis, DeBus">
   <title>Rhythm Runner</title>
   <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/nav-bar.css">
@@ -130,8 +133,7 @@
 <body>
 
   <nav>
-    <a class="logo" href="/"><img src="https://carzzyapps.github.io/Carzzy Apps Logo.png"
-        style="width:150px;height:50px;"></a>
+    <a class="logo" href="/"><img src="https://carzzyapps.github.io/Carzzy%20Apps%20Logo.png" style="width:150px;height:50px;" alt="Carzzy Apps Logo"></a>
     <h1 class="nav-head">Carzzy Apps</h1>
     <span class="nav-links">
       <a class="nav-link" href="/">Home</a>
@@ -143,14 +145,14 @@
   <div class="stats">
     SCORE: <span id="score">0</span><br>
     <div id="best-label">BEST: <span id="best-score">0</span>
-      <span title="Not based on highest score of user.&#13;Based on highest score saved in the browsing data."> ⓘ</span>
+      <span title="Not based on highest score of user.&#10;Based on highest score saved in the browsing data."> ⓘ</span>
     </div>
   </div>
 
   <div id="usernameDisplay"></div>
 
   <div id="ui-layer">
-    <img src="https://carzzyapps.github.io/Rhythm-Runner/rhythm-dj.png" style="width: 60px;">
+    <img src="https://carzzyapps.github.io/Rhythm-Runner/rhythm-dj.png" style="width: 60px;" alt="Rhythm Runner Icon">
     <h2 id="title">RHYTHM RUNNER</h2>
     <p><b>JUMP</b> spikes | <b>DUCK</b> drones</p>
 
@@ -215,7 +217,7 @@
       updateUsernameDisplay();
 
       submitScore(username, 0);
-    };
+    }
 
     document.getElementById("changeUsernameBtn").onclick = () => {
       askForUsername();
@@ -299,15 +301,20 @@
 
     // --- 1. PLAYLIST SETUP ---
     const playlist = [
-      'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Bekitcha.mp3',
+      /*'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Bekitcha.mp3',
       'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Hershy%20Weinberger%20and%20Shmueli%20Ungar%20-%20RTVT.mp3',
       'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Arcade.mp3',
       'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Ari%20Samet%20and%20Ancii%20-%20Hood.mp3',
       'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Fire-shmulei_ungar.mp3',
       'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Parentches.mp3',
       'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Zusha-Pull_Me_Through.mp3',
-      'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Zusha%20-%20Everything%20Can%20Change.mp3'
-
+      'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/Zusha%20-%20Everything%20Can%20Change.mp3',*/
+      'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/acappela/Yum%20Yum(acapella).mp3',
+      'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/acappela/Yonatan_Stern_-_Nekudot__Acapella_Cover__(Single).mp3',
+      "https://github.com/CARZZYAPPS/music/raw/refs/heads/main/acappela/Ya'alili.mp3",
+      'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/acappela/Types_Of_Yidden_no_silence.mp3',
+      'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/acappela/Shulem%20Lemmer%20singing%20with%20shira%20chad%20gadyu.mp3',
+      'https://github.com/CARZZYAPPS/music/raw/refs/heads/main/acappela/Gavriel_Pelcovitz_-_Eicha__Acapella__(Single).mp3'
     ];
 
     function shufflePlaylist(array) {
@@ -330,7 +337,7 @@
     // --- 2. CHEAT SETUP ---
     let ghostMode = false;
     let inputBuffer = "";
-    const cheatCode = "JSFGSGFKJSHUEGDBDCVGDSLFCBJHGFSDJTFSLJGFSYCSGKAJHBTCOSIEUGRCKDGFBLJKDGFKHDGFJHSDGKSFHDGJDHGFJHVJDGFJSDHGFKJSDHFJHDSGKJSDHFJHDGSKHGFGSDMNFGJDHGFDJHFGDJHF";
+    const cheatCode = "sgdufbkhfdvjfdrfrbvforhfkjfifkkjghkdjhkhkjhjkjjjjjjjjjjjjjjjkkkkkkkkkkkkkkkkkkkklllllllllllllgdhgjgytfhgrjgfdhgjfdfjkfjhfdhgfgfggfhggfhydhfgffyfhtfthllllllllgffytgcghfddsghnbvftjkjuh215465446354685764646734670624121edd5d55d5d5d54f54f8f157ce5dd44484t8fvefiefo8ryeiluwy9eyr48rk8f4r9r3r4ru983roi48ur4iruo4ru984r4r9847r98r749r489r0328734347928343928740234873409832474533633543154053335763216574";
 
     let gameActive = false, score = 0, bestScore = localStorage.getItem('rr_best_pro') || 0;
     document.getElementById('best-score').innerText = bestScore;
@@ -507,6 +514,14 @@
       update();
     };
 
+    document.getElementById("usernamePrompt").addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('saveUsernameBtn').click();
+      }
+    });
+        
+    
     //tawk.to script
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function () {
