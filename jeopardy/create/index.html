@@ -406,7 +406,9 @@
   <audio id="jeopardyMusic" src="jeopardy-theme.mp3"></audio>
 
   <script>
-    const OBFUSCATE = "asdk";
+    //Code to enter Editor Mode
+    const EDITOR_CODE = "carzzy apps is the best website ever";
+    const AFRICA = "zimbabwe";
     const MUSIC_DURATION = 32;
     const STORAGE_KEY_BOARD = "jeopardyBoardV2";
     const STORAGE_KEY_STATE = "jeopardyGameStateV2";
@@ -630,7 +632,7 @@
     editorToggleBtn.addEventListener("click", () => {
       if (!editorMode) {
         const code = prompt("Enter editor code:");
-        if (code !== OBFUSCATE) {
+        if (code !== AFRICA) {
           alert("Incorrect code.");
           return;
         }
