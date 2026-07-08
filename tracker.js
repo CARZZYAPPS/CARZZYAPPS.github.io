@@ -1,41 +1,23 @@
 
-// ---------------------------
-// Client-side tracker code
-// ---------------------------
-// Usage: include the code below in a <script> on your site, and set APPS_SCRIPT_URL
-// to the deployed Web App URL (Deploy -> New deployment -> Web app). Deploy with
-// "Execute as: Me" and "Who has access: Anyone, even anonymous" for anonymous logs.
-
 (function () {
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZPIONLcpdwTL_FVWUxidjyU6DFTAB5n6cwJ_Y_wi1QFRx2j6dF2BLbCQeCe25zpqfdg/exec';
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNmtqr-hRckMsO3qYXNJmDubHmU136Q9djx_CiubkRrobxLUJYEOJ2u2c_w6-Z0o04_w/exec';
 
   function getOrCreateToken() {
     var token = localStorage.getItem('userToken');
-    if (token) return token;
-
-    // use a temporary token immediately, then request a proper sequential token
-    token = 'ca-temp-' + Date.now();
-    try { localStorage.setItem('userToken', token); } catch (e) {}
-
-    // async request to get the next sequential token from the server
-    try {
-      var url = APPS_SCRIPT_URL + '?action=getNextToken';
-      fetch(url, { method: 'GET', cache: 'no-store' })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          if (data && data.token) {
-            try { localStorage.setItem('userToken', data.token); } catch (e) {}
-            userToken = data.token; // update outer var when ready
-          }
-        }).catch(function () { /* ignore */ });
-    } catch (err) { /* ignore */ }
-
+    if (!token) {
+      token = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      try {
+        localStorage.setItem('userToken', token);
+      } catch (err) {
+        // localStorage may be blocked; fall back to in-memory token
+      }
+    }
     return token;
   }
 
   var pageVisitStart = Date.now();
   var userToken = getOrCreateToken();
-  var currentPage = window.location.pathname || (document.referrer ? new URL(document.referrer, location.href).pathname : '/');
+  var currentPage = window.location.pathname;
 
   window.addEventListener('load', function () {
     pageVisitStart = Date.now();
@@ -72,11 +54,6 @@
       return;
     }
 
-    // fallback: if fromPage is empty or root, try document.referrer
-    if (!fromPage || fromPage === '/') {
-      try { fromPage = document.referrer ? new URL(document.referrer, location.href).pathname : fromPage; } catch (e) { /* ignore */ }
-    }
-
     var payload = {
       action: 'logActivity',
       token: userToken,
@@ -111,4 +88,3 @@
   // expose for debugging
   window.__trackThat = { logActivity: logActivity };
 })();
-// Removed legacy global tracker code (was conflicting with the IIFE tracker).
