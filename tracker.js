@@ -1,4 +1,3 @@
-
 (function () {
   var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNmtqr-hRckMsO3qYXNJmDubHmU136Q9djx_CiubkRrobxLUJYEOJ2u2c_w6-Z0o04_w/exec';
 
