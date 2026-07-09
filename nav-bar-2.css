@@ -9,6 +9,7 @@ nav {
     height: 80px;
     overflow: hidden;
     height: 80px;
+    z-index: 1;
 }
 
 nav iframe {
