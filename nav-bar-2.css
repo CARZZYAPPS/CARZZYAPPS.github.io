@@ -2,7 +2,7 @@ body {
 	margin: 0px;
 }
 
-.iframe-container {
+nav {
 	position: fixed;
 	top: 0px;
     width: 100vw;
@@ -11,7 +11,7 @@ body {
     height: 80px;
 }
 
-.iframe-container iframe {
+iframe {
     width: calc(100% + 15px);
     height: 80px;
     border: none;
