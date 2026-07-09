@@ -1,18 +1,18 @@
 body {
-margin: 0px;
+    margin: 0px;
 }
 
 nav {
-position: fixed;
-top: 0px;
-width: 100vw;
-height: 80px;
-overflow: hidden;
-height: 80px;
+    position: fixed;
+    top: 0px;
+    width: 100vw;
+    height: 80px;
+    overflow: hidden;
+    height: 80px;
 }
 
 nav iframe {
-width: calc(100% + 15px);
-height: 80px;
-border: none;
+    width: calc(100% + 15px);
+    height: 80px;
+    border: none;
 }
