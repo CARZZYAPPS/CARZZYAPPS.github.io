@@ -1,5 +1,5 @@
 (function () {
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxY8BXgTzGp1gCSQE05g0K6gc703Dap1-1RyvdEVTU_0pINDzJVsejX90SJxusEPhHUw/exec';
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6VjBst3Vaa-RuHtb5EW214YA-GGq3RQ12UhawS0DKhudtK7MSIckgPyX2805Sq-MMxA/exec';
 
   function getOrCreateToken() {
     var token = localStorage.getItem('userToken');
