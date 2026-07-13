@@ -1,4 +1,4 @@
-fetch('/nav-bar.html')
+fetch('https://www.carzzyapps.com/nav-bar.html')
     .then(response => response.text())
     .then(navbar => {
         document.body.insertAdjacentHTML('afterbegin', navbar);
