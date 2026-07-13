@@ -10,13 +10,11 @@ function initializeMenu() {
     const menuIcon = document.querySelector('.menu-icon');
     const menu = document.querySelector('.menu-popup');
     
-    if (menuIcon) {
-        menuIcon.addEventListener('click', () => {
-            menu.style.display = 'block';
-        });
+    menuIcon.addEventListener('click', () => {
+        menu.style.display = 'block';
+    });
 
-        document.querySelector('#close-menu')?.addEventListener('click', () => {
-            menu.style.display = 'none';
-        });
-    }
+    document.querySelector('#close-menu')?.addEventListener('click', () => {
+        menu.style.display = 'none';
+    });
 }
