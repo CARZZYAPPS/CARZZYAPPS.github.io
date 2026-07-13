@@ -14,7 +14,7 @@ function initializeMenu() {
         menu.style.display = 'block';
     });
 
-    document.querySelector('#close-menu')?.addEventListener('click', () => {
+    document.querySelector('#close-menu').addEventListener('click', () => {
         menu.style.display = 'none';
     });
 }
