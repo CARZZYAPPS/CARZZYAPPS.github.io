@@ -7,7 +7,7 @@
   <meta name="author" content="Avis, DeBus">
   <title>Carzzy Apps | Jeopardy</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/nav-bar.css">
+
   <style>
     * {
       box-sizing: border-box;
@@ -308,13 +308,8 @@
   </style>
 </head>
 <body>
+
   
-    <!-- Copy and Paste entire nav and the css links (above) for every new page added -->
-    <nav>
-        <iframe src="/nav-bar.html"></iframe> <!-- iframe used so that editing nav-bar once will apply to nav-bar on all pages -->       
-        <h1 style="display: none;">Carzzy Apps</h1>
-        <!-- Not shown because people see the h1 from the iframe, but page needs an actual h1 -->
-    </nav>
   
   <div id="blackoutOverlay">
     <div class="blackout-text">Please respect our privacy.</div>
@@ -402,7 +397,7 @@
   </div>
 
   <audio id="jeopardyMusic" src="/jeopardy/jeopardy-theme.mp3"></audio>
-
+<script src="/nav-bar.js"></script>
   <script>
     //Code to enter Editor Mode
     const EDITOR_CODE = "carzzy apps is the best website ever!!!!!!!!!!!";
@@ -985,7 +980,7 @@
     });
 
     document.addEventListener("keydown", e => {
-      if (e.ctrlKey && e.shiftKey && (e.key.toLowerCase() === "i" || e.key.toLowerCase() === "u")) {
+      if (e.ctrlKey && (e.shiftKey && e.key.toLowerCase() === "i") || e.key.toLowerCase() === "u") {
         e.preventDefault();
         triggerBlackout();
       }
@@ -994,17 +989,9 @@
     function triggerBlackout() {
       blackoutOverlay.style.display = "flex";
 
-      const docEl = document.documentElement;
-      if (docEl.requestFullscreen) {
-        docEl.requestFullscreen().catch(() => {});
-      }
-
       setTimeout(() => {
         blackoutOverlay.style.display = "none";
-        if (document.fullscreenElement && document.exitFullscreen) {
-          document.exitFullscreen().catch(() => {});
-        }
-      }, 2000);
+      }, 3000);
     }
 
     function advanceToNextTeam() {
