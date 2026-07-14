@@ -12,9 +12,11 @@ function initializeMenu() {
 
     menuIcon.addEventListener('click', () => {
         menuOverlay.style.display = 'block';
+        document.body.style.overflow = 'hidden';
     });
 
     menuOverlay.addEventListener('click', () => {
         menuOverlay.style.display = 'none';
+        document.body.style.overflow = 'auto';
     });
 }
