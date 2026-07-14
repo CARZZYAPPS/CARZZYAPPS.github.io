@@ -1,4 +1,4 @@
-fetch('https://www.carzzyapps.com/nav-bar.html')
+fetch('/nav-bar.html')
     .then(response => response.text())
     .then(navbar => {
         document.body.insertAdjacentHTML('afterbegin', navbar);
@@ -8,13 +8,13 @@ fetch('https://www.carzzyapps.com/nav-bar.html')
 
 function initializeMenu() {
     const menuIcon = document.querySelector('.menu-icon');
-    const menu = document.querySelector('.menu-popup');
-    
+    const menuOverlay = document.querySelector('.menu-overlay');
+
     menuIcon.addEventListener('click', () => {
-        menu.style.display = 'block';
+        menuOverlay.style.display = 'block';
     });
 
-    document.querySelector('#close-menu').addEventListener('click', () => {
-        menu.style.display = 'none';
+    menuOverlay.addEventListener('click', () => {
+        menuOverlay.style.display = 'none';
     });
 }
