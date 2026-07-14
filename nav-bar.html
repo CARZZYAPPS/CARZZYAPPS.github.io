@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en-US">
 
@@ -5,7 +6,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carzzy Apps nav-bar</title>
+    <title>Carzzy Apps Navbar</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     <style>
@@ -177,7 +178,7 @@
 <body>
 
     <nav>
-        <a class="logo" href="/"><img src="https://carzzyapps.com/Carzzy%20Apps%20Logo.png" style="width:150px;height:50px;"
+        <a class="logo" href="/"><img src="/Carzzy%20Apps%20Logo.png" style="width:150px;height:50px;"
                 alt="Carzzy Apps Logo"></a>
         <h1 class="nav-head">Carzzy Apps</h1>
                 <span class="nav-links">
@@ -222,10 +223,12 @@
 
         menuIcon.addEventListener('click', () => {
             menuOverlay.style.display = 'block';
+            document.body.style.overflow = 'hidden';
         });
 
         menuOverlay.addEventListener('click', () => {
             menuOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
         });
 
     </script>
