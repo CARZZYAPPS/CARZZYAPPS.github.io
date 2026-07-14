@@ -3,6 +3,8 @@
 
 <head>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carzzy Apps nav-bar</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
@@ -85,9 +87,17 @@
             background: #010101;
             color: white;
             list-style: none;
-            display: none;
             border: solid #00d1b2 5px;
             box-shadow: -7px 7px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            position: fixed;
+            height: 100vh;
+            width: 100vw;
+            z-index: 1;
         }
 
         #close-menu {
@@ -96,6 +106,7 @@
             top: -10px;
             right: 10px;
             transition: 0.4s;
+            cursor: pointer;
         }
 
         #close-menu:hover {
@@ -177,32 +188,44 @@
 
             <img src="/menu.svg" class="menu-icon" alt="">
 
-
-            <ul class="menu-popup">
-
-                <span id="close-menu">&times;</span>
-                <a href="/" class="list-nav-link"><li class="menu-link">Home</li></a>
-                <a href="/Leaderboards/" class="list-nav-link"><li class="menu-link">Leaderboards</li></a>
-                <a href="/scymores-games/" class="list-nav-link"><li class="menu-link">Scymore's Games</li></a>
-                <a href="/contact-us" class="list-nav-link"><li class="menu-link">Contact Us</li></a>
-
-            </ul>
-
     </nav>
+
+    <div class="menu-overlay">
+
+        <img src="/menu.svg" class="menu-icon" alt="">
+        
+        <ul class="menu-popup">        
+                
+            <span id="close-menu">&times;</span>
+            <a href="/" class="list-nav-link">
+                <li class="menu-link">Home</li>
+            </a>
+            <a href="/Leaderboards/" class="list-nav-link">
+                <li class="menu-link">Leaderboards</li>
+            </a>
+            <a href="/scymores-games/" class="list-nav-link">
+                <li class="menu-link">Scymore's Games</li>
+            </a>
+            <a href="/contact-us" class="list-nav-link">
+                <li class="menu-link">Contact Us</li>
+            </a>
+                
+        </ul>
+                
+    </div>
     
     <script>
 
         const menuIcon = document.querySelector('.menu-icon');
-        const menu = document.querySelector('.menu-popup');
+        const menuOverlay = document.querySelector('.menu-overlay');
 
         menuIcon.addEventListener('click', () => {
-            menu.style.display = 'block';
+            menuOverlay.style.display = 'block';
         });
 
-        document.querySelector('#close-menu')?.addEventListener('click', () => {
-            menu.style.display = 'none';
+        menuOverlay.addEventListener('click', () => {
+            menuOverlay.style.display = 'none';
         });
-
 
     </script>
     
