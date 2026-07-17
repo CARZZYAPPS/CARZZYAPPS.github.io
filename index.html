@@ -1,230 +1,762 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A fun website with games and other useful tools">
-    <meta name="keywords" content="carzzy apps, games, apps, crazzy apps">
-    <meta name="author" content="Avis, DeBus">
-    
-    <!-- This is to (hopefully) get Google to display the name instead of the url -->
-    <meta property="og:site_name" content="Carzzy Apps">
-    
-    <!--
-        Keep this next tag only on the homepage; don't put it on the others.
-        Hopefully we will finally get ourselves on Google Search results :)
-        This tag doesn't just work on its own. It's for verification on the Google Search Console. It still needs to remain here even after verification.
-    -->
-    <meta name="google-site-verification" content="HbcEB98bgiQEfkfdGsmj3vowfgB6Mep-i1L_DJFxTYU">
-    
-    <title>Carzzy Apps | Home Page</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Carzzy Chords</title>
+	<style>
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #0a0a0a;
+			color: #00d1b2;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
+			margin: 0;
+			padding: 20px;
+		}
 
-    <style>
-        body {
-            background-color: #0a0a0a;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-        }
+		.card {
+			position: relative;
+			background: #1a1a1a;
+			padding: 24px;
+			border-radius: 16px;
+			box-shadow: 0 6px 20px rgba(10, 10, 20, 0.08);
+			width: 360px;
+			max-width: 100%;
+		}
 
-        h2 {
-            margin-top: 100px;
-            color: #aaa;
-            margin-bottom: 40px;
-            text-align: center;
-        }
+		.card-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 18px;
+		}
 
-        .container {
-            width: 100%;
-            max-width: 600px;
-        }
+		h1 {
+			font-size: 20px;
+			margin: 0;
+			text-shadow: 0 0 8px rgb(0, 209, 178);
+		}
 
-        .project-card {
-            background: #151515;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: white;
-            display: block;
-            transition: 0.3s;
-        }
+		.chord {
+    		font-size: 48px;
+    		font-weight: 700;
+    		text-align: center;
+    		margin: 24px 0;
+    		padding: 20px;
+    		background: #0a0a0a;
+    		border-radius: 12px;
+    		box-shadow: 0 0 25px rgb(0, 209, 178);
+			text-shadow: 0 0 20px rgb(0, 209, 178);
+		}
 
-        .project-card:hover {
-            border-color: #00d1b2;
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0, 209, 178, 0.2);
-        }
+		.info {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 14px;
+			gap: 12px;
+			flex-wrap: wrap;
+		}
 
-        .project-title {
-            color: #00d1b2;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            display: block;
-        }
+		.score {
+			font-size: 14px;
+			font-weight: 600;
+		}
 
-        .project-desc {
-            font-size: 0.9rem;
-            color: #aaa;
-        }
+		.score span {
+			font-weight: 700;
+		}
 
-        .contact-section {
-            margin-top: 60px;
-            text-align: center;
-            border-top: 1px solid #222;
-            padding-top: 40px;
-            width: 100%;
-            max-width: 400px;
-        }
+		.top-score-good {
+			color: #4caf50;
+			text-shadow: 0 0 8px rgba(244, 67, 54, 0.7);
+		}
 
-        .contact-btn {
-            display: inline-block;
-            background: transparent;
-            color: #00d1b2;
-            border: 2px solid #00d1b2;
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
+		.top-score-bad {
+			color: #f44336;
+			text-shadow: 0 0 8px rgba(76, 175, 80, 0.7);
+		}
 
-        .contact-btn:hover {
-            background: #00d1b2;
-            color: #0a0a0a;
-            box-shadow: 0 0 20px rgba(0, 209, 178, 0.4);
-        }
+		button {
+			padding: 10px 16px;
+			border-radius: 10px;
+			border: 0;
+			background: #0a0a0a;
+			color: #00d1b2;
+			font-weight: 600;
+			cursor: pointer;
+			transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+			transition-duration: 0.4s;
+		}
 
-        footer {
-            margin-top: 50px;
-            font-size: 0.8rem;
-            color: #444;
-        }
+		button:hover {
+			opacity: 0.95;
+			transform: translateY(-3px) translateX(0) translateZ(3px); 
+		}
 
-        s {
-            color: #aaa;
-            text-decoration-line: line-through;
-            text-decoration-color: #00d1b2;
-        }
+		button:active {
+			transform: translateY(0);
+		}
 
-    </style>
+		button.secondary {
+			background: #0a0a0a;
+			color: #00d1b2;
+			box-shadow: 0 0 10px rgb(0, 209, 178);
+		}
+
+		button.correct {
+			color: #4caf50;
+			box-shadow: #4caf50 0px 0px 10px;
+			text-shadow: 0 0 10px #4caf50;
+		}
+
+		button.incorrect {
+			color: #f44336;
+			box-shadow: #f44336 0px 0px 10px;
+			text-shadow: 0 0 10px #f44336;
+		}
+
+		.controls {
+			display: flex;
+			gap: 10px;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		.controls button {
+			flex: 1;
+			min-width: 100px;
+		}
+
+		.hint {
+			font-size: 13px;
+			color: #666;
+			margin-top: 14px;
+			text-align: center;
+			line-height: 1.5;
+		}
+
+		.modal {
+			display: none !important;
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.5);
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+		}
+
+		.modal.show {
+			display: flex !important;
+		}
+
+		.modal-content {
+			background: #0a0a0a;
+			padding: 24px;
+			border-radius: 16px;
+			width: 420px;
+			max-width: 95%;
+		}
+
+		.modal-content h2 {
+			margin: 0 0 16px;
+			font-size: 18px;
+		}
+
+		.answer-list {
+			font-size: 18px;
+			color: #2b7cff;
+			font-weight: 700;
+			margin: 16px 0;
+			padding: 16px;
+			background: #f0f4ff;
+			border-radius: 12px;
+			text-align: center;
+		}
+
+		.modal-buttons {
+			display: flex;
+			justify-content: flex-end;
+			gap: 8px;
+			margin-top: 16px;
+		}
+
+		.notification {
+			position: fixed;
+			top: 18px;
+			left: 50%;
+			transform: translateX(-50%) translateY(-10px);
+			min-width: 280px;
+			max-width: 90%;
+			padding: 14px 18px;
+			border-radius: 14px;
+			border: 1px solid rgba(255,255,255,0.16);
+			background: rgba(15, 15, 15, 0.9);
+			color: #fff;
+			font-weight: 600;
+			opacity: 0;
+			pointer-events: none;
+			backdrop-filter: blur(12px);
+			box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+			transition: opacity 0.2s ease, transform 0.2s ease;
+			z-index: 1200;
+		}
+
+		.notification.show {
+			opacity: 1;
+			transform: translateX(-50%) translateY(0);
+		}
+
+		.notification.success {
+			border-color: rgba(76, 175, 80, 0.8);
+			background: rgba(76, 175, 80, 0.14);
+		}
+
+		.notification.error {
+			border-color: rgba(244, 67, 54, 0.8);
+			background: rgba(244, 67, 54, 0.14);
+		}
+
+		.notification.info {
+			border-color: rgba(33, 150, 243, 0.8);
+			background: rgba(33, 150, 243, 0.14);
+		}
+
+		.confetti-container {
+			pointer-events: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			z-index: 1150;
+		}
+
+		.confetti-piece {
+			position: absolute;
+			width: 4px;
+			height: 4px;
+			border-radius: 50%;
+			opacity: 0.95;
+			will-change: transform, opacity;
+			animation: confetti-fall 2800ms ease-out forwards;
+		}
+
+		@keyframes confetti-fall {
+			0% {
+				transform: translate3d(0, 0, 0) rotate(0deg);
+				opacity: 1;
+			}
+			20% {
+				transform: translate3d(calc(var(--dx) * 0.14 + var(--sway) * 0.13), calc(var(--top) * 0.2), 0) rotate(calc(var(--r) * 0.16));
+				opacity: 1;
+			}
+			35% {
+				transform: translate3d(calc(var(--dx) * 0.32 + var(--sway2) * 0.16), calc(var(--top) * 0.4), 0) rotate(calc(var(--r) * 0.24));
+				opacity: 1;
+			}
+			55% {
+				transform: translate3d(calc(var(--dx) * 0.55 + var(--sway3) * 0.2), calc(var(--top) * 0.62), 0) rotate(calc(var(--r) * 0.42));
+				opacity: 1;
+			}
+			75% {
+				transform: translate3d(calc(var(--dx) * 0.82 + var(--sway) * 0.14), calc(var(--top) * 0.85 + 12px), 0) rotate(calc(var(--r) * 0.65));
+				opacity: 1;
+			}
+			90% {
+				transform: translate3d(calc(var(--dx) * 0.96 + var(--sway2) * 0.1), calc(var(--top) * 0.94 + 24px), 0) rotate(calc(var(--r) * 0.85));
+				opacity: 0.9;
+			}
+			100% {
+				transform: translate3d(calc(var(--dx) * 1.08 + var(--sway3) * 0.06), var(--fall), 0) rotate(var(--r));
+				opacity: 0;
+			}
+		}
+	</style>
 </head>
-
 <body>
+	<div id="notification" class="notification"></div>
+	<div id="confetti" class="confetti-container"></div>
+	<div class="card">
+		<div class="card-header">
+			<h1>Carzzy Chords</h1>
+			<button id="settingsBtn" class="secondary" title="Settings" style="text-shadow: 0 0 50px rgb(0, 209, 178)"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0,0,256,256">
+<g fill="#00d1b2" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.12,5.12)"><path d="M47.16,21.221l-5.91,-0.966c-0.346,-1.186 -0.819,-2.326 -1.411,-3.405l3.45,-4.917c0.279,-0.397 0.231,-0.938 -0.112,-1.282l-3.889,-3.887c-0.347,-0.346 -0.893,-0.391 -1.291,-0.104l-4.843,3.481c-1.089,-0.602 -2.239,-1.08 -3.432,-1.427l-1.031,-5.886c-0.084,-0.478 -0.499,-0.828 -0.985,-0.828h-5.5c-0.49,0 -0.908,0.355 -0.987,0.839l-0.956,5.854c-1.2,0.345 -2.352,0.818 -3.437,1.412l-4.83,-3.45c-0.399,-0.285 -0.942,-0.239 -1.289,0.106l-3.887,3.887c-0.343,0.343 -0.391,0.883 -0.112,1.28l3.399,4.863c-0.605,1.095 -1.087,2.254 -1.438,3.46l-5.831,0.971c-0.482,0.08 -0.836,0.498 -0.836,0.986v5.5c0,0.485 0.348,0.9 0.825,0.985l5.831,1.034c0.349,1.203 0.831,2.362 1.438,3.46l-3.441,4.813c-0.284,0.397 -0.239,0.942 0.106,1.289l3.888,3.891c0.343,0.343 0.884,0.391 1.281,0.112l4.87,-3.411c1.093,0.601 2.248,1.078 3.445,1.424l0.976,5.861c0.079,0.481 0.496,0.834 0.985,0.834h5.5c0.485,0 0.9,-0.348 0.984,-0.825l1.045,-5.89c1.199,-0.353 2.348,-0.833 3.43,-1.435l4.905,3.441c0.398,0.281 0.938,0.232 1.282,-0.111l3.888,-3.891c0.346,-0.347 0.391,-0.894 0.104,-1.292l-3.498,-4.857c0.593,-1.08 1.064,-2.222 1.407,-3.408l5.918,-1.039c0.479,-0.084 0.827,-0.5 0.827,-0.985v-5.5c0.001,-0.49 -0.354,-0.908 -0.838,-0.987zM25,32c-3.866,0 -7,-3.134 -7,-7c0,-3.866 3.134,-7 7,-7c3.866,0 7,3.134 7,7c0,3.866 -3.134,7 -7,7z"></path></g></g>
+</svg></button>
+		</div>
+		<div class="info">
+			<div class="score">Correct: <span id="correct" style=color:#4caf50>0</span></div>
+			<div class="score">Wrong: <span id="wrong" style=color:#f44336>0</span></div>
+			<div class="score">Top: <span id="topScore">0</span></div>
+		</div>
+		<div class="chord" id="chord">Click Next To Begin</div>
+		<div class="controls">
+			<button id="wrongBtn" class="incorrect">Wrong</button>
+			<button id="checkBtn" class="secondary">Check</button>
+			<button id="rightBtn" class="correct">Correct</button>
+		</div>
+		<div style="display:flex;justify-content:center;margin-top:12px;gap:8px">
+			<button id="nextBtn" class="secondary">Next</button>
+		</div>
+		<div class="hint">
+			<strong>Keyboard Shortcuts:</strong> ← arrow = incorrect, → arrow = correct<br>
+			<strong>Controls:</strong> Check to see answer, Next for new chord
+		</div>
+	</div>
 
-    <script src="/nav-bar.js"></script>
-    
-    <header>
-        <h2>Our Games & Apps</h2>
-    </header>
+	<!-- Settings Modal -->
+	<div id="modal" class="modal">
+		<div class="modal-content">
+			<h2>Select chords to test</h2>
+			<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+				<div style="flex:1;min-width:160px">
+					<strong>Notes</strong>
+					<div id="notesList" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+				</div>
+				<div style="flex:1;min-width:160px">
+					<strong>Qualities</strong>
+					<div style="margin-top:8px">
+						<label style="display:block;margin:6px 0"><input type="checkbox" id="optMajor" checked/> Major</label>
+						<label style="display:block;margin:6px 0"><input type="checkbox" id="optMinor" checked/> Minor</label>
+					</div>
+					<strong style="display:block;margin-top:12px">Accidentals</strong>
+					<div style="margin-top:8px">
+						<label style="display:block;margin:6px 0"><input type="checkbox" id="optSharp" checked/> Use sharps (#)</label>
+						<label style="display:block;margin:6px 0"><input type="checkbox" id="optFlat"/> Use flats (b)</label>
+						<label style="display:block;margin:6px 0"><input type="checkbox" id="optPlain"/> Plain letters</label>
+					</div>
+					<strong style="display:block;margin-top:12px">Confetti</strong>
+					<div style="margin-top:8px">
+						<label style="display:block;margin:6px 0"><input type="checkbox" id="optConfetti" checked/> Enable celebration confetti</label>
+						<label style="display:block;margin:6px 0">Every <select id="confettiInterval" style="margin-left:6px;padding:4px 6px;border-radius:6px;background:#111;color:#00d1b2;border:1px solid rgba(255,255,255,0.12);">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="5">5</option>
+							<option value="10" selected>10</option>
+							<option value="20">20</option>
+						</select> correct answers</label>
+					</div>
+				</div>
+			</div>
+			<div class="modal-buttons">
+				<button id="openDanger" class="incorrect">⚠️ Danger zone</button>
+				<button id="cancelSettings" class="secondary">Cancel</button>
+				<button id="saveSettings" class="secondary">Save</button>
+			</div>
+		</div>
+	</div>
 
-    <div class="container">
-        <!-- PROJECT 1 -->
-        <a href="https://carzzyapps.github.io/Rhythm-Runner/" class="project-card">
-            <span class="project-title">Rhythm Runner</span>
-            <span class="project-desc">An Endless Runner where You Jump Spikes and Duck Drones</span><br>
-            <span class="project-desc"><s>Built In Music</s></span>
-            <span class="project-desc" style="font-size: 0.7rem">To accommodate our users, the music will be acapella during the Three Weeks</span><br> 
-            <span class="project-desc">✓ Compatible With Smartphones.</span><br>
-            
-        </a>
+	<div id="dangerModal" class="modal">
+		<div class="modal-content">
+			<h2>⚠️ Danger Zone</h2>
+			<p style="margin:0 0 16px;color:#f44336;">Reset settings or scores here. This cannot be undone.</p>
+			<div class="modal-buttons" style="flex-direction:column;align-items:stretch;">
+				<button id="dangerResetSettings" class="incorrect">Reset settings</button>
+				<button id="dangerResetScores" class="incorrect">Reset scores</button>
+				<button id="dangerResetAll" class="incorrect">Reset everything</button>
+				<button id="closeDanger" class="secondary">Close</button>
+			</div>
+		</div>
+	</div>
 
-        <!-- PROJECT 2 -->
-        <a href="https://carzzyapps.github.io/Metronome/" class="project-card">
-            <span class="project-title">Metronome</span>
-            <span class="project-desc">An Online Metronome</span>
-        </a>
+	<!-- Answer Modal -->
+	<div id="answerModal" class="modal" style="box-shadow: 0 0 20px rgb(0, 209, 178);">
+		<div class="modal-content">
+			<h2>Chord Notes</h2>
+			<div class="answer-list" id="answerText">—</div>
+			<div class="modal-buttons">
+				<button id="closeAnswer" class="secondary" style="width:75%; align-items:center;">Close</button>
+			</div>
+		</div>
+	</div>
 
+	<script>
+		const sharpNotes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+		const flatNotes  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+		const plainNotes = ['C','D','E','F','G','A','B'];
+		const qualities = ['major','minor'];
+		
+		const chordEl = document.getElementById('chord');
+		const correctEl = document.getElementById('correct');
+		const wrongEl = document.getElementById('wrong');
+		const rightBtn = document.getElementById('rightBtn');
+		const wrongBtn = document.getElementById('wrongBtn');
+		const nextBtn = document.getElementById('nextBtn');
+		const settingsBtn = document.getElementById('settingsBtn');
+		const modal = document.getElementById('modal');
+		const notesListEl = document.getElementById('notesList');
+		const cancelSettings = document.getElementById('cancelSettings');
+		const saveSettings = document.getElementById('saveSettings');
+		const openDanger = document.getElementById('openDanger');
+		const dangerModal = document.getElementById('dangerModal');
+		const dangerResetSettings = document.getElementById('dangerResetSettings');
+		const dangerResetScores = document.getElementById('dangerResetScores');
+		const dangerResetAll = document.getElementById('dangerResetAll');
+		const closeDanger = document.getElementById('closeDanger');
+		const optMajor = document.getElementById('optMajor');
+		const optMinor = document.getElementById('optMinor');
+		const optSharp = document.getElementById('optSharp');
+		const optFlat = document.getElementById('optFlat');
+		const optPlain = document.getElementById('optPlain');
+		const optConfetti = document.getElementById('optConfetti');
+		const confettiIntervalEl = document.getElementById('confettiInterval');
+		const checkBtn = document.getElementById('checkBtn');
+		const answerModal = document.getElementById('answerModal');
+		const answerText = document.getElementById('answerText');
+		const closeAnswer = document.getElementById('closeAnswer');
+		const topScoreEl = document.getElementById('topScore');
 
-        <!-- PROJECT 3 -->
-        <a href="https://carzzyapps.github.io/right-on-time/" class="project-card">
-            <span class="project-title">Right On Time</span>
-            <span class="project-desc">A Stopwatch where You Try to Stop it Exactly on the Second</span>
-        </a>
+		const noteMap = { C:0,'C#':1,Db:1,D:2,'D#':3,Eb:3,E:4,F:5,'F#':6,Gb:6,G:7,'G#':8,Ab:8,A:9,'A#':10,Bb:10,B:11 };
 
+		let correct = 0, wrong = 0;
+		let topScore = 0;
+		let current = null;
+		let useSharps = true;
+		let useFlat = false;
+		let activeNotes = [...sharpNotes];
+		let usePlain = false;
+		let activeQualities = ['major','minor'];
+		let confettiEnabled = true;
+		let confettiInterval = 10;
 
-        <!-- PROJECT 4 -->
-        <a href="https://carzzyapps.github.io/Radical-Stopwatch/" class="project-card">
-            <span class="project-title">Radical Stopwatch</span>
-            <span class="project-desc">A Stopwatch that Counts in Radicals</span>
-        </a>
+		function randInt(n){return Math.floor(Math.random()*n)}
 
-        <!-- PROJECT 5 -->
-        <a href="https://carzzyapps.github.io/Radical-Clicker/" class="project-card">
-            <span class="project-title">Radical Clicker</span>
-            <span class="project-desc">A Clicker Game that Counts in Radicals</span>
-        </a>
+		function saveSettingsToStorage(){
+			localStorage.setItem('easyChordsSettings', JSON.stringify({
+				activeNotes,
+				usePlain,
+				useSharps,
+				useFlat: optFlat.checked,
+				activeQualities,
+				confettiEnabled,
+				confettiInterval
+			}));
+		}
 
-        <!-- PROJECT 6 -->
-        <a href="https://carzzyapps.github.io/Hockey-Shootout/" class="project-card">
-            <span class="project-title">Hockey Shootout</span>
-            <span class="project-desc">Exactly what it Sounds Like</span>
-        </a>
+		function updateTopScore(){
+			const wasHighScore = correct > topScore;
+			if(wasHighScore){
+				topScore = correct;
+				topScoreEl.textContent = topScore;
+				localStorage.setItem('easyChordsTopScore', String(topScore));
+				showNotification('New high score!', 'success');
+				if(confettiEnabled) launchConfetti();
+			}
+			applyTopScoreStyle();
+		}
 
-        <!-- PROJECT 7 -->
-        <a href="https://carzzyapps.github.io/DeCrossyBus/" class="project-card">
-            <span class="project-title">DeCrossyBus</span>
-            <span class="project-desc">Why Did DeBus Cross the Road?</span><br>
-            <span class="project-desc">To Save Us From Copyright Infringement, Of Course</span><br>
-            <span class="project-desc">✓ Compatible With Smartphones</span><br>
-        </a>
+		function maybeLaunchConfettiOnInterval(){
+			if(!confettiEnabled || confettiInterval <= 0) return;
+			if(correct > 0 && correct % confettiInterval === 0 && correct !== topScore){
+				showNotification(`Confetti every ${confettiInterval} correct!`, 'success');
+				launchConfetti();
+			}
+		}
 
-        <!-- PROJECT 8 -->
-        <a href="https://carzzyapps.github.io/Stat-Calc/" class="project-card">
-            <span class="project-title">Statistics Calculator</span>
-            <span class="project-desc">Calculator for Mean, Median, Mode, Z-scores, and More</span>
-        </a>
+		function applyTopScoreStyle(){
+			topScoreEl.classList.toggle('top-score-good', topScore >= 7);
+			topScoreEl.classList.toggle('top-score-bad', topScore < 7 && topScore > 0);
+		}
 
-        <!-- Category 3 -->
-        <a href="/jeopardy" class="project-card">
-            <span class="project-title"><b>*NEW*</b> Jeopardy</span>
-            <span class="project-desc">If you have any questions you want featured on a Jeopardy Game please send them in via the chat bot.</span>
-            
-        </a>
+		function loadSettings(){
+			const savedSettings = localStorage.getItem('easyChordsSettings');
+			if(savedSettings){
+				try{
+					const parsed = JSON.parse(savedSettings);
+					if(Array.isArray(parsed.activeNotes) && parsed.activeNotes.length) activeNotes = parsed.activeNotes;
+					usePlain = parsed.usePlain === true;
+					useSharps = parsed.useSharps === true && !parsed.usePlain;
+					useFlat = parsed.useFlat === true && !parsed.usePlain;
+					if(Array.isArray(parsed.activeQualities) && parsed.activeQualities.length) activeQualities = parsed.activeQualities;
+					confettiEnabled = parsed.confettiEnabled !== false;
+					const parsedInterval = Number(parsed.confettiInterval);
+				confettiInterval = parsedInterval > 0 ? parsedInterval : 10;
+					optPlain.checked = usePlain;
+					optSharp.checked = useSharps;
+					optFlat.checked = useFlat;
+				}catch(_){ }
+			}
+			const savedTop = parseInt(localStorage.getItem('easyChordsTopScore'), 10);
+			if(!Number.isNaN(savedTop)) topScore = savedTop;
+			topScoreEl.textContent = topScore;
+			applyTopScoreStyle();
+			if(optMajor) optMajor.checked = activeQualities.includes('major');
+			if(optMinor) optMinor.checked = activeQualities.includes('minor');
+			optSharp.checked = useSharps && !usePlain;
+			optFlat.checked = useFlat && !usePlain;
+			optPlain.checked = usePlain;
+			optConfetti.checked = confettiEnabled;
+			confettiIntervalEl.value = String(confettiInterval);
+		}
 
+		function renderNotesList(){
+			notesListEl.innerHTML = '';
+			let list;
+			if(usePlain){
+				list = plainNotes;
+			}else if(useSharps && useFlat){
+				list = Array.from(new Set([...sharpNotes, ...flatNotes]));
+			}else if(useSharps){
+				list = sharpNotes;
+			}else{
+				list = flatNotes;
+			}
+			list.forEach(n=>{
+				const label = document.createElement('label');
+				label.style.padding = '6px 8px';
+				label.style.border = '1px solid #ddd';
+				label.style.borderRadius = '6px';
+				label.style.cursor = 'pointer';
+				label.style.display = 'flex';
+				label.style.alignItems = 'center';
+				label.style.gap = '4px';
+				const input = document.createElement('input');
+				input.type = 'checkbox';
+				input.value = n;
+				input.checked = activeNotes.includes(n);
+				label.appendChild(input);
+				label.appendChild(document.createTextNode(n));
+				notesListEl.appendChild(label);
+			});
+		}
 
-        <!-- Category 1 -->
-        <a href="scymores-games" class="project-card">
-            <span class="project-title">Scymore's Games</span>
-            <span class="project-desc">Click here to view them.</span>
-        </a>
+		function loadInitialState(){
+			loadSettings();
+			renderNotesList();
+		}
+		
+		function pickChord(){
+			const root = activeNotes[randInt(activeNotes.length)];
+			const quality = activeQualities[randInt(activeQualities.length)];
+			return `${root} ${quality}`;
+		}
 
-        <!-- Category 2 -->
-        <a href="https://carzzyapps.github.io/Leaderboards/" class="project-card">
-            <span class="project-title">Leaderboards</span>
-            <span class="project-desc">Click here to view them.</span>
-        </a>
+		function showNew(){
+			current = pickChord();
+			chordEl.textContent = current;
+		}
 
+		function formatNote(index){
+			if(usePlain) return plainNotes[index];
+			if(useSharps) return sharpNotes[index];
+			return flatNotes[index];
+		}
 
-    </div>
+		function getChordKeys(chord){
+			const [root, quality] = chord.split(' ');
+			const rootIndex = noteMap[root];
+			if(rootIndex === undefined) return [];
+			const thirdIndex = (rootIndex + (quality === 'minor' ? 3 : 4)) % 12;
+			const fifthIndex = (rootIndex + 7) % 12;
+			return [root, formatNote(thirdIndex), formatNote(fifthIndex)];
+		}
 
-    <footer>
-        Avis & DeBus | v1.0.0 PRO
-    </footer>
+		function showCheckAnswer(){
+			const keys = getChordKeys(current);
+			answerText.textContent = keys.length ? keys.join(' + ') : 'No chord available';
+			answerModal.classList.add('show');
+		}
 
-    <script>
-        //tawk.to script
-        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        (function () {
-            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = 'https://embed.tawk.to/6a13a7770e89d01c34a57289/1jpeccafp';
-            s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin', '*');
-            s0.parentNode.insertBefore(s1, s0);
-        })();
+		function markCorrect(){ 
+			correct++; 
+			correctEl.textContent = correct; 
+			updateTopScore();
+			maybeLaunchConfettiOnInterval();
+			showNew(); 
+		}
+		
+		function markWrong(){ 
+			wrong++; 
+			wrongEl.textContent = wrong; 
+			showNew(); 
+		}
 
-    </script>
-    <script src="tracker.js"></script>
+		function resetScore(){
+			correct = 0;
+			wrong = 0;
+			correctEl.textContent = '0';
+			wrongEl.textContent = '0';
+			showNew();
+		}
 
+		function resetSettings(){
+			useSharps = true;
+			useFlat = false;
+			usePlain = false;
+			activeNotes = [...sharpNotes];
+			activeQualities = ['major','minor'];
+			confettiEnabled = true;
+			confettiInterval = 10;
+			optMajor.checked = true;
+			optMinor.checked = true;
+			optSharp.checked = true;
+			optFlat.checked = false;
+			optPlain.checked = false;
+			optConfetti.checked = true;
+			confettiIntervalEl.value = '10';
+			renderNotesList();
+			saveSettingsToStorage();
+			showNotification('Settings reset', 'success');
+		}
+
+		function resetScores(){
+			correct = 0;
+			wrong = 0;
+			correctEl.textContent = '0';
+			wrongEl.textContent = '0';
+			showNotification('Scores reset', 'success');
+		}
+
+		function resetEverything(){
+			resetSettings();
+			resetScores();
+			topScore = 0;
+			topScoreEl.textContent = '0';
+			localStorage.removeItem('easyChordsTopScore');
+			saveSettingsToStorage();
+			applyTopScoreStyle();
+			showNotification('All data reset', 'error');
+		}
+
+		// Event listeners
+		rightBtn.addEventListener('click', markCorrect);
+		wrongBtn.addEventListener('click', markWrong);
+		nextBtn.addEventListener('click', showNew);
+		checkBtn.addEventListener('click', showCheckAnswer);
+		openDanger.addEventListener('click', ()=> dangerModal.classList.add('show'));
+		dangerResetSettings.addEventListener('click', ()=>{
+			resetSettings();
+			dangerModal.classList.remove('show');
+		});
+		dangerResetScores.addEventListener('click', ()=>{
+			resetScores();
+			dangerModal.classList.remove('show');
+		});
+		dangerResetAll.addEventListener('click', ()=>{
+			resetEverything();
+			dangerModal.classList.remove('show');
+		});
+		closeDanger.addEventListener('click', ()=> dangerModal.classList.remove('show'));
+		closeAnswer.addEventListener('click', ()=>{ answerModal.classList.remove('show'); });
+		settingsBtn.addEventListener('click', openModal);
+		cancelSettings.addEventListener('click', closeModal);
+		modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+
+		// Keyboard shortcuts: ArrowLeft = incorrect, ArrowRight = correct, Space = check answer
+		window.addEventListener('keydown', (e)=>{
+			const answerOpen = answerModal.classList.contains('show');
+			if(e.key === 'ArrowLeft' || e.key === 'ArrowRight'){
+				e.preventDefault();
+				if(answerOpen){
+					answerModal.classList.remove('show');
+				}else if(e.key === 'ArrowLeft'){
+					markWrong();
+				}else{
+					markCorrect();
+				}
+			}else if(e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar'){
+				e.preventDefault();
+				showCheckAnswer();
+			}else if(e.key === 'Escape' && answerOpen){
+				e.preventDefault();
+				answerModal.classList.remove('show');
+			}
+		});
+
+		// Modal management
+		function openModal(){
+			modal.classList.add('show');
+		}
+
+		function closeModal(){
+			modal.classList.remove('show');
+		}
+
+		function showNotification(message, type = 'info'){
+			const notification = document.getElementById('notification');
+			notification.textContent = message;
+			notification.className = `notification show ${type}`;
+			clearTimeout(notification.dataset.timeout);
+			notification.dataset.timeout = setTimeout(()=>{
+				notification.className = 'notification';
+			}, 2500);
+		}
+
+		function launchConfetti(){
+			const container = document.getElementById('confetti');
+			for(let i=0;i<180;i++){
+				const piece = document.createElement('div');
+				piece.className = 'confetti-piece';
+				const startX = window.innerWidth / 2 + (Math.random() * 320 - 160);
+				const spreadX = (Math.random() * 2 - 1) * window.innerWidth * 0.5;
+				const topReach = - (window.innerHeight - 80 + Math.random() * 80);
+				const fallDistance = window.innerHeight + 260;
+				const sway = (Math.random() * 2 - 1) * 48;
+				const sway2 = (Math.random() * 2 - 1) * 38;
+				const sway3 = (Math.random() * 2 - 1) * 28;
+				piece.style.left = `${startX}px`;
+				piece.style.bottom = '-24px';
+				piece.style.setProperty('--dx', `${spreadX}px`);
+				piece.style.setProperty('--top', `${topReach}px`);
+				piece.style.setProperty('--fall', `${fallDistance}px`);
+				piece.style.setProperty('--sway', `${sway}px`);
+				piece.style.setProperty('--sway2', `${sway2}px`);
+				piece.style.setProperty('--sway3', `${sway3}px`);
+				piece.style.setProperty('--r', `${Math.random() * 720}deg`);
+				piece.style.background = ['#00d1b2','#4caf50','#f44336','#2196f3','#ffeb3b','#ff9800','#9c27b0'][Math.floor(Math.random()*7)];
+				piece.style.animationDuration = `${2400 + Math.random() * 700}ms`;
+				piece.style.opacity = `${0.8 + Math.random() * 0.2}`;
+				container.appendChild(piece);
+				setTimeout(()=> container.removeChild(piece), 3100);
+			}
+		}
+
+		// Save settings
+		saveSettings.addEventListener('click', ()=>{
+			usePlain = optPlain.checked;
+			useSharps = optSharp.checked && !usePlain;
+			useFlat = optFlat.checked && !usePlain;
+			
+			const checkboxes = notesListEl.querySelectorAll('input[type="checkbox"]');
+			const selected = [];
+			checkboxes.forEach(cb=>{ if(cb.checked) selected.push(cb.value); });
+			
+			if(selected.length > 0) activeNotes = selected;
+			else if(usePlain) activeNotes = [...plainNotes];
+			else if(useFlat) activeNotes = [...flatNotes];
+			else activeNotes = [...sharpNotes];
+			
+			activeQualities = [];
+			if(optMajor.checked) activeQualities.push('major');
+			if(optMinor.checked) activeQualities.push('minor');
+			if(activeQualities.length === 0) activeQualities = ['major','minor'];
+			
+			confettiEnabled = optConfetti.checked;
+			confettiInterval = parseInt(confettiIntervalEl.value, 10) || 10;
+			saveSettingsToStorage();
+			closeModal();
+			showNotification('Settings saved', 'success');
+			showNew();
+		});
+
+		// Handle accidental changes
+		[optSharp, optFlat, optPlain].forEach(el=>el.addEventListener('change', ()=>{
+			if(optPlain.checked){
+				optSharp.checked = false;
+				optFlat.checked = false;
+			}else if(optSharp.checked || optFlat.checked){
+				optPlain.checked = false;
+			}
+			renderNotesList();
+		}));
+
+		// Initialize
+		loadInitialState();
+		showNew();
+	</script>
 </body>
-<!-- hi -->
 </html>
