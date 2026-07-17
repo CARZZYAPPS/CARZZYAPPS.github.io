@@ -150,10 +150,11 @@
 			display: none !important;
 			position: fixed;
 			inset: 0;
-			background: rgba(0, 0, 0, 0.5);
+			background: rgb(1, 1, 1);
 			align-items: center;
 			justify-content: center;
 			z-index: 1000;
+			box-shadow: 0 0 20px rgb(0, 209, 178);
 		}
 
 		.modal.show {
@@ -175,13 +176,15 @@
 
 		.answer-list {
 			font-size: 18px;
-			color: #2b7cff;
+			color: #00d1b2;
 			font-weight: 700;
 			margin: 16px 0;
 			padding: 16px;
-			background: #f0f4ff;
+			background: #010101;
 			border-radius: 12px;
 			text-align: center;
+			box-shadow: 0 0 20px rgb(0, 209, 178);
+			text-shadow: 0 0 20px rgb(0, 209, 178);
 		}
 
 		.modal-buttons {
@@ -286,7 +289,6 @@
 	</style>
 </head>
 <body>
-	 <script src="/nav-bar.js"></script>
 	<div id="notification" class="notification"></div>
 	<div id="confetti" class="confetti-container"></div>
 	<div class="card">
@@ -377,7 +379,7 @@
 			<h2>Chord Notes</h2>
 			<div class="answer-list" id="answerText">—</div>
 			<div class="modal-buttons">
-				<button id="closeAnswer" class="secondary" style="width:75%; align-items:center;">Close</button>
+				<button id="closeAnswer" class="secondary" style="width:70%; margin-left: 15%; margin-right: 15%;">Close</button>
 			</div>
 		</div>
 	</div>
