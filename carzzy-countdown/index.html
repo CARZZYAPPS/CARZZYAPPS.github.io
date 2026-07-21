@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Carzzy Countdown</title>
+  <meta name="description" content="Carzzy Countdown is a simple and customizable countdown timer that allows you to set a countdown for any event, save it, and share it with others." />
+   <meta name="keywords" content="carzzy apps, games, apps, crazzy apps, countdown, timer, countdown timer, event countdown, customizable countdown, shareable countdown, save countdown, countdown app, countdown tool, countdown website, countdown webpage, countdown page, countdown generator, countdown creator, countdown maker, countdown software, countdown utility, countdown application" />
+    <meta name="author" content="Avis, DeBus">
+    
+    <!-- This is to (hopefully) get Google to display the name instead of the url -->
+    <meta property="og:site_name" content="Carzzy Apps">
+  <title>Carzzy Apps | Carzzy Countdown</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <style>
     html, body {
@@ -71,6 +77,7 @@
 
     button:hover {
       transform: translateY(-1px);
+      text-shadow: 0 0 10px rgb(0, 209, 178);
     }
 
     .primary {
@@ -89,11 +96,13 @@
 
     .countdown {
       margin-top: 14px;
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.25);
+      background: #0a0a0a;
+      border: 1px solid #00d1b2;
       border-radius: 16px;
       padding: 20px;
       text-align: center;
+      box-shadow: 3px 3px 11.5px rgb(0, 209, 178);
+      text-shadow: 0 0 10px rgb(0, 209, 178);
     }
 
     .time-grid {
@@ -104,22 +113,26 @@
     }
 
     .time-card {
-      background: rgba(15, 40, 76, 0.85);
-      border: 1px solid rgba(148, 163, 184, 0.15);
+      background: #010101;
+      border: 1px solid #07a890;
       border-radius: 14px;
       padding: 16px;
+      box-shadow: 3px 3px 11.5px rgb(0, 209, 178);
+      text-shadow: 0 0 10px rgb(0, 209, 178);
     }
 
     .time-card strong {
       display: block;
       font-size: 2rem;
-      color: #fff;
+      color: #07a890;
+      text-shadow: 1.5px 1.5px 5px #07a890;
     }
 
     .time-card span {
       display: block;
       margin-top: 6px;
-      color: #94a3b8;
+      color: #07a890;
+      text-shadow: 1.5px 1.5px 5px #07a890;
       font-size: 0.95rem;
     }
 
@@ -254,7 +267,7 @@
     </div>
 
     <div class="countdown" id="countdown-panel">
-      <div id="current-label">No countdown set yet.</div>
+      <div id="current-label">No countdown set yet. To set a countdown click the settings button.</div>
       <div class="time-grid" id="time-grid">
         <div class="time-card"><strong id="days">00</strong><span>Days</span></div>
         <div class="time-card"><strong id="hours">00</strong><span>Hours</span></div>
@@ -284,7 +297,7 @@
 
       <fieldset class="unit-options">
         <legend>Visible time increments</legend>
-        <label><input type="checkbox" id="unit-weeks" checked /> Weeks</label>
+        <label><input type="checkbox" id="unit-weeks"  /> Weeks</label>
         <label><input type="checkbox" id="unit-days" checked /> Days</label>
         <label><input type="checkbox" id="unit-hours" checked /> Hours</label>
         <label><input type="checkbox" id="unit-minutes" checked /> Minutes</label>
@@ -478,7 +491,11 @@
     }
 
     function updateDocumentTitle(name) {
-      document.title = `Carzzy Countdown | ${name || 'Countdown'} Countdown`;
+      if (name && String(name).trim()) {
+        document.title = `Carzzy Countdown | ${name} Countdown`;
+      } else {
+        document.title = 'Carzzy Apps | Carzzy Countdown';
+      }
     }
 
     function showModal() {
@@ -898,5 +915,6 @@
       }
     });
   </script>
+  
 </body>
 </html>
