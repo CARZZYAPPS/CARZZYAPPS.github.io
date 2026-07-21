@@ -1,0 +1,902 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carzzy Countdown</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <style>
+    html, body {
+    overflow: hidden;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a0a0a;
+      color: #00d1b2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 560px;
+      background: #101010;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 0 40px rgb(0, 209, 178);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 2rem;
+      text-align: center;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 20px rgb(0, 209, 178);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    input[type="datetime-local"], input[type="text"] {
+      width: 93%;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      border: 1px solid #00d1b2;
+      background: #0a0a0a;
+      color: #00d1b2;
+      outline: none;
+      font-size: 1rem;
+      text-shadow: 0 0 5px rgb(0, 209, 178);
+      box-shadow: 0 0 20px rgb(0, 209, 178);
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      background: #00d1b2;
+      color: #0a0a0a;
+      box-shadow: 0 0 10px rgb(10, 10, 10);
+      text-shadow: 0 0 5px rgb(10, 10, 10);
+    }
+
+    .secondary {
+      background: #0a0a0a;
+      color: #00d1b2;
+      box-shadow: 0 0 10px rgb(0, 209, 178);
+      text-shadow: 0 0 5px rgb(0, 209, 178);
+    }
+
+    .countdown {
+      margin-top: 14px;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(64px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .time-card {
+      background: rgba(15, 40, 76, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .time-card strong {
+      display: block;
+      font-size: 2rem;
+      color: #fff;
+    }
+
+    .time-card span {
+      display: block;
+      margin-top: 6px;
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    .status {
+      color: #a5f3fc;
+      margin-top: 10px;
+      font-size: 0.98rem;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 24, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 20;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: #010101;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 0 60px #00d1b2;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal h2 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .modal p {
+      color: #cbd5e1;
+      line-height: 1.5;
+      margin: 0 0 18px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .link-box {
+      border-radius: 14px;
+      background: #0a1528;
+      border: 1px solid #1e293b;
+      padding: 14px;
+      min-height: 70px;
+      color: #e2e8f0;
+      word-break: break-all;
+      line-height: 1.4;
+    }
+
+    .close-button {
+      background: none;
+      color: #00d1b2;
+      text-shadow: 0 0 5px rgb(0, 209, 178);
+      font-size: 1.4rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding-bottom: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    fieldset.unit-options {
+      border: 1px solid rgba(0, 209, 178, 0.18);
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 18px;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    fieldset.unit-options legend {
+      padding: 0 8px;
+      font-weight: 700;
+      color: #00d1b2;
+    }
+
+    fieldset.unit-options label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-right: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    fieldset.unit-options input {
+      width: 16px;
+      height: 16px;
+      accent-color: #00d1b2;
+    }
+
+    @media (max-width: 520px) {
+      .time-grid {
+        grid-template-columns: repeat(2, minmax(70px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+
+    <script src="/nav-bar.js"></script>
+
+  <div class="container">
+    <div class="countdown-header">
+      <h1>Carzzy Countdown</h1>
+      <button class="secondary" id="settings-button">Settings</button>
+    </div>
+
+    <div class="countdown" id="countdown-panel">
+      <div id="current-label">No countdown set yet.</div>
+      <div class="time-grid" id="time-grid">
+        <div class="time-card"><strong id="days">00</strong><span>Days</span></div>
+        <div class="time-card"><strong id="hours">00</strong><span>Hours</span></div>
+        <div class="time-card"><strong id="minutes">00</strong><span>Minutes</span></div>
+        <div class="time-card"><strong id="seconds">00</strong><span>Seconds</span></div>
+      </div>
+      <div class="status" id="status-message"></div>
+    </div>
+
+  </div>
+
+  <div class="modal-backdrop" id="settings-modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+      <div class="modal-header">
+        <div>
+          <h2 id="settings-modal-title">Countdown Settings</h2>
+          <p>Edit the countdown name, date/time, and manage saved countdowns.</p>
+        </div>
+        <button class="close-button" id="close-settings-modal" aria-label="Close settings modal">×</button>
+      </div>
+
+      <label for="countdown-name">Countdown Name</label>
+      <input type="text" id="countdown-name" placeholder="Birthday, Launch, Event..." />
+
+      <label for="target-datetime">Target Date & Time</label>
+      <input type="datetime-local" id="target-datetime" />
+
+      <fieldset class="unit-options">
+        <legend>Visible time increments</legend>
+        <label><input type="checkbox" id="unit-weeks" checked /> Weeks</label>
+        <label><input type="checkbox" id="unit-days" checked /> Days</label>
+        <label><input type="checkbox" id="unit-hours" checked /> Hours</label>
+        <label><input type="checkbox" id="unit-minutes" checked /> Minutes</label>
+        <label><input type="checkbox" id="unit-seconds" checked /> Seconds</label>
+        <label><input type="checkbox" id="unit-centiseconds" /> Centiseconds</label>
+        <label><input type="checkbox" id="unit-milliseconds" /> Milliseconds</label>
+      </fieldset>
+
+      <div class="modal-actions">
+        <button class="primary" id="start-button">Set Countdown</button>
+        <button class="secondary" id="clear-button">Clear Saved Countdown</button>
+        <button class="secondary" id="save-button">Save your countdown</button>
+        <button class="secondary" id="load-button">Load countdown</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <div>
+          <h2 id="modal-title">Save Countdown</h2>
+          <p>Download the countdown as HTML or copy a shareable link.</p>
+        </div>
+        <button class="close-button" id="close-modal" aria-label="Close modal">X</button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="primary" id="download-html">Download HTML</button>
+        <button class="secondary" id="copy-link">Copy Link</button>
+      </div>
+
+      <div class="link-box" id="link-output">No countdown saved yet. Set a countdown first.</div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="load-modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="load-modal-title">
+      <div class="modal-header">
+        <div>
+          <h2 id="load-modal-title">Load Countdown</h2>
+          <p>Paste a shared countdown link or upload a saved countdown HTML file.</p>
+        </div>
+        <button class="close-button" id="close-load-modal" aria-label="Close modal">×</button>
+      </div>
+
+      <label for="load-link-input">Load from link</label>
+      <input type="text" id="load-link-input" placeholder="Paste countdown link here" />
+
+      <div class="modal-actions">
+        <button class="primary" id="load-link-button">Load Link</button>
+        <button class="secondary" id="load-file-button">Upload File</button>
+      </div>
+
+      <div class="link-box" id="load-status">Paste a countdown link or upload a saved file to load it.</div>
+      <input type="file" id="load-file-input" accept=".html,.htm,text/html" class="hidden" />
+    </div>
+  </div>
+
+  <script>
+    const nameInput = document.getElementById('countdown-name');
+    const dateInput = document.getElementById('target-datetime');
+    const startButton = document.getElementById('start-button');
+    const clearButton = document.getElementById('clear-button');
+    const saveButton = document.getElementById('save-button');
+    const loadButton = document.getElementById('load-button');
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const closeModal = document.getElementById('close-modal');
+    const downloadHtmlButton = document.getElementById('download-html');
+    const copyLinkButton = document.getElementById('copy-link');
+    const linkOutput = document.getElementById('link-output');
+    const loadModalBackdrop = document.getElementById('load-modal-backdrop');
+    const closeLoadModal = document.getElementById('close-load-modal');
+    const loadLinkInput = document.getElementById('load-link-input');
+    const loadLinkButton = document.getElementById('load-link-button');
+    const loadFileButton = document.getElementById('load-file-button');
+    const loadFileInput = document.getElementById('load-file-input');
+    const loadStatus = document.getElementById('load-status');
+    const settingsModalBackdrop = document.getElementById('settings-modal-backdrop');
+    const closeSettingsModal = document.getElementById('close-settings-modal');
+    const settingsButton = document.getElementById('settings-button');
+    const currentLabel = document.getElementById('current-label');
+    const statusMessage = document.getElementById('status-message');
+    const timeGrid = document.getElementById('time-grid');
+    const unitInputs = {
+      weeks: document.getElementById('unit-weeks'),
+      days: document.getElementById('unit-days'),
+      hours: document.getElementById('unit-hours'),
+      minutes: document.getElementById('unit-minutes'),
+      seconds: document.getElementById('unit-seconds'),
+      centiseconds: document.getElementById('unit-centiseconds'),
+      milliseconds: document.getElementById('unit-milliseconds')
+    };
+    const timeValueEls = {};
+
+    Object.values(unitInputs).forEach(input => {
+      if (!input) return;
+      input.addEventListener('change', () => {
+        renderTimeGrid();
+        if (targetTimestamp) {
+          updateCountdown();
+        }
+      });
+    });
+
+    const STORAGE_KEY = 'carzzyCountdown';
+    const TIME_UNITS = [
+      { key: 'weeks', label: 'Weeks', ms: 1000 * 60 * 60 * 24 * 7 },
+      { key: 'days', label: 'Days', ms: 1000 * 60 * 60 * 24 },
+      { key: 'hours', label: 'Hours', ms: 1000 * 60 * 60 },
+      { key: 'minutes', label: 'Minutes', ms: 1000 * 60 },
+      { key: 'seconds', label: 'Seconds', ms: 1000 },
+      { key: 'centiseconds', label: 'Centiseconds', ms: 10 },
+      { key: 'milliseconds', label: 'Milliseconds', ms: 1 }
+    ];
+
+    let countdownTimer = null;
+    let targetTimestamp = null;
+    let countdownName = '';
+
+    function formatNumber(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function getSelectedUnitKeys() {
+      return TIME_UNITS.filter(unit => unitInputs[unit.key]?.checked).map(unit => unit.key);
+    }
+
+    function getActiveUnits() {
+      const selected = getSelectedUnitKeys();
+      return TIME_UNITS.filter(unit => selected.includes(unit.key));
+    }
+
+    function setSelectedUnits(keys) {
+      TIME_UNITS.forEach(unit => {
+        if (unitInputs[unit.key]) {
+          unitInputs[unit.key].checked = Array.isArray(keys) ? keys.includes(unit.key) : true;
+        }
+      });
+    }
+
+    function renderTimeGrid() {
+      const activeUnits = getActiveUnits();
+      if (!activeUnits.length) {
+        setSelectedUnits(['days', 'hours', 'minutes', 'seconds']);
+      }
+
+      timeGrid.innerHTML = '';
+      Object.keys(timeValueEls).forEach(key => delete timeValueEls[key]);
+
+      getActiveUnits().forEach(unit => {
+        const card = document.createElement('div');
+        card.className = 'time-card';
+        const strong = document.createElement('strong');
+        strong.id = `time-${unit.key}`;
+        strong.textContent = '00';
+        const label = document.createElement('span');
+        label.textContent = unit.label;
+        card.appendChild(strong);
+        card.appendChild(label);
+        timeGrid.appendChild(card);
+        timeValueEls[unit.key] = strong;
+      });
+    }
+
+    function saveCountdownToStorage(name, timestamp) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, timestamp, units: getSelectedUnitKeys() }));
+    }
+
+    function loadCountdownFromStorage() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        return null;
+      }
+
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.timestamp) {
+          return {
+            name: parsed.name,
+            timestamp: parsed.timestamp,
+            units: Array.isArray(parsed.units) && parsed.units.length ? parsed.units : ['days', 'hours', 'minutes', 'seconds']
+          };
+        }
+      } catch (error) {
+        console.warn('Invalid saved countdown data', error);
+        localStorage.removeItem(STORAGE_KEY);
+      }
+
+      return null;
+    }
+
+    function updateDocumentTitle(name) {
+      document.title = `Carzzy Countdown | ${name || 'Countdown'} Countdown`;
+    }
+
+    function showModal() {
+      hideSettingsModal();
+      updateLinkOutput();
+      modalBackdrop.style.display = 'flex';
+    }
+
+    function hideModal() {
+      modalBackdrop.style.display = 'none';
+    }
+
+    function showSettingsModal() {
+      settingsModalBackdrop.style.display = 'flex';
+    }
+
+    function hideSettingsModal() {
+      settingsModalBackdrop.style.display = 'none';
+    }
+
+    function showLoadModal() {
+      hideSettingsModal();
+      loadLinkInput.value = '';
+      loadStatus.textContent = 'Paste a countdown link or upload a saved file to load it.';
+      loadModalBackdrop.style.display = 'flex';
+    }
+
+    let statusTimeoutId = null;
+    let loadStatusTimeoutId = null;
+
+    function hideLoadModal() {
+      loadModalBackdrop.style.display = 'none';
+    }
+
+    function setTemporaryMessage(element, text, fallback = '', duration = 3000, timeoutIdRef = null) {
+      if (!element) return;
+      if (element._timeoutId) {
+        clearTimeout(element._timeoutId);
+      }
+      element.textContent = text;
+      if (duration > 0) {
+        element._timeoutId = setTimeout(() => {
+          if (element.textContent === text) {
+            element.textContent = fallback;
+          }
+          element._timeoutId = null;
+        }, duration);
+      }
+    }
+
+    function parseCountdownPayload(payload) {
+      if (!payload) {
+        return null;
+      }
+
+      try {
+        const data = JSON.parse(atob(decodeURIComponent(payload)));
+        if (data && data.timestamp) {
+          return data;
+        }
+      } catch (error) {
+        return null;
+      }
+      return null;
+    }
+
+    function setActiveUnitSelection(units) {
+      if (!Array.isArray(units) || !units.length) {
+        return;
+      }
+      setSelectedUnits(units);
+      renderTimeGrid();
+    }
+
+    function extractPayloadFromUrl(link) {
+      try {
+        const normalized = link.trim();
+        const url = normalized.startsWith('http') ? new URL(normalized) : new URL(normalized, window.location.origin);
+        const payload = url.searchParams.get('c');
+        if (payload) {
+          return parseCountdownPayload(payload);
+        }
+      } catch (error) {
+        // ignore invalid URL and try payload directly
+      }
+
+      if (normalized.includes('c=')) {
+        const match = normalized.match(/c=([^&\s]+)/);
+        if (match && match[1]) {
+          return parseCountdownPayload(match[1]);
+        }
+      }
+
+      return parseCountdownPayload(normalized);
+    }
+
+    async function loadCountdownFromString(value) {
+      const loaded = extractPayloadFromUrl(value);
+      if (!loaded) {
+        setTemporaryMessage(loadStatus, 'Unable to load countdown from that link.', 'Paste a countdown link or upload a saved file to load it.');
+        return;
+      }
+      applyCountdown(loaded.name || 'Countdown', loaded.timestamp, true, loaded.units);
+      setTemporaryMessage(loadStatus, 'Countdown loaded from link.', 'Paste a countdown link or upload a saved file to load it.');
+      hideLoadModal();
+    }
+
+    async function loadCountdownFromFile(file) {
+      const text = await file.text();
+      const match = text.match(/<script[^>]*id=["']countdown-data["'][^>]*>([\s\S]*?)<\/script>/i);
+      if (!match || !match[1]) {
+        setTemporaryMessage(loadStatus, 'Uploaded file does not contain a valid countdown.', 'Paste a countdown link or upload a saved file to load it.');
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(match[1].trim());
+        applyCountdown(parsed.name || 'Countdown', parsed.timestamp, true, parsed.units);
+        setTemporaryMessage(loadStatus, 'Countdown loaded from file.', 'Paste a countdown link or upload a saved file to load it.');
+        hideLoadModal();
+      } catch (error) {
+        setTemporaryMessage(loadStatus, 'Cannot read countdown data from file.', 'Paste a countdown link or upload a saved file to load it.');
+      }
+    }
+
+    function clearCountdownStorage() {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function applyCountdown(name, timestamp, save = true, units = null) {
+      countdownName = name || 'Countdown';
+      targetTimestamp = Number(timestamp);
+      if (!targetTimestamp || targetTimestamp <= Date.now()) {
+        setTemporaryMessage(statusMessage, 'Please choose a future date and time.');
+        return;
+      }
+
+      if (Array.isArray(units) && units.length) {
+        setActiveUnitSelection(units);
+      }
+
+      nameInput.value = countdownName;
+      dateInput.value = new Date(targetTimestamp).toISOString().slice(0, 16);
+      currentLabel.textContent = countdownName;
+      updateDocumentTitle(countdownName);
+      statusMessage.textContent = '';
+
+      renderTimeGrid();
+
+      if (save) {
+        saveCountdownToStorage(countdownName, targetTimestamp);
+      }
+
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+      }
+
+      countdownTimer = setInterval(updateCountdown, 250);
+      updateCountdown();
+    }
+
+    function updateCountdown() {
+      if (!targetTimestamp) {
+        return;
+      }
+
+      const now = Date.now();
+      let remaining = targetTimestamp - now;
+
+      if (remaining <= 0) {
+        clearInterval(countdownTimer);
+        Object.values(timeValueEls).forEach(el => {
+          el.textContent = '00';
+        });
+        setTemporaryMessage(statusMessage, 'Countdown complete!');
+        return;
+      }
+
+      getActiveUnits().forEach(unit => {
+        const value = Math.floor(remaining / unit.ms);
+        remaining -= value * unit.ms;
+        if (timeValueEls[unit.key]) {
+          timeValueEls[unit.key].textContent = formatNumber(value);
+        }
+      });
+    }
+
+    function getShareableUrl() {
+      if (!targetTimestamp) {
+        return window.location.href;
+      }
+
+      const payload = encodeURIComponent(btoa(JSON.stringify({ name: countdownName, timestamp: targetTimestamp, units: getSelectedUnitKeys() })));
+      return `${window.location.origin}${window.location.pathname}?c=${payload}`;
+    }
+
+    function updateLinkOutput() {
+      if (!targetTimestamp) {
+        linkOutput.textContent = 'No countdown saved yet. Set a countdown first.';
+        return;
+      }
+      linkOutput.textContent = getShareableUrl();
+    }
+
+    function downloadCountdownHtml() {
+      if (!targetTimestamp) {
+        return;
+      }
+
+      const countdownMeta = JSON.stringify({ name: countdownName, timestamp: targetTimestamp, units: getSelectedUnitKeys() });
+      const countdownUnits = getSelectedUnitKeys();
+      const unitCards = TIME_UNITS.filter(unit => countdownUnits.includes(unit.key))
+        .map(unit => `<div class="time-card"><strong id="${unit.key}">00</strong><span>${unit.label}</span></div>`)
+        .join('');
+      const unitScriptArray = JSON.stringify(TIME_UNITS.filter(unit => countdownUnits.includes(unit.key)));
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Carzzy Countdown | ${countdownName} Countdown</title>
+<style>
+  body{margin:0;font-family:Arial,sans-serif;background:#08192f;color:#f8fafc;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+  .card{background:#11263f;border-radius:22px;padding:28px;max-width:560px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.35);}
+  h1{margin:0 0 18px;font-size:2rem;}
+  .time-grid{display:grid;grid-template-columns:repeat(4,minmax(64px,1fr));gap:14px;margin-top:18px;}
+  .time-card{background:rgba(255,255,255,.05);border:1px solid rgba(148,163,184,.15);border-radius:16px;padding:18px;}
+  .time-card strong{display:block;font-size:2rem;}
+  .time-card span{display:block;margin-top:8px;color:#94a3b8;font-size:.95rem;}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>${countdownName}</h1>
+  <div id="countdown" class="time-grid">
+    ${unitCards}
+  </div>
+</div>
+<script id="countdown-data" type="application/json">${countdownMeta}</scr` + `ipt>
+<script>
+  const target = ${targetTimestamp};
+  const unitDefs = units.map(unit => ({ key: unit.key, label: unit.label, ms: unit.ms }));
+  function pad(v){return String(v).padStart(2,'0');}
+  function tick(){
+    const diff = target - Date.now();
+    if(diff<=0){
+      unitDefs.forEach(unit => {
+        const el = document.getElementById(unit.key);
+        if (el) el.textContent = '00';
+      });
+      clearInterval(timer);
+      return;
+    }
+    let remaining = diff;
+    unitDefs.forEach(unit => {
+      const value = Math.floor(remaining / unit.ms);
+      remaining -= value * unit.ms;
+      const element = document.getElementById(unit.key);
+      if (element) element.textContent = pad(value);
+    });
+  }
+  const timer = setInterval(tick, 250);
+  tick();
+</scr` + `ipt>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `${countdownName.replace(/[^a-z0-9_-]/gi, '_') || 'countdown'}.html`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
+    }
+
+    function handleQueryPayload() {
+      const params = new URLSearchParams(window.location.search);
+      const encoded = params.get('c');
+      if (!encoded) {
+        return;
+      }
+      try {
+        const decoded = JSON.parse(atob(decodeURIComponent(encoded)));
+        if (decoded && decoded.timestamp) {
+          applyCountdown(decoded.name || 'Countdown', decoded.timestamp, true, decoded.units);
+          setTemporaryMessage(statusMessage, 'Loaded countdown from shared link.');
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      } catch (error) {
+        console.warn('Failed to parse shared countdown URL', error);
+      }
+    }
+
+    startButton.addEventListener('click', () => {
+      const name = nameInput.value.trim() || 'Countdown';
+      const selected = dateInput.value;
+      if (!selected) {
+        setTemporaryMessage(statusMessage, 'Select a date and time before starting.');
+        return;
+      }
+
+      const timestamp = new Date(selected).getTime();
+      if (Number.isNaN(timestamp) || timestamp <= Date.now()) {
+        setTemporaryMessage(statusMessage, 'Select a valid future date and time.');
+        return;
+      }
+
+      applyCountdown(name, timestamp, true);
+      setTemporaryMessage(statusMessage, 'Countdown saved locally.');
+    });
+
+    clearButton.addEventListener('click', () => {
+      clearCountdownStorage();
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+      }
+      targetTimestamp = null;
+      countdownName = '';
+      currentLabel.textContent = 'No countdown set yet.';
+      updateDocumentTitle('');
+      setTemporaryMessage(statusMessage, 'Saved countdown cleared.');
+      daysEl.textContent = '00';
+      hoursEl.textContent = '00';
+      minutesEl.textContent = '00';
+      secondsEl.textContent = '00';
+      nameInput.value = '';
+      dateInput.value = '';
+      linkOutput.textContent = 'No countdown saved yet. Set a countdown first.';
+    });
+
+    saveButton.addEventListener('click', () => {
+      if (!targetTimestamp) {
+        setTemporaryMessage(statusMessage, 'Set a countdown first to save or share it.');
+        return;
+      }
+      showModal();
+    });
+
+    closeModal.addEventListener('click', hideModal);
+    modalBackdrop.addEventListener('click', (event) => {
+      if (event.target === modalBackdrop) {
+        hideModal();
+      }
+    });
+
+    settingsButton.addEventListener('click', showSettingsModal);
+    closeSettingsModal.addEventListener('click', hideSettingsModal);
+    settingsModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === settingsModalBackdrop) {
+        hideSettingsModal();
+      }
+    });
+
+    downloadHtmlButton.addEventListener('click', () => {
+      downloadCountdownHtml();
+    });
+
+    copyLinkButton.addEventListener('click', async () => {
+      const url = getShareableUrl();
+      try {
+        await navigator.clipboard.writeText(url);
+        linkOutput.textContent = 'Link copied to clipboard!\n' + url;
+      } catch (error) {
+        linkOutput.textContent = 'Unable to copy automatically. Copy this link manually:\n' + url;
+      }
+    });
+
+    loadButton.addEventListener('click', () => {
+      showLoadModal();
+    });
+
+    closeLoadModal.addEventListener('click', hideLoadModal);
+    loadModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === loadModalBackdrop) {
+        hideLoadModal();
+      }
+    });
+
+    loadLinkButton.addEventListener('click', () => {
+      const value = loadLinkInput.value.trim();
+      if (!value) {
+        setTemporaryMessage(loadStatus, 'Paste a countdown link before loading.', 'Paste a countdown link or upload a saved file to load it.');
+        return;
+      }
+      loadCountdownFromString(value);
+    });
+
+    loadFileButton.addEventListener('click', () => {
+      loadFileInput.click();
+    });
+
+    loadFileInput.addEventListener('change', async (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) {
+        return;
+      }
+      await loadCountdownFromFile(file);
+      loadFileInput.value = '';
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      handleQueryPayload();
+      const savedCountdown = loadCountdownFromStorage();
+      if (savedCountdown) {
+        setActiveUnitSelection(savedCountdown.units);
+        applyCountdown(savedCountdown.name || 'Countdown', savedCountdown.timestamp, false, savedCountdown.units);
+        setTemporaryMessage(statusMessage, 'Loaded saved countdown from browser storage.');
+      } else {
+        renderTimeGrid();
+      }
+      if (targetTimestamp) {
+        updateLinkOutput();
+      }
+    });
+  </script>
+</body>
+</html>
