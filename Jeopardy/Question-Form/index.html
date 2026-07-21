@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Jeopardy | Question Form</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+        <style>
+            body, html {
+                overflow: hidden;
+            }
+            body {
+                background: #0a0a0a;
+                color: #00d1b2;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                text-align: center;
+            }
+
+            h2 {
+				margin-top: 100px;
+                font-size: 32px;
+            }
+            
+            input {
+            	height: 30px;
+            }
+            
+            input, textarea {
+                background: #ddd;
+            	color: #3a3a3a;
+            	border: outset 5px #00d1b2;
+                border-radius: 10px;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 17px;
+                font-weight: 500;
+                width: 50ch;
+                padding: 7px;
+				resize: none;
+            }
+            
+            input::placeholder, textarea::placeholder {
+            	font-size: 17px;
+            }
+            
+            .submit-btn {
+            	background: linear-gradient(135deg,rgb(0 209 178) 0%, rgb(0 130 144) 100%);
+                color: white;;
+                border: none;
+                border-radius: 10px;
+                font-size: 30px;
+                padding: 10px 20px;
+                width: 495px;
+                transition: 0.25s;
+				cursor: pointer;
+            }
+            
+            .submit-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0px 0px 15px rgba(0, 209, 178, 0.5);
+            }
+
+            footer {
+                margin-top: 50px;
+                margin-bottom: 30px;
+                font-size: 12.8px;
+                color: #444;
+            }
+            
+        </style>
+
+    </head>
+
+    <body>
+
+		<script src="/nav-bar.js"></script>
+
+        <h2>Jeopardy Question Form</h2>
+        <h4>Fill out the form below to submit your question for Jeopardy!</h4>
+
+        <form action="https://formsubmit.co/carzzyapps@gmail.com" method="post">
+            <input type="text" name="Name" id="name" placeholder="Your Name" required><br><br>
+            <input type="email" name="Email address" id="email" placeholder="Email" required><br><br>
+            <textarea rows="10" name="Question" id="textbox" placeholder="Your question in proper format. 
+Example: Q:The best website ever. A:What is carzzyapps.com" required></textarea><br><br>
+			<button type="submit" class="submit-btn">Send</button>
+        </form>
+
+        <footer>Avis & DeBus v1.0.0 PRO</footer>
+
+</body>
+</html>
