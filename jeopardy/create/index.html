@@ -395,7 +395,7 @@
     </div>
   </div>
 
-  <audio id="jeopardyMusic" src="/jeopardy_music.mp3"></audio>
+  <audio id="jeopardyMusic" src="/jeopardy/jeopardy_music.mp3"></audio>
 
   <script>
     //Code to enter Editor Mode
@@ -971,18 +971,6 @@
 
     howToPlayCloseBtn.addEventListener("click", () => {
       howToPlayBackdrop.style.display = "none";
-    });
-
-    document.addEventListener("contextmenu", e => {
-      e.preventDefault();
-      triggerBlackout();
-    });
-
-    document.addEventListener("keydown", e => {
-      if (e.ctrlKey && (e.shiftKey && e.key.toLowerCase() === "i") || e.key.toLowerCase() === "u") {
-        e.preventDefault();
-        triggerBlackout();
-      }
     });
 
     function triggerBlackout() {
