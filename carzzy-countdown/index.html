@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -187,6 +187,96 @@
       margin-bottom: 18px;
     }
 
+    .modal-actions.share-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(140px, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .share-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #0a0a0a;
+      background: #00d1b2;
+      box-shadow: 0 12px 30px rgba(0, 209, 178, 0.18);
+      transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .share-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 35px rgba(0, 209, 178, 0.25);
+    }
+
+    .share-action.secondary {
+      background: #08131a;
+      color: #00d1b2;
+    }
+
+    .share-action.secondary:hover {
+      background: #091c27;
+      color: #baf8e1;
+    }
+
+    .share-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 1rem;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .share-copy {
+      background: #00d1b2;
+      color: #0a0a0a;
+    }
+
+    .share-email {
+      background: #1360a8;
+      color: #fff;
+    }
+
+    .share-facebook {
+      background: #1877f2;
+      color: #fff;
+    }
+
+    .share-linkedin {
+      background: #0a66c2;
+      color: #fff;
+    }
+
+    .share-x {
+      background: #1da1f2;
+      color: #fff;
+    }
+
+    .share-whatsapp {
+      background: #25d366;
+      color: #0a0a0a;
+    }
+
+    .share-action.share-whatsapp .share-icon {
+      background: rgba(37, 211, 102, 0.12);
+    }
+
+    @media (max-width: 520px) {
+      .modal-actions.share-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .link-box {
       border-radius: 14px;
       background: #0a1528;
@@ -309,12 +399,32 @@
       <div class="modal-actions">
         <button class="primary" id="start-button">Set Countdown</button>
         <button class="secondary" id="clear-button">Clear Saved Countdown</button>
-        <button class="secondary" id="save-button">Save your countdown</button>
+        <button class="secondary" id="share-button">Share countdown</button>
         <button class="secondary" id="load-button">Load countdown</button>
       </div>
     </div>
   </div>
 
+  <div class="modal-backdrop" id="share-modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+      <div class="modal-header">
+        <h2 id="share-modal-title">Share Countdown</h2>
+        <button class="close-button" id="close-share-modal">✕</button>
+      </div>
+      <p>Use the link below to share this countdown. You can copy it or share via email and social platforms.</p>
+      <div class="modal-actions">
+        <div class="link-box" id="share-link-output">No countdown saved yet. Set a countdown first.</div>
+      </div>
+      <div class="modal-actions share-grid">
+        <button class="primary share-action share-copy" id="share-copy"><img class="share-icon" src="C:\Users\avish\Downloads\.vscode\Carzzy Apps\Carzzy Countdown\images\copy.png"></img>Copy link</button>
+        <a class="secondary share-action share-email" id="share-email" href="#" target="_blank" rel="noopener"><img class="share-icon" src="C:\Users\avish\Downloads\.vscode\Carzzy Apps\Carzzy Countdown\images\email.png"></img>Email</a>
+        <a class="secondary share-action share-facebook" id="share-facebook" href="#" target="_blank" rel="noopener"><img class="share-icon" src="C:\Users\avish\Downloads\.vscode\Carzzy Apps\Carzzy Countdown\images\facebook.png"></img>Facebook</a>
+        <a class="secondary share-action share-linkedin" id="share-linkedin" href="#" target="_blank" rel="noopener"><img class="share-icon" src="C:\Users\avish\Downloads\.vscode\Carzzy Apps\Carzzy Countdown\images\linkedin.png"></img>LinkedIn</a>
+        <a class="secondary share-action share-x" id="share-x" href="#" target="_blank" rel="noopener"><img class="share-icon" src="C:\Users\avish\Downloads\.vscode\Carzzy Apps\Carzzy Countdown\images\x.png"></img>X</a>
+        <a class="secondary share-action share-whatsapp" id="share-whatsapp" href="#" target="_blank" rel="noopener"><img class="share-icon" src="C:\Users\avish\Downloads\.vscode\Carzzy Apps\Carzzy Countdown\images\whatsapp.png"></img>WhatsApp</a>
+      </div>
+    </div>
+  </div>
   <div class="modal-backdrop" id="modal-backdrop">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="modal-header">
@@ -339,7 +449,7 @@
       <div class="modal-header">
         <div>
           <h2 id="load-modal-title">Load Countdown</h2>
-          <p>Paste a shared countdown link or upload a saved countdown HTML file.</p>
+          <p>Paste a shared countdown link to load the countdown.</p>
         </div>
         <button class="close-button" id="close-load-modal" aria-label="Close modal">×</button>
       </div>
@@ -349,11 +459,9 @@
 
       <div class="modal-actions">
         <button class="primary" id="load-link-button">Load Link</button>
-        <button class="secondary" id="load-file-button">Upload File</button>
       </div>
 
-      <div class="link-box" id="load-status">Paste a countdown link or upload a saved file to load it.</div>
-      <input type="file" id="load-file-input" accept=".html,.htm,text/html" class="hidden" />
+      <div class="link-box" id="load-status">Paste a countdown link to load it.</div>
     </div>
   </div>
 
@@ -362,8 +470,8 @@
     const dateInput = document.getElementById('target-datetime');
     const startButton = document.getElementById('start-button');
     const clearButton = document.getElementById('clear-button');
-    const saveButton = document.getElementById('save-button');
     const loadButton = document.getElementById('load-button');
+    const shareButton = document.getElementById('share-button');
     const modalBackdrop = document.getElementById('modal-backdrop');
     const closeModal = document.getElementById('close-modal');
     const downloadHtmlButton = document.getElementById('download-html');
@@ -373,9 +481,16 @@
     const closeLoadModal = document.getElementById('close-load-modal');
     const loadLinkInput = document.getElementById('load-link-input');
     const loadLinkButton = document.getElementById('load-link-button');
-    const loadFileButton = document.getElementById('load-file-button');
-    const loadFileInput = document.getElementById('load-file-input');
     const loadStatus = document.getElementById('load-status');
+    const shareModalBackdrop = document.getElementById('share-modal-backdrop');
+    const closeShareModal = document.getElementById('close-share-modal');
+    const shareLinkOutput = document.getElementById('share-link-output');
+    const shareCopyButton = document.getElementById('share-copy');
+    const shareEmail = document.getElementById('share-email');
+    const shareFacebook = document.getElementById('share-facebook');
+    const shareLinkedin = document.getElementById('share-linkedin');
+    const shareX = document.getElementById('share-x');
+    const shareWhatsApp = document.getElementById('share-whatsapp');
     const settingsModalBackdrop = document.getElementById('settings-modal-backdrop');
     const closeSettingsModal = document.getElementById('close-settings-modal');
     const settingsButton = document.getElementById('settings-button');
@@ -519,7 +634,7 @@
     function showLoadModal() {
       hideSettingsModal();
       loadLinkInput.value = '';
-      loadStatus.textContent = 'Paste a countdown link or upload a saved file to load it.';
+      loadStatus.textContent = 'Paste a countdown link to load it.';
       loadModalBackdrop.style.display = 'flex';
     }
 
@@ -552,7 +667,8 @@
       }
 
       try {
-        const data = JSON.parse(atob(decodeURIComponent(payload)));
+        const decodedPayload = decodeURIComponent(payload.replace(/\s+/g, '+'));
+        const data = JSON.parse(atob(decodedPayload));
         if (data && data.timestamp) {
           return data;
         }
@@ -574,8 +690,9 @@
       try {
         const normalized = link.trim();
         const url = normalized.startsWith('http') ? new URL(normalized) : new URL(normalized, window.location.origin);
-        const payload = url.searchParams.get('c');
+        let payload = url.searchParams.get('c');
         if (payload) {
+          payload = payload.replace(/\s+/g, '+');
           return parseCountdownPayload(payload);
         }
       } catch (error) {
@@ -585,7 +702,7 @@
       if (normalized.includes('c=')) {
         const match = normalized.match(/c=([^&\s]+)/);
         if (match && match[1]) {
-          return parseCountdownPayload(match[1]);
+          return parseCountdownPayload(match[1].replace(/ /g, '+'));
         }
       }
 
@@ -595,31 +712,14 @@
     async function loadCountdownFromString(value) {
       const loaded = extractPayloadFromUrl(value);
       if (!loaded) {
-        setTemporaryMessage(loadStatus, 'Unable to load countdown from that link.', 'Paste a countdown link or upload a saved file to load it.');
+        setTemporaryMessage(loadStatus, 'Unable to load countdown from that link.', 'Paste a countdown link to load it.');
         return;
       }
       applyCountdown(loaded.name || 'Countdown', loaded.timestamp, true, loaded.units);
-      setTemporaryMessage(loadStatus, 'Countdown loaded from link.', 'Paste a countdown link or upload a saved file to load it.');
+      setTemporaryMessage(loadStatus, 'Countdown loaded from link.', 'Paste a countdown link to load it.');
       hideLoadModal();
     }
 
-    async function loadCountdownFromFile(file) {
-      const text = await file.text();
-      const match = text.match(/<script[^>]*id=["']countdown-data["'][^>]*>([\s\S]*?)<\/script>/i);
-      if (!match || !match[1]) {
-        setTemporaryMessage(loadStatus, 'Uploaded file does not contain a valid countdown.', 'Paste a countdown link or upload a saved file to load it.');
-        return;
-      }
-
-      try {
-        const parsed = JSON.parse(match[1].trim());
-        applyCountdown(parsed.name || 'Countdown', parsed.timestamp, true, parsed.units);
-        setTemporaryMessage(loadStatus, 'Countdown loaded from file.', 'Paste a countdown link or upload a saved file to load it.');
-        hideLoadModal();
-      } catch (error) {
-        setTemporaryMessage(loadStatus, 'Cannot read countdown data from file.', 'Paste a countdown link or upload a saved file to load it.');
-      }
-    }
 
     function clearCountdownStorage() {
       localStorage.removeItem(STORAGE_KEY);
@@ -821,21 +921,64 @@
       currentLabel.textContent = 'No countdown set yet.';
       updateDocumentTitle('');
       setTemporaryMessage(statusMessage, 'Saved countdown cleared.');
-      daysEl.textContent = '00';
-      hoursEl.textContent = '00';
-      minutesEl.textContent = '00';
-      secondsEl.textContent = '00';
+      Object.values(timeValueEls).forEach(el => { if (el) el.textContent = '00'; });
       nameInput.value = '';
       dateInput.value = '';
       linkOutput.textContent = 'No countdown saved yet. Set a countdown first.';
     });
 
-    saveButton.addEventListener('click', () => {
+    function openShareModal() {
+      hideSettingsModal();
+      const url = getShareableUrl();
+      shareLinkOutput.textContent = url;
+      const encodedUrl = encodeURIComponent(url);
+      const encodedTitle = encodeURIComponent(countdownName || 'Countdown');
+      const mailBody = encodeURIComponent('Check out this countdown: ' + url);
+      shareEmail.href = `mailto:?subject=${encodedTitle}&body=${mailBody}`;
+      shareFacebook.href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+      shareLinkedin.href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`;
+      shareX.href = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
+      shareWhatsApp.href = `https://wa.me/?text=${encodeURIComponent((countdownName || 'Countdown') + ' ' + url)}`;
+      shareModalBackdrop.style.display = 'flex';
+    }
+
+    shareButton.addEventListener('click', async () => {
       if (!targetTimestamp) {
-        setTemporaryMessage(statusMessage, 'Set a countdown first to save or share it.');
+        setTemporaryMessage(statusMessage, 'Set a countdown first to share.');
         return;
       }
-      showModal();
+      const url = getShareableUrl();
+      const title = countdownName || 'Countdown';
+      const text = `Countdown: ${countdownName}\n${url}`;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, text, url });
+          return;
+        } catch (err) {
+          // fall back to modal
+        }
+      }
+      openShareModal();
+    });
+
+    closeShareModal.addEventListener('click', () => {
+      shareModalBackdrop.style.display = 'none';
+    });
+
+    shareModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === shareModalBackdrop) {
+        shareModalBackdrop.style.display = 'none';
+      }
+    });
+
+    shareCopyButton.addEventListener('click', async () => {
+      const url = getShareableUrl();
+      try {
+        await navigator.clipboard.writeText(url);
+        shareLinkOutput.textContent = 'Link copied to clipboard!\n' + url;
+      } catch (error) {
+        shareLinkOutput.textContent = 'Unable to copy automatically. Copy this link manually:\n' + url;
+      }
     });
 
     closeModal.addEventListener('click', hideModal);
@@ -881,23 +1024,10 @@
     loadLinkButton.addEventListener('click', () => {
       const value = loadLinkInput.value.trim();
       if (!value) {
-        setTemporaryMessage(loadStatus, 'Paste a countdown link before loading.', 'Paste a countdown link or upload a saved file to load it.');
+        setTemporaryMessage(loadStatus, 'Paste a countdown link before loading.', 'Paste a countdown link to load it.');
         return;
       }
       loadCountdownFromString(value);
-    });
-
-    loadFileButton.addEventListener('click', () => {
-      loadFileInput.click();
-    });
-
-    loadFileInput.addEventListener('change', async (event) => {
-      const file = event.target.files && event.target.files[0];
-      if (!file) {
-        return;
-      }
-      await loadCountdownFromFile(file);
-      loadFileInput.value = '';
     });
 
     document.addEventListener('DOMContentLoaded', () => {
