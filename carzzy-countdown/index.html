@@ -240,6 +240,7 @@
     .share-copy {
       background: #00d1b2;
       color: #0a0a0a;
+      width: 200%;
     }
 
     .share-email {
@@ -264,6 +265,11 @@
 
     .share-whatsapp {
       background: #25d366;
+      color: #0a0a0a;
+    }
+
+    .share-calendar {
+      background: #f2a900;
       color: #0a0a0a;
     }
 
@@ -416,12 +422,13 @@
         <div class="link-box" id="share-link-output">No countdown saved yet. Set a countdown first.</div>
       </div>
       <div class="modal-actions share-grid">
-        <button class="primary share-action share-copy" id="share-copy"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown\images\copy.png"></img>Copy link</button>
-        <a class="secondary share-action share-email" id="share-email" href="#" target="_blank" rel="noopener"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/email.png"></img>Email</a>
-        <a class="secondary share-action share-facebook" id="share-facebook" href="#" target="_blank" rel="noopener"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/facebook.png"></img>Facebook</a>
-        <a class="secondary share-action share-linkedin" id="share-linkedin" href="#" target="_blank" rel="noopener"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/linkedin.png"></img>LinkedIn</a>
-        <a class="secondary share-action share-x" id="share-x" href="#" target="_blank" rel="noopener"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/x.png"></img>X</a>
-        <a class="secondary share-action share-whatsapp" id="share-whatsapp" href="#" target="_blank" rel="noopener"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/whatsapp.png"></img>WhatsApp</a>
+        <button class="primary share-action share-copy" id="share-copy"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown\images\copy.png"></img>Copy link</button><br>
+        <a class="secondary share-action share-email" id="share-email" href="#" target="_blank" rel="noopener noreferrer"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/email.png"></img>Email</a>
+        <a class="secondary share-action share-facebook" id="share-facebook" href="#" target="_blank" rel="noopener noreferrer"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/facebook.png"></img>Facebook</a>
+        <a class="secondary share-action share-linkedin" id="share-linkedin" href="#" target="_blank" rel="noopener noreferrer"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/linkedin.png"></img>LinkedIn</a>
+        <a class="secondary share-action share-x" id="share-x" href="#" target="_blank" rel="noopener noreferrer"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/x.png"></img>X</a>
+        <a class="secondary share-action share-whatsapp" id="share-whatsapp" href="#" target="_blank" rel="noopener noreferrer"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/whatsapp.png"></img>WhatsApp</a>
+        <a class="secondary share-action share-calendar" id="share-calendar" href="#" target="_blank" rel="noopener noreferrer"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/calendar.png"></img>Add to Calendar</a>
       </div>
     </div>
   </div>
@@ -491,6 +498,7 @@
     const shareLinkedin = document.getElementById('share-linkedin');
     const shareX = document.getElementById('share-x');
     const shareWhatsApp = document.getElementById('share-whatsapp');
+    const shareCalendar = document.getElementById('share-calendar');
     const settingsModalBackdrop = document.getElementById('settings-modal-backdrop');
     const closeSettingsModal = document.getElementById('close-settings-modal');
     const settingsButton = document.getElementById('settings-button');
@@ -933,12 +941,18 @@
       shareLinkOutput.textContent = url;
       const encodedUrl = encodeURIComponent(url);
       const encodedTitle = encodeURIComponent(countdownName || 'Countdown');
+      const subject = encodeURIComponent(`Check Out My ${countdownName || 'Countdown'} Countdown`);
       const mailBody = encodeURIComponent('Check out this countdown I made on Carzzy Apps | Carzzy Countdown: ' + url);
-      shareEmail.href = `mailto:?subject=${encodedTitle}&body=${mailBody}`;
+      shareEmail.href = `mailto:?subject=${subject}&body=${mailBody}`;
       shareFacebook.href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
       shareLinkedin.href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`;
       shareX.href = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
       shareWhatsApp.href = `https://wa.me/?text=${encodeURIComponent((countdownName || 'Countdown') + ' ' + url)}`;
+      const eventStart = new Date(targetTimestamp).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      const eventEnd = new Date(targetTimestamp + 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      const calendarTitle = encodeURIComponent(`Check Out My ${countdownName || 'Countdown'} Countdown`);
+      const calendarDetails = encodeURIComponent(`Countdown for ${countdownName || 'Countdown'}\n${url}`);
+      shareCalendar.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calendarTitle}&dates=${eventStart}/${eventEnd}&details=${calendarDetails}&sf=true&output=xml`;
       shareModalBackdrop.style.display = 'flex';
     }
 
