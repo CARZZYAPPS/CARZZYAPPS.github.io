@@ -933,7 +933,7 @@
       shareLinkOutput.textContent = url;
       const encodedUrl = encodeURIComponent(url);
       const encodedTitle = encodeURIComponent(countdownName || 'Countdown');
-      const mailBody = encodeURIComponent('Check out this countdown: ' + url);
+      const mailBody = encodeURIComponent('Check out this countdown I made on Carzzy Apps | Carzzy Countdown: ' + url);
       shareEmail.href = `mailto:?subject=${encodedTitle}&body=${mailBody}`;
       shareFacebook.href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
       shareLinkedin.href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`;
@@ -949,7 +949,7 @@
       }
       const url = getShareableUrl();
       const title = countdownName || 'Countdown';
-      const text = `Countdown: ${countdownName}\n${url}`;
+      const text = `Check out this countdown I made on Carzzy Apps | Carzzy Countdown: ${countdownName}\n${url}`;
       if (navigator.share) {
         try {
           await navigator.share({ title, text, url });
