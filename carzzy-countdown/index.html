@@ -359,9 +359,7 @@
   <div class="container">
     <div class="countdown-header">
       <h1>Carzzy Countdown</h1>
-      <button class="secondary" id="settings-button">Settings</button>
-    </div>
-
+      <button type="button" class="secondary" id="settings-button">Settings</button>
     <div class="countdown" id="countdown-panel">
       <div id="current-label">No countdown set yet. To set a countdown click the settings button.</div>
       <div class="time-grid" id="time-grid">
@@ -403,10 +401,10 @@
       </fieldset>
 
       <div class="modal-actions">
-        <button class="primary" id="start-button">Set Countdown</button>
-        <button class="secondary" id="clear-button">Clear Saved Countdown</button>
-        <button class="secondary" id="share-button">Share countdown</button>
-        <button class="secondary" id="load-button">Load countdown</button>
+        <button type="button" class="primary" id="start-button">Set Countdown</button>
+        <button type="button" class="secondary" id="clear-button">Clear Saved Countdown</button>
+        <button type="button" class="secondary" id="share-button">Share countdown</button>
+        <button type="button" class="secondary" id="load-button">Load countdown</button>
       </div>
     </div>
   </div>
@@ -415,14 +413,14 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
       <div class="modal-header">
         <h2 id="share-modal-title">Share Countdown</h2>
-        <button class="close-button" id="close-share-modal">✕</button>
+        <button type="button" class="close-button" id="close-share-modal">✕</button>
       </div>
       <p>Use the link below to share this countdown. You can copy it or share via email and social platforms.</p>
       <div class="modal-actions">
         <div class="link-box" id="share-link-output">No countdown saved yet. Set a countdown first.</div>
       </div>
       <div class="modal-actions share-grid">
-        <button class="primary share-action share-copy" id="share-copy"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown\images\copy.png"></img>Copy link</button><br>
+        <button type="button" class="primary share-action share-copy" id="share-copy"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/copy.png"></img>Copy link</button><br>
         <a class="secondary share-action share-email" id="share-email" href="#" target="_blank" rel="noopener noreferrer"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/email.png"></img>Email</a>
         <a class="secondary share-action share-facebook" id="share-facebook" href="#" target="_blank" rel="noopener noreferrer"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/facebook.png"></img>Facebook</a>
         <a class="secondary share-action share-linkedin" id="share-linkedin" href="#" target="_blank" rel="noopener noreferrer"><img class="share-icon" src="https://www.carzzyapps.com/carzzy-countdown/images/linkedin.png"></img>LinkedIn</a>
@@ -443,8 +441,8 @@
       </div>
 
       <div class="modal-actions">
-        <button class="primary" id="download-html">Download HTML</button>
-        <button class="secondary" id="copy-link">Copy Link</button>
+        <button type="button" class="primary" id="download-html">Download HTML</button>
+        <button type="button" class="secondary" id="copy-link">Copy Link</button>
       </div>
 
       <div class="link-box" id="link-output">No countdown saved yet. Set a countdown first.</div>
@@ -543,6 +541,12 @@
 
     function formatNumber(value) {
       return String(value).padStart(2, '0');
+    }
+
+    function formatLocalDatetimeInput(date) {
+      const pad = v => String(v).padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
+        `T${pad(date.getHours())}:${pad(date.getMinutes())}`;
     }
 
     function getSelectedUnitKeys() {
@@ -746,7 +750,7 @@
       }
 
       nameInput.value = countdownName;
-      dateInput.value = new Date(targetTimestamp).toISOString().slice(0, 16);
+      dateInput.value = formatLocalDatetimeInput(new Date(targetTimestamp));
       currentLabel.textContent = countdownName;
       updateDocumentTitle(countdownName);
       statusMessage.textContent = '';
@@ -797,7 +801,10 @@
       }
 
       const payload = encodeURIComponent(btoa(JSON.stringify({ name: countdownName, timestamp: targetTimestamp, units: getSelectedUnitKeys() })));
-      return `${window.location.origin}${window.location.pathname}?c=${payload}`;
+      const baseUrl = window.location.protocol === 'file:'
+        ? window.location.href.split('?')[0]
+        : `${window.location.origin}${window.location.pathname}`;
+      return `${baseUrl}?c=${payload}`;
     }
 
     function updateLinkOutput() {
