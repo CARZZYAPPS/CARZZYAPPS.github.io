@@ -957,7 +957,7 @@
       shareWhatsApp.href = `https://wa.me/?text=${encodeURIComponent((countdownName || 'Countdown') + ' ' + url)}`;
       const eventStart = new Date(targetTimestamp).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
       const eventEnd = new Date(targetTimestamp + 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-      const calendarTitle = encodeURIComponent(`Check Out My ${countdownName || 'Countdown'} Countdown`);
+      const calendarTitle = encodeURIComponent(countdownName);
       const calendarDetails = encodeURIComponent(`Countdown for ${countdownName || 'Countdown'}\n${url}`);
       shareCalendar.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calendarTitle}&dates=${eventStart}/${eventEnd}&details=${calendarDetails}&sf=true&output=xml`;
       shareModalBackdrop.style.display = 'flex';
