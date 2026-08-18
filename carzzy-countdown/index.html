@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Carzzy Countdown is a simple and customizable countdown timer that allows you to set a countdown for any event, save it, and share it with others." />
-   <meta name="keywords" content="carzzy apps, games, apps, crazzy apps, countdown, timer, countdown timer, event countdown, customizable countdown, shareable countdown, save countdown, countdown app, countdown tool, countdown website, countdown webpage, countdown page, countdown generator, countdown creator, countdown maker, countdown software, countdown utility, countdown application" />
-    <meta name="author" content="Avis, DeBus">
+  <meta name="keywords" content="carzzy apps, games, apps, crazzy apps, countdown, timer, countdown timer, event countdown, customizable countdown, shareable countdown, save countdown, countdown app, countdown tool, countdown website, countdown webpage, countdown page, countdown generator, countdown creator, countdown maker, countdown software, countdown utility, countdown application" />
+  <meta name="author" content="Avis, DeBus">
     
-    <!-- This is to (hopefully) get Google to display the name instead of the url -->
-    <meta property="og:site_name" content="Carzzy Apps">
   <title>Carzzy Apps | Carzzy Countdown</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  
   <style>
+    
     html, body {
-    overflow: hidden;
+      overflow: hidden;
     }
 
     body {
@@ -37,7 +37,7 @@
       box-shadow: 0 0 40px rgb(0, 209, 178);
     }
 
-    h1 {
+    h2 {
       margin-top: 0;
       font-size: 2rem;
       text-align: center;
@@ -169,7 +169,7 @@
       margin-bottom: 16px;
     }
 
-    .modal h2 {
+    .modal h3 {
       margin: 0;
       font-size: 1.3rem;
     }
@@ -354,11 +354,11 @@
 </head>
 <body>
 
-    <script src="/nav-bar.js"></script>
+  <script src="/nav-bar.js"></script>
 
   <div class="container">
     <div class="countdown-header">
-      <h1>Carzzy Countdown</h1>
+      <h2>Carzzy Countdown</h2>
       <button type="button" class="secondary" id="settings-button">Settings</button>
     <div class="countdown" id="countdown-panel">
       <div id="current-label">No countdown set yet. To set a countdown click the settings button.</div>
@@ -377,7 +377,7 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
       <div class="modal-header">
         <div>
-          <h2 id="settings-modal-title">Countdown Settings</h2>
+          <h3 id="settings-modal-title">Countdown Settings</h3>
           <p>Edit the countdown name, date/time, and manage saved countdowns.</p>
         </div>
         <button class="close-button" id="close-settings-modal" aria-label="Close settings modal">×</button>
