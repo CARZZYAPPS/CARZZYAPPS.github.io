@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
     
@@ -22,15 +23,9 @@
                 user-select: none;
             }
 
-            #logo {
-                position: absolute;
-                top: 20px;
-                left: 20px;
-            }
-
             #stats {
                 position: absolute;
-                top: 20px;
+                top: 100px;
                 right: 20px;
                 font-size: 18px;
                 font-weight: bold;
@@ -41,19 +36,20 @@
                 color: #ffd700;
             }
 
-            h1 {
-                font-size: 50px;
-                margin-top: 85px;
+            h2 {
+                font-size: 40px;
+                margin-top: 145px;
                 margin-bottom: 5px;
             }
 
             #timer {
-                font-size: 150px;
+                font-size: 115px;
+                margin-bottom: 0px;
             }
 
             #message {
                 color: #ffd700;
-                font-size: 25px;
+                font-size: 20px;
             }
 
             button {
@@ -64,7 +60,7 @@
                 padding: 10px;
                 border-radius: 50px;
                 cursor: pointer;
-                margin: 30px 20px;
+                margin: 15px 20px;
                 transition: 0.15s;
             }
 
@@ -91,11 +87,7 @@
 
     <body>
 
-        <div id="logo">
-            <a href="https://carzzyapps.github.io">
-                <img src="/Carzzy Apps Logo.png" style="width: 150px; height: 50px;">
-            </a>
-        </div>
+		<script src="/nav-bar.js/"></script>
 
         <div id="stats">
             Session Score: <span id="session-score"></span>
@@ -104,7 +96,7 @@
             <div class="best-scores">Highest Streak: <span id="highest-streak"></span></div>
         </div>
 
-        <h1>Right On Time</h1>
+        <h2>Right On Time</h2>
         <p style="color: #ffd700">
             Try to stop the stopwatch exactly on the second (1.00s, 2.00s, etc.). You can wait as long as you want before you stop it.<br>
             Try to build a streak!
