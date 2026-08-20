@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="The global leaderboard for our popular game 'Rhythm Runner'">
+  <meta name="keywords" content="carzzy apps, games, apps, crazzy apps, leaderboard, rhythm runner">
+  <meta name="author" content="Avis, DeBus">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rhythm Runner | Leaderboard</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+  <style>
+    body {
+      background: #0a0a0a;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      user-select: none;
+    }
+
+    h2 {
+      margin-top: 100px;
+      color: #00d1b2;
+      margin-bottom: 40px;
+      font-size: 32px;
+    }
+
+    table {
+      width: 90%;
+      max-width: 600px;
+      margin: auto;
+      border: #00d1b2 solid 1px;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 18px;
+      box-shadow: 0px 0px 15px rgba(0, 209, 178, 0.5);
+    }
+
+    thead {
+      background: rgba(0, 209, 178, 0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #00d1b2;
+    }
+
+    tr:hover, tr:nth-child(even):hover {
+      background: rgba(0, 209, 178, 0.2)
+    }
+
+    th {
+      color: #00d1b2;
+      font-size: 20px;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(0, 209, 178, 0.1);
+    }
+
+    #loading {
+      margin-top: 30px;
+      color: #00d1b2;
+      font-size: 20px;
+    }
+    
+    footer {
+      margin-top: 50px;
+      margin-bottom: 35px;
+      font-size: 0.8rem;
+      color: #444;
+    }
+    
+  </style>
+</head>
+<body>
+  
+  <script src="/nav-bar.js"></script>
+
+  <h2>RHYTHM RUNNER — GLOBAL LEADERBOARD</h2>
+  <p style="margin-bottom: 40px;">Our leaderboard system isn't perfect, so if there is a bug, <a href="/contact-us" style="color:#00d1b2">let us know</a>.</p>
+
+  <div id="loading">Loading leaderboard...</div>
+
+  <table style="display:none;" id="leaderboardTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Username</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboard"></tbody>
+  </table>
+  <footer>
+    Avis & DeBus v1.0.0 PRO
+  </footer>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbyUqQ31FsONw4J5ibyvLFzIoSMvcd8qfkFwbc_j-BXEO0S3pTiqARVZ4mOm5C3rI-7sIA/exec";
+
+    async function loadLeaderboard() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        const tbody = document.getElementById("leaderboard");
+        tbody.innerHTML = "";
+
+        data.forEach((row, i) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${row.username}</td>
+            <td>${row.score}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("leaderboardTable").style.display = "table";
+
+      } catch (err) {
+        document.getElementById("loading").innerText = "Failed to load leaderboard.";
+      }
+    }
+
+    loadLeaderboard();
+  </script>
+
+</body>
+</html>
