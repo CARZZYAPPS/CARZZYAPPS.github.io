@@ -25,7 +25,7 @@
     		"@context": "https://schema.org",
     		"@type": "WebSite",
     		"name": "Carzzy Apps",
-    		"url": "https://www.carzzyapps.com/"
+    		"url": "https://www.carzzyapps.com"
   		}
 	</script>
 	
@@ -37,7 +37,6 @@
         Hopefully we will finally get ourselves on Google Search results :)
         This tag doesn't just work on its own. It's for verification on the Google Search Console. It still needs to remain here even after verification.
     -->
-    <meta name="google-site-verification" content="HbcEB98bgiQEfkfdGsmj3vowfgB6Mep-i1L_DJFxTYU">
     
     <title>Carzzy Apps | Home Page</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -64,74 +63,7 @@
             width: 100%;
             max-width: 600px;
         }
-
-        .location-section {
-            position: fixed;
-            inset: 0;
-            z-index: 10;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.78);
-        }
-
-        .location-modal {
-            width: 100%;
-            max-width: 480px;
-            box-sizing: border-box;
-            padding: 24px;
-            border: 1px solid #333;
-            border-radius: 12px;
-            background: #151515;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .location-section p {
-            margin: 0 0 12px;
-            color: #aaa;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .location-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .location-btn {
-            background: #00d1b2;
-            color: #0a0a0a;
-            border: 1px solid #00d1b2;
-            border-radius: 6px;
-            padding: 9px 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .location-btn.secondary {
-            background: transparent;
-            color: #00d1b2;
-        }
-
-        .location-status {
-            margin-top: 12px;
-            color: #aaa;
-            font-size: 0.8rem;
-        }
-
-        .location-close {
-            float: right;
-            background: transparent;
-            color: #aaa;
-            border: 0;
-            font-size: 1.4rem;
-            line-height: 1;
-            cursor: pointer;
-        }
-
+		
         .project-card {
             background: #151515;
             border: 1px solid #333;
@@ -198,13 +130,6 @@
             color: #444;
         }
 
-        .location-reopen {
-            display: block;
-            margin-top: 8px;
-            color: #00d1b2;
-            text-align: center;
-        }
-
         s {
             color: #aaa;
             text-decoration-line: line-through;
@@ -221,19 +146,6 @@
     <header>
         <h2>Our Games & Apps</h2>
     </header>
-
-    <section class="location-section" aria-labelledby="location-title">
-        <div class="location-modal" role="dialog" aria-modal="true" aria-labelledby="location-title">
-            <button class="location-close" id="close-location" type="button" aria-label="Close location notice">&times;</button>
-            <p id="location-title"><strong>Location notice</strong></p>
-            <p>We collect your precise location for quality assurance purposes. Your coordinates are saved in this browser's local storage and are not sent by this page to a server. Your browser will ask for permission before sharing your location.</p>
-            <div class="location-actions">
-                <button class="location-btn" id="allow-location" type="button">Allow location</button>
-                <button class="location-btn secondary" id="clear-location" type="button">Clear saved location</button>
-            </div>
-            <div class="location-status" id="location-status" role="status" aria-live="polite">No location saved.</div>
-        </div>
-    </section>
 
     <div class="container">
         <!-- PROJECT 1 -->
@@ -329,78 +241,11 @@
 
     <footer>
         Avis & DeBus | v1.0.0 PRO
-        <a class="location-reopen" id="reopen-location" href="#location-title">Location Notice</a>
     </footer>
 
-<script data-goatcounter="https://carzzyapps.goatcounter.com/count"
+	<script data-goatcounter="https://carzzyapps.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
-    <script>
-        (function () {
-            const storageKey = 'carzzyapps_precise_location';
-            const allowButton = document.getElementById('allow-location');
-            const clearButton = document.getElementById('clear-location');
-            const closeButton = document.getElementById('close-location');
-            const reopenButton = document.getElementById('reopen-location');
-            const locationSection = document.querySelector('.location-section');
-            const status = document.getElementById('location-status');
-
-            function updateStatus() {
-                const savedLocation = localStorage.getItem(storageKey);
-                status.textContent = savedLocation ? 'A location is saved in this browser.' : 'No location saved.';
-            }
-
-            function requestLocation() {
-                if (!navigator.geolocation) {
-                    status.textContent = 'Location is not supported by this browser.';
-                    return;
-                }
-
-                status.textContent = 'Requesting your location...';
-                navigator.geolocation.getCurrentPosition(
-                    function (position) {
-                        localStorage.setItem(storageKey, JSON.stringify({
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            accuracy: position.coords.accuracy,
-                            savedAt: new Date().toISOString()
-                        }));
-                        status.textContent = 'Your location was saved in this browser.';
-                    },
-                    function (error) {
-                        if (error.code === error.PERMISSION_DENIED) {
-                            status.textContent = 'Location permission was not granted.';
-                            locationSection.style.display = 'flex';
-                        } else {
-                            status.textContent = 'Unable to get your location.';
-                        }
-                    },
-                    { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
-                );
-            }
-
-            allowButton.addEventListener('click', requestLocation);
-
-            clearButton.addEventListener('click', function () {
-                localStorage.removeItem(storageKey);
-                updateStatus();
-            });
-
-            closeButton.addEventListener('click', function () {
-                locationSection.style.display = 'none';
-            });
-
-            reopenButton.addEventListener('click', function (event) {
-                event.preventDefault();
-                locationSection.style.display = 'flex';
-                closeButton.focus();
-            });
-
-            updateStatus();
-            requestLocation();
-        }());
-    </script>
-	
 </body>
 <!-- hi -->
 </html>
