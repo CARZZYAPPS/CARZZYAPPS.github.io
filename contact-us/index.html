@@ -1,405 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 
-<head>
-	
-	<!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-VD38580YSL"></script>	
-	<script>
-  		window.dataLayer = window.dataLayer || [];
-  		function gtag(){dataLayer.push(arguments);}
-  		gtag('js', new Date());
-  		gtag('config', 'G-VD38580YSL');
-	</script>
-	
-	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A fun website with games and other useful tools">
-    <meta name="keywords" content="carzzy apps, games, apps, crazzy apps">
-    <meta name="author" content="Avis, DeBus">
-    
-    <!-- This is to (hopefully) get Google to display the name instead of the url -->
-	<script type="application/ld+json">
-		{
-    		"@context": "https://schema.org",
-    		"@type": "WebSite",
-    		"name": "Carzzy Apps",
-    		"url": "https://www.carzzyapps.com/"
-  		}
-	</script>
-	
-	<!-- Ditto -->
-    <meta property="og:site_name" content="Carzzy Apps">
-    
-    <!--
-        Keep this next tag only on the homepage; don't put it on the others.
-        Hopefully we will finally get ourselves on Google Search results :)
-        This tag doesn't just work on its own. It's for verification on the Google Search Console. It still needs to remain here even after verification.
-    -->
-    <meta name="google-site-verification" content="HbcEB98bgiQEfkfdGsmj3vowfgB6Mep-i1L_DJFxTYU">
-    
-    <title>Carzzy Apps | Home Page</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <head>
 
-    <style>
-        body {
-            background-color: #0a0a0a;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-        }
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contact Us | Carzzy Apps</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-        h2 {
-            margin-top: 100px;
-            color: #aaa;
-            margin-bottom: 40px;
-            text-align: center;
-        }
+        <style>
 
-        .container {
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .location-section {
-            position: fixed;
-            inset: 0;
-            z-index: 10;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.78);
-        }
-
-        .location-modal {
-            width: 100%;
-            max-width: 480px;
-            box-sizing: border-box;
-            padding: 24px;
-            border: 1px solid #333;
-            border-radius: 12px;
-            background: #151515;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .location-section p {
-            margin: 0 0 12px;
-            color: #aaa;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .location-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .location-btn {
-            background: #00d1b2;
-            color: #0a0a0a;
-            border: 1px solid #00d1b2;
-            border-radius: 6px;
-            padding: 9px 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .location-btn.secondary {
-            background: transparent;
-            color: #00d1b2;
-        }
-
-        .location-status {
-            margin-top: 12px;
-            color: #aaa;
-            font-size: 0.8rem;
-        }
-
-        .location-close {
-            float: right;
-            background: transparent;
-            color: #aaa;
-            border: 0;
-            font-size: 1.4rem;
-            line-height: 1;
-            cursor: pointer;
-        }
-
-        .project-card {
-            background: #151515;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: white;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .project-card:hover {
-            border-color: #00d1b2;
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0, 209, 178, 0.2);
-        }
-
-        .project-title {
-            color: #00d1b2;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .project-desc {
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-
-        .contact-section {
-            margin-top: 60px;
-            text-align: center;
-            border-top: 1px solid #222;
-            padding-top: 40px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .contact-btn {
-            display: inline-block;
-            background: transparent;
-            color: #00d1b2;
-            border: 2px solid #00d1b2;
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-
-        .contact-btn:hover {
-            background: #00d1b2;
-            color: #0a0a0a;
-            box-shadow: 0 0 20px rgba(0, 209, 178, 0.4);
-        }
-
-        footer {
-            margin-top: 50px;
-            padding-bottom: 40px;
-            font-size: 0.8rem;
-            color: #444;
-        }
-
-        .location-reopen {
-            display: block;
-            margin-top: 8px;
-            color: #00d1b2;
-            text-align: center;
-        }
-
-        s {
-            color: #aaa;
-            text-decoration-line: line-through;
-            text-decoration-color: #00d1b2;
-        }
-
-    </style>
-</head>
-
-<body>
-
-    <script src="/nav-bar.js"></script>
-    
-    <header>
-        <h2>Our Games & Apps</h2>
-    </header>
-
-    <section class="location-section" aria-labelledby="location-title">
-        <div class="location-modal" role="dialog" aria-modal="true" aria-labelledby="location-title">
-            <button class="location-close" id="close-location" type="button" aria-label="Close location notice">&times;</button>
-            <p id="location-title"><strong>Location notice</strong></p>
-            <p>We collect your precise location for quality assurance purposes. Your coordinates are saved in this browser's local storage and are not sent by this page to a server. Your browser will ask for permission before sharing your location.</p>
-            <div class="location-actions">
-                <button class="location-btn" id="allow-location" type="button">Allow location</button>
-                <button class="location-btn secondary" id="clear-location" type="button">Clear saved location</button>
-            </div>
-            <div class="location-status" id="location-status" role="status" aria-live="polite">No location saved.</div>
-        </div>
-    </section>
-
-    <div class="container">
-        <!-- PROJECT 1 -->
-        <a href="https://carzzyapps.github.io/Rhythm-Runner/" class="project-card">
-            <span class="project-title">Rhythm Runner</span>
-            <span class="project-desc">An Endless Runner where You Jump Spikes and Duck Drones</span><br>
-            <span class="project-desc"><!--<s>-->Built In Music!!!<!--</s>--></span>
-            <!--<span class="project-desc" style="font-size: 0.7rem">To accommodate our users, the music will be acapella during the Three Weeks</span>--><br> 
-            <span class="project-desc">✓ Compatible With Smartphones.</span><br>
-            
-        </a>
-
-        <!-- PROJECT 2 -->
-        <a href="https://carzzyapps.github.io/Metronome/" class="project-card">
-            <span class="project-title">Metronome</span>
-            <span class="project-desc">An Online Metronome</span>
-        </a>
-
-
-        <!-- PROJECT 3 -->
-        <a href="https://carzzyapps.github.io/right-on-time/" class="project-card">
-            <span class="project-title">Right On Time</span>
-            <span class="project-desc">A Stopwatch where You Try to Stop it Exactly on the Second</span>
-        </a>
-
-
-        <!-- PROJECT 4 -->
-        <a href="https://carzzyapps.github.io/Radical-Stopwatch/" class="project-card">
-            <span class="project-title">Radical Stopwatch</span>
-            <span class="project-desc">A Stopwatch that Counts in Radicals</span>
-        </a>
-
-        <!-- PROJECT 5 -->
-        <a href="https://carzzyapps.github.io/Radical-Clicker/" class="project-card">
-            <span class="project-title">Radical Clicker</span>
-            <span class="project-desc">A Clicker Game that Counts in Radicals</span>
-        </a>
-
-        <!-- PROJECT 6 -->
-        <a href="https://carzzyapps.github.io/Hockey-Shootout/" class="project-card">
-            <span class="project-title">Hockey Shootout</span>
-            <span class="project-desc">Exactly what it Sounds Like</span>
-        </a>
-
-        <!-- PROJECT 7 -->
-        <a href="https://carzzyapps.github.io/DeCrossyBus/" class="project-card">
-            <span class="project-title">DeCrossyBus</span>
-            <span class="project-desc">Why Did DeBus Cross the Road?</span><br>
-            <span class="project-desc">To Save Us From Copyright Infringement, Of Course</span><br>
-            <span class="project-desc">✓ Compatible With Smartphones</span><br>
-        </a>
-
-        <!-- PROJECT 8 -->
-        <a href="https://carzzyapps.github.io/Stat-Calc/" class="project-card">
-            <span class="project-title">Statistics Calculator</span>
-            <span class="project-desc">Calculator for Mean, Median, Mode, Z-scores, and More</span>
-        </a>
-
-		<!-- PROJECT 9 -->
-		<a href="https://carzzyapps.github.io/Carzzy-Chords/" class="project-card">
-            <span class="project-title" id="new"><b>*NEW*</b> Carzzy Chords</span>
-            <span class="project-desc">The perfect tool to practice piano chords.</span>
-        </a>
-
-        <!-- PROJECT 10 -->
-        <a href="https://carzzyapps.github.io/carzzy-countdown/" class="project-card">
-            <span class="project-title" id="new"><b>*NEW*</b> Carzzy Countdown</span>
-            <span class="project-desc">A simple and customizable countdown timer that allows you to set a countdown for any event, save it, and share it with others.</span>
-        </a>
-
-        <!-- Category 3 -->
-        <a href="/jeopardy" class="project-card">
-            <span class="project-title">Jeopardy</span>
-            <span class="project-desc">If you have any questions you want featured on a Jeopardy Game please send them in via the chat bot.</span>
-            
-        </a>
-
-
-        <!-- Category 1 -->
-        <a href="scymores-games" class="project-card">
-            <span class="project-title">Scymore's Games</span>
-            <span class="project-desc">Click here to view them.</span>
-        </a>
-
-        <!-- Category 2 -->
-        <a href="https://carzzyapps.github.io/Leaderboards/" class="project-card">
-            <span class="project-title">Leaderboards</span>
-            <span class="project-desc">Click here to view them.</span>
-        </a>
-
-
-    </div>
-
-    <footer>
-        Avis & DeBus | v1.0.0 PRO
-        <a class="location-reopen" id="reopen-location" href="#location-title">Location notice</a>
-    </footer>
-
-<script data-goatcounter="https://carzzyapps.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
-
-    <script>
-        (function () {
-            const storageKey = 'carzzyapps_precise_location';
-            const allowButton = document.getElementById('allow-location');
-            const clearButton = document.getElementById('clear-location');
-            const closeButton = document.getElementById('close-location');
-            const reopenButton = document.getElementById('reopen-location');
-            const locationSection = document.querySelector('.location-section');
-            const status = document.getElementById('location-status');
-
-            function updateStatus() {
-                const savedLocation = localStorage.getItem(storageKey);
-                status.textContent = savedLocation ? 'A location is saved in this browser.' : 'No location saved.';
+            body {
+                background: #0a0a0a;
+                color: #00d1b2;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                text-align: center;
             }
 
-            function requestLocation() {
-                if (!navigator.geolocation) {
-                    status.textContent = 'Location is not supported by this browser.';
-                    return;
-                }
-
-                status.textContent = 'Requesting your location...';
-                navigator.geolocation.getCurrentPosition(
-                    function (position) {
-                        localStorage.setItem(storageKey, JSON.stringify({
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            accuracy: position.coords.accuracy,
-                            savedAt: new Date().toISOString()
-                        }));
-                        status.textContent = 'Your location was saved in this browser.';
-                    },
-                    function (error) {
-                        if (error.code === error.PERMISSION_DENIED) {
-                            status.textContent = 'Location permission was not granted.';
-                            locationSection.style.display = 'flex';
-                        } else {
-                            status.textContent = 'Unable to get your location.';
-                        }
-                    },
-                    { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
-                );
+            h2 {
+				margin-top: 100px;
+                font-size: 32px;
             }
 
-            allowButton.addEventListener('click', requestLocation);
+            input {
+            	height: 30px;
+            }
 
-            clearButton.addEventListener('click', function () {
-                localStorage.removeItem(storageKey);
-                updateStatus();
-            });
+            input, textarea {
+                background: #ddd;
+            	color: #3a3a3a;
+            	border: outset 5px #00d1b2;
+                border-radius: 10px;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 17px;
+                font-weight: 500;
+				width: 75vw;
+				max-width: 500px;
+                padding: 7px;
+				resize: none;
+            }
 
-            closeButton.addEventListener('click', function () {
-                locationSection.style.display = 'none';
-            });
+            input::placeholder, textarea::placeholder {
+            	font-size: 17px;
+            }
 
-            reopenButton.addEventListener('click', function (event) {
-                event.preventDefault();
-                locationSection.style.display = 'flex';
-                closeButton.focus();
-            });
+            .submit-btn {
+            	background: linear-gradient(135deg,rgb(0 209 178) 0%, rgb(0 130 144) 100%);
+                color: white;;
+                border: none;
+                border-radius: 10px;
+                font-size: 30px;
+                padding: 10px 20px;
+				width: calc(75vw + 20px);
+				max-width: 520px;
+                transition: transform 0.25s;
+				cursor: pointer;
+            }
 
-            updateStatus();
-            requestLocation();
-        }());
-    </script>
-	
+            .submit-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0px 0px 15px rgba(0, 209, 178, 0.5);
+            }
+
+            footer {
+                margin-top: 50px;
+                margin-bottom: 29px;
+                font-size: 12.8px;
+                color: #444;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+		<script src="/nav-bar.js"></script>
+
+        <h2>Contact Us</h2>
+
+        <form action="https://formcarry.com/s/-sOSEHZlugr" method="post">
+            <input type="text" name="Username" id="uname" placeholder="Username" required><br><br>
+            <input type="email" name="Email address" id="email" placeholder="Email" required><br><br>
+            <textarea rows="10" name="Comments" id="textbox" placeholder="Your questions, comments, or ideas here" required></textarea><br><br>
+			<button type="submit" class="submit-btn">Send</button>
+        </form>
+
+        <footer>Avis & DeBus v1.0.0 PRO</footer>
+
 </body>
-<!-- hi -->
 </html>
