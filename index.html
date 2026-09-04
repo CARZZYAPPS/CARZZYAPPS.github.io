@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -134,6 +133,36 @@
             width: 100%;
             max-width: 600px;
             margin: 10px auto 12px;
+        }
+
+        .ad-frame {
+            position: relative;
+            width: 120%;
+            margin-left: -10%;
+            border-right: 3px solid #00d1b2;
+            border-left: 3px solid #00d1b2;
+        }
+
+        .ad-content {
+            width: 83.333333%;
+            margin: 0 auto;
+        }
+
+        .ad-frame::before,
+        .ad-frame::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #00d1b2;
+        }
+
+        .ad-frame::before {
+            margin-bottom: 12px;
+        }
+
+        .ad-frame::after {
+            margin-top: 12px;
         }
 
         .ad-label {
@@ -286,15 +315,42 @@
 
 		<!-- PROJECT 9 -->
 		<a href="https://carzzyapps.github.io/Carzzy-Chords/" class="project-card">
-            <span class="project-title" id="new"><b>*NEW*</b> Carzzy Chords</span>
+            <span class="project-title" id="new">Carzzy Chords</span>
             <span class="project-desc">The perfect tool to practice piano chords.</span>
         </a>
 
         <!-- PROJECT 10 -->
         <a href="https://carzzyapps.github.io/carzzy-countdown/" class="project-card">
-            <span class="project-title" id="new"><b>*NEW*</b> Carzzy Countdown</span>
+            <span class="project-title" id="new">Carzzy Countdown</span>
             <span class="project-desc">A simple and customizable countdown timer that allows you to set a countdown for any event, save it, and share it with others.</span>
         </a>
+
+        <!-- AD BREAK-->
+<aside class="ad-panel">
+        <div class="ad-frame">
+        <div class="ad-content">
+        <p class="ad-label">Paid Advertisement</p>
+        <div class="ad-banner" aria-label="YC Prints advertisement">
+            <p class="ad-brand">YC PRINTS</p>
+            <p class="ad-tagline">Contact Yosef Chaim Shabtai for more info</p>
+            <p class="ad-tagline">Text (561) 449-9522</p>
+        </div>
+        <h3 class="ad-contact">
+            To have your business featured here, please <a href="https://www.carzzyapps.com/contact-us/">contact us</a>!
+        </h3>
+        </div>
+        </div>
+    </aside>
+        <!-- AD BREAK END -->
+
+        <!-- PROJECT 11 -->
+        <a href="https://carzzyapps.github.io/basketball/" class="project-card">
+            <span class="project-title" id="new"><b>*NEW*</b> 2K Hoops</span>
+            <span class="project-desc">A fun online basketball game.</span>
+            <br>
+            <span class="project-desc">Made by: ACM</span>
+        </a>
+
 
         <!-- Category 3 -->
         <a href="/jeopardy" class="project-card">
@@ -319,17 +375,7 @@
 
     </div>
 
-    <aside class="ad-panel">
-        <p class="ad-label">Paid Advertisement</p>
-        <div class="ad-banner" aria-label="YC Prints advertisement">
-            <p class="ad-brand">YC PRINTS</p>
-            <p class="ad-tagline">Contact Yosef Chaim Shabtai for more info</p>
-            <p class="ad-tagline">Text (561) 449-9522</p>
-        </div>
-        <h3 class="ad-contact">
-            To have your business featured here, please <a href="https://www.carzzyapps.com/contact-us/">contact us</a>!
-        </h3>
-    </aside>
+    
 
     <footer>
         Avis & DeBus | v1.0.0 PRO
